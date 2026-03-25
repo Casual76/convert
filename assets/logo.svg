@@ -1,0 +1,48 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="248" fill="url(#bg)"/>
+  <g filter="url(#glowA)">
+    <circle cx="292" cy="270" r="182" fill="url(#orbA)" fill-opacity="0.9"/>
+  </g>
+  <g filter="url(#glowB)">
+    <circle cx="748" cy="776" r="210" fill="url(#orbB)" fill-opacity="0.84"/>
+  </g>
+  <rect x="152" y="178" width="720" height="668" rx="196" fill="url(#panel)" stroke="#FFFFFF" stroke-opacity="0.24"/>
+  <path d="M356 390C356 363.49 377.49 342 404 342H586C612.51 342 634 363.49 634 390V452C634 478.51 612.51 500 586 500H480L548 568C561.255 581.255 561.255 602.745 548 616C534.745 629.255 513.255 629.255 500 616L373.029 489.029C363.653 479.653 360.852 465.555 364.601 453.466C369.625 437.264 384.733 426 402.5 426H566V410H404C396.268 410 390 416.268 390 424V438C390 456.778 374.778 472 356 472C337.222 472 322 456.778 322 438V390H356Z" fill="url(#arrowA)"/>
+  <path d="M668 634C668 660.51 646.51 682 620 682H438C411.49 682 390 660.51 390 634V572C390 545.49 411.49 524 438 524H544L476 456C462.745 442.745 462.745 421.255 476 408C489.255 394.745 510.745 394.745 524 408L650.971 534.971C660.347 544.347 663.148 558.445 659.399 570.534C654.375 586.736 639.267 598 621.5 598H458V614H620C627.732 614 634 607.732 634 600V586C634 567.222 649.222 552 668 552C686.778 552 702 567.222 702 586V634H668Z" fill="url(#arrowB)"/>
+  <defs>
+    <filter id="glowA" x="14" y="-8" width="556" height="556" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="48" result="effect1_foregroundBlur_0_1"/>
+    </filter>
+    <filter id="glowB" x="442" y="470" width="612" height="612" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="48" result="effect1_foregroundBlur_0_1"/>
+    </filter>
+    <linearGradient id="bg" x1="146" y1="96" x2="848" y2="928" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08101F"/>
+      <stop offset="1" stop-color="#1A2847"/>
+    </linearGradient>
+    <radialGradient id="orbA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(292 270) rotate(90) scale(182)">
+      <stop stop-color="#7DCBFF"/>
+      <stop offset="1" stop-color="#7DCBFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(748 776) rotate(90) scale(210)">
+      <stop stop-color="#FF8C72"/>
+      <stop offset="1" stop-color="#FF8C72" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="220" y1="218" x2="786" y2="828" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="arrowA" x1="322" y1="341" x2="604" y2="634" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7EC9FF"/>
+      <stop offset="1" stop-color="#E8F5FF"/>
+    </linearGradient>
+    <linearGradient id="arrowB" x1="702" y1="682" x2="420" y2="389" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF9C86"/>
+      <stop offset="1" stop-color="#FFF2EA"/>
+    </linearGradient>
+  </defs>
+</svg>

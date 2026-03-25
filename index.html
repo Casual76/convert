@@ -2,61 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <link rel="stylesheet" href="style.css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Convert to it!</title>
-  
+
   <meta name="url" content="https://convert.to.it">
   <meta name="identifier-URL" content="https://convert.to.it">
-  <meta name="og:url" content="https://convert.to.it"/>
-  <meta name="og:title" content="Convert to it!"/>
-  <meta name="og:site_name" content="Convert to it!"/>
-  <meta name="og:description" content="Truly universal online file converter. Private, on-device conversion across mediums."/>
-  <meta name="og:image" content="https://p2r3.github.io/convert/assets/favicon-Bfod-rsk.ico"/>
-  <meta name="theme-color" content="#1C77FF"/>
-  <meta name="og:type" content="website"/>
+  <meta name="og:url" content="https://convert.to.it">
+  <meta name="og:title" content="Convert to it!">
+  <meta name="og:site_name" content="Convert to it!">
+  <meta name="og:description" content="Truly universal online file converter. Private, on-device conversion across mediums.">
+  <meta name="og:image" content="https://p2r3.github.io/convert/assets/favicon-Bfod-rsk.ico">
+  <meta name="theme-color" content="#08101F">
+  <meta name="og:type" content="website">
 </head>
 <body>
 
   <input id="file-input" type="file">
 
-  <a id="commit-id" href="https://github.com/p2r3/convert"></a>
-
-  <div id="file-area">
-    <h2>Click to add your file</h2>
-    <p id="drop-hint-text">or drag and drop it here</p>
-  </div>
-  <div id="side-panel">
-    <button id="mode-button">Advanced mode</button>
-  </div>
-
-  <div id="format-containers">
-
-    <div id="from-container" class="format-container">
-      <h2>Convert from:</h2>
-      <input type="text" id="search-from" class="search" placeholder="Search">
-      <div id="from-list" class="format-list">
-
+  <div class="app-shell">
+    <header class="hero glass-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Universal converter</p>
+        <h1>Convert to it!</h1>
+        <p class="hero-text">
+          Private, on-device conversion with a phone-first flow that stays fast even when the formats get weird.
+        </p>
       </div>
-    </div>
 
-    <div id="to-container" class="format-container">
-      <h2>Convert to:</h2>
-      <input type="text" id="search-to" class="search" placeholder="Search">
-      <div id="to-list" class="format-list">
-
+      <div class="hero-actions">
+        <button id="mode-button" class="ghost-button" type="button">Routing: Simple</button>
+        <a id="commit-id" href="https://github.com/p2r3/convert">Source</a>
       </div>
+    </header>
+
+    <nav id="stepper" class="stepper" aria-label="Conversion steps">
+      <button class="step-chip" type="button" data-step-target="upload">
+        <span class="step-index">01</span>
+        <span class="step-label">Upload</span>
+      </button>
+      <button class="step-chip" type="button" data-step-target="from">
+        <span class="step-index">02</span>
+        <span class="step-label">From</span>
+      </button>
+      <button class="step-chip" type="button" data-step-target="to">
+        <span class="step-index">03</span>
+        <span class="step-label">To</span>
+      </button>
+      <button class="step-chip" type="button" data-step-target="review">
+        <span class="step-index">04</span>
+        <span class="step-label">Convert</span>
+      </button>
+    </nav>
+
+    <main id="wizard-grid" class="wizard-grid">
+      <section id="upload-stage" class="wizard-stage glass-panel" data-step="upload">
+        <div class="stage-heading">
+          <p class="stage-kicker">Step 1</p>
+          <h2>Drop your file and let the app guess the route.</h2>
+        </div>
+
+        <button id="file-area" class="drop-zone" type="button">
+          <span class="drop-title">Tap to add a file</span>
+          <span class="drop-subtitle" id="drop-hint-text">or drag, drop, or paste it here</span>
+        </button>
+
+        <div id="selection-card" class="info-card">
+          <p id="selection-kicker" class="selection-kicker">Ready when you are</p>
+          <h3 id="selection-title">No file selected yet</h3>
+          <p id="selection-meta">Choose a file to unlock the format steps and build a conversion route.</p>
+          <div id="selection-list" class="chip-row"></div>
+        </div>
+      </section>
+
+      <section id="from-container" class="wizard-stage glass-panel" data-step="from">
+        <div class="stage-heading">
+          <p class="stage-kicker">Step 2</p>
+          <h2>Confirm the input format.</h2>
+          <p class="stage-copy">We auto-detect when possible, but you can search and override it.</p>
+        </div>
+
+        <label class="search-shell" for="search-from">
+          <span>Search input formats</span>
+          <input type="text" id="search-from" class="search" placeholder="PNG, PDF, audio/wav...">
+        </label>
+
+        <div class="list-meta">
+          <span id="from-count">0 formats</span>
+        </div>
+        <div id="from-list" class="format-list"></div>
+      </section>
+
+      <section id="to-container" class="wizard-stage glass-panel" data-step="to">
+        <div class="stage-heading">
+          <p class="stage-kicker">Step 3</p>
+          <h2>Pick the output format.</h2>
+          <p class="stage-copy">Search broadly or browse until the route looks right.</p>
+        </div>
+
+        <label class="search-shell" for="search-to">
+          <span>Search output formats</span>
+          <input type="text" id="search-to" class="search" placeholder="PDF, MP3, ZIP, JSON...">
+        </label>
+
+        <div class="list-meta">
+          <span id="to-count">0 formats</span>
+        </div>
+        <div id="to-list" class="format-list"></div>
+      </section>
+
+      <section id="review-stage" class="wizard-stage glass-panel" data-step="review">
+        <div class="stage-heading">
+          <p class="stage-kicker">Step 4</p>
+          <h2>Review the conversion before you run it.</h2>
+          <p class="stage-copy">Everything stays on-device. You can still jump back and tweak any step.</p>
+        </div>
+
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span class="summary-label">Files</span>
+            <strong id="summary-files">No files selected</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">From</span>
+            <strong id="summary-from">Pick an input format</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">To</span>
+            <strong id="summary-to">Pick an output format</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Routing</span>
+            <strong id="summary-mode">Simple mode</strong>
+          </article>
+        </div>
+
+        <div id="review-hint" class="review-hint">
+          Select a file and both formats to enable conversion.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="action-bar" class="action-bar glass-panel">
+    <button id="back-button" class="ghost-button" type="button">Back</button>
+    <button id="next-button" class="primary-button" type="button">Continue</button>
+    <button id="convert-button" class="primary-button accent-button" type="button">Convert</button>
+  </div>
+
+  <div id="popup-bg" class="overlay" hidden></div>
+  <div id="popup" class="dialog glass-panel" hidden>
+    <div id="popup-content">
+      <h2>Loading tools...</h2>
+      <p>Preparing the conversion graph.</p>
     </div>
-
   </div>
 
-  <button id="convert-button" class="disabled">Convert</button>
+  <div id="mode-sheet-backdrop" class="overlay" hidden></div>
+  <section id="mode-sheet" class="sheet glass-panel" hidden aria-labelledby="mode-sheet-title">
+    <div class="sheet-header">
+      <p class="stage-kicker">Routing mode</p>
+      <h2 id="mode-sheet-title">Choose how formats are exposed.</h2>
+    </div>
+    <button class="mode-option" type="button" data-routing-mode="simple">
+      <strong>Simple mode</strong>
+      <span>Group by user-facing format and keep the route picker clean.</span>
+    </button>
+    <button class="mode-option" type="button" data-routing-mode="advanced">
+      <strong>Advanced mode</strong>
+      <span>Expose handler-specific formats so you can steer the conversion tool manually.</span>
+    </button>
+  </section>
 
-  <div id="popup-bg"></div>
-  <div id="popup">
-    <h2>Loading tools...</h2>
-  </div>
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
   <script type="module" src="src/main.ts"></script>
 

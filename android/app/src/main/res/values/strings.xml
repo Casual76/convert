@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Convert to it!</string>
+    <string name="title_activity_main">Convert to it!</string>
+    <string name="package_name">com.p2r3.convert</string>
+    <string name="custom_url_scheme">com.p2r3.convert</string>
+</resources>

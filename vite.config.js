@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     exclude: [
       "@ffmpeg/ffmpeg",
@@ -10,7 +10,7 @@ export default defineConfig({
       "@bokuweb/zstd-wasm"
     ]
   },
-  base: "/convert/",
+  base: mode === "android" ? "./" : "/convert/",
   plugins: [
     viteStaticCopy({
       targets: [
@@ -78,4 +78,4 @@ export default defineConfig({
     }),
     tsconfigPaths()
   ]
-});
+}));

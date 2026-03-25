@@ -1,0 +1,156 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with a phone-first flow that stays fast even when the formats get weird.
+      - generic [ref=e9]:
+        - 'button "Routing: Simple" [ref=e10] [cursor=pointer]'
+        - link "Source" [ref=e11] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e12]:
+      - button "01 Upload" [ref=e13] [cursor=pointer]:
+        - generic [ref=e14]: "01"
+        - generic [ref=e15]: Upload
+      - button "02 From" [disabled]:
+        - generic: "02"
+        - generic: From
+      - button "03 To" [disabled]:
+        - generic: "03"
+        - generic: To
+      - button "04 Convert" [disabled]:
+        - generic: "04"
+        - generic: Convert
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: Step 1
+          - heading "Drop your file and let the app guess the route." [level=2] [ref=e29]
+        - button "Tap to add a file or drag, drop, or paste it here" [ref=e30] [cursor=pointer]:
+          - generic [ref=e31]: Tap to add a file
+          - generic [ref=e32]: or drag, drop, or paste it here
+        - generic [ref=e33]:
+          - paragraph [ref=e34]: Ready when you are
+          - heading "No file selected yet" [level=3] [ref=e35]
+          - paragraph [ref=e36]: Choose a file to unlock the format steps and build a conversion route.
+          - generic [ref=e80]: No files
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Step 2
+          - heading "Confirm the input format." [level=2] [ref=e40]
+          - paragraph [ref=e41]: We auto-detect when possible, but you can search and override it.
+        - generic [ref=e42]:
+          - generic [ref=e43]: Search input formats
+          - textbox "Search input formats" [ref=e44]:
+            - /placeholder: PNG, PDF, audio/wav...
+        - generic [ref=e45]: 0 formats
+        - generic [ref=e81]:
+          - button "PNG Portable Network Graphics image/png | .png" [ref=e82] [cursor=pointer]:
+            - generic [ref=e83]: PNG
+            - generic [ref=e84]: Portable Network Graphics
+            - generic [ref=e85]: image/png | .png
+          - button "JPEG Joint Photographic Experts Group JFIF image/jpeg | .jpg" [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]: JPEG
+            - generic [ref=e88]: Joint Photographic Experts Group JFIF
+            - generic [ref=e89]: image/jpeg | .jpg
+          - button "WEBP WebP image/webp | .webp" [ref=e90] [cursor=pointer]:
+            - generic [ref=e91]: WEBP
+            - generic [ref=e92]: WebP
+            - generic [ref=e93]: image/webp | .webp
+          - button "GIF CompuServe Graphics Interchange Format image/gif | .gif" [ref=e94] [cursor=pointer]:
+            - generic [ref=e95]: GIF
+            - generic [ref=e96]: CompuServe Graphics Interchange Format
+            - generic [ref=e97]: image/gif | .gif
+          - button "SVG Scalable Vector Graphics image/svg+xml | .svg" [ref=e98] [cursor=pointer]:
+            - generic [ref=e99]: SVG
+            - generic [ref=e100]: Scalable Vector Graphics
+            - generic [ref=e101]: image/svg+xml | .svg
+          - button "TEXT Plain Text text/plain | .txt" [ref=e102] [cursor=pointer]:
+            - generic [ref=e103]: TEXT
+            - generic [ref=e104]: Plain Text
+            - generic [ref=e105]: text/plain | .txt
+          - button "WAV Waveform Audio File Format audio/wav | .wav" [ref=e106] [cursor=pointer]:
+            - generic [ref=e107]: WAV
+            - generic [ref=e108]: Waveform Audio File Format
+            - generic [ref=e109]: audio/wav | .wav
+          - button "MP3 MP3 Audio audio/mpeg | .mp3" [ref=e110] [cursor=pointer]:
+            - generic [ref=e111]: MP3
+            - generic [ref=e112]: MP3 Audio
+            - generic [ref=e113]: audio/mpeg | .mp3
+          - button "OGG Ogg Audio audio/ogg | .ogg" [ref=e114] [cursor=pointer]:
+            - generic [ref=e115]: OGG
+            - generic [ref=e116]: Ogg Audio
+            - generic [ref=e117]: audio/ogg | .ogg
+          - button "FLAC Free Lossless Audio Codec audio/flac | .flac" [ref=e118] [cursor=pointer]:
+            - generic [ref=e119]: FLAC
+            - generic [ref=e120]: Free Lossless Audio Codec
+            - generic [ref=e121]: audio/flac | .flac
+          - button "MP4 MPEG-4 Part 14 video/mp4 | .mp4" [ref=e122] [cursor=pointer]:
+            - generic [ref=e123]: MP4
+            - generic [ref=e124]: MPEG-4 Part 14
+            - generic [ref=e125]: video/mp4 | .mp4
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - paragraph [ref=e48]: Step 3
+          - heading "Pick the output format." [level=2] [ref=e49]
+          - paragraph [ref=e50]: Search broadly or browse until the route looks right.
+        - generic [ref=e51]:
+          - generic [ref=e52]: Search output formats
+          - textbox "Search output formats" [ref=e53]:
+            - /placeholder: PDF, MP3, ZIP, JSON...
+        - generic [ref=e54]: 0 formats
+        - generic [ref=e126]:
+          - button "SVG Scalable Vector Graphics image/svg+xml | .svg" [ref=e127] [cursor=pointer]:
+            - generic [ref=e128]: SVG
+            - generic [ref=e129]: Scalable Vector Graphics
+            - generic [ref=e130]: image/svg+xml | .svg
+          - button "PNG Portable Network Graphics image/png | .png | lossless" [ref=e131] [cursor=pointer]:
+            - generic [ref=e132]: PNG
+            - generic [ref=e133]: Portable Network Graphics
+            - generic [ref=e134]: image/png | .png | lossless
+          - button "JPEG Joint Photographic Experts Group JFIF image/jpeg | .jpg" [ref=e135] [cursor=pointer]:
+            - generic [ref=e136]: JPEG
+            - generic [ref=e137]: Joint Photographic Experts Group JFIF
+            - generic [ref=e138]: image/jpeg | .jpg
+          - button "WEBP WebP image/webp | .webp" [ref=e139] [cursor=pointer]:
+            - generic [ref=e140]: WEBP
+            - generic [ref=e141]: WebP
+            - generic [ref=e142]: image/webp | .webp
+          - button "TEXT Plain Text text/plain | .txt" [ref=e143] [cursor=pointer]:
+            - generic [ref=e144]: TEXT
+            - generic [ref=e145]: Plain Text
+            - generic [ref=e146]: text/plain | .txt
+          - button "WAV Waveform Audio File Format audio/wav | .wav" [ref=e147] [cursor=pointer]:
+            - generic [ref=e148]: WAV
+            - generic [ref=e149]: Waveform Audio File Format
+            - generic [ref=e150]: audio/wav | .wav
+          - button "HTML Hypertext Markup Language text/html | .html | lossless" [ref=e151] [cursor=pointer]:
+            - generic [ref=e152]: HTML
+            - generic [ref=e153]: Hypertext Markup Language
+            - generic [ref=e154]: text/html | .html | lossless
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - paragraph [ref=e57]: Step 4
+          - heading "Review the conversion before you run it." [level=2] [ref=e58]
+          - paragraph [ref=e59]: Everything stays on-device. You can still jump back and tweak any step.
+        - generic [ref=e60]:
+          - article [ref=e61]:
+            - generic [ref=e62]: Files
+            - strong [ref=e63]: No files selected
+          - article [ref=e64]:
+            - generic [ref=e65]: From
+            - strong [ref=e66]: Pick an input format
+          - article [ref=e67]:
+            - generic [ref=e68]: To
+            - strong [ref=e69]: Pick an output format
+          - article [ref=e70]:
+            - generic [ref=e71]: Routing
+            - strong [ref=e72]: Simple mode
+        - generic [ref=e73]: Select a file to begin.
+  - generic [ref=e74]:
+    - button "Choose input format" [disabled]
+  - generic [ref=e157]:
+    - heading "Loading tools..." [level=2] [ref=e158]
+    - paragraph [ref=e159]: Preparing the conversion graph.

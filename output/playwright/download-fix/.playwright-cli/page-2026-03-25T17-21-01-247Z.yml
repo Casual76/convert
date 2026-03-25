@@ -1,0 +1,70 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with a phone-first flow that stays fast even when the formats get weird.
+      - generic [ref=e9]:
+        - 'button "Routing: Simple" [ref=e10]'
+        - link "Source" [ref=e11] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e12]:
+      - button "01 Upload" [ref=e13]
+      - button "02 From" [ref=e14]
+      - button "03 To" [ref=e15]
+      - button "04 Convert" [ref=e16]
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - paragraph [ref=e20]: Step 1
+          - heading "Drop your file and let the app guess the route." [level=2] [ref=e21]
+        - button "Tap to add a file or drag, drop, or paste it here" [ref=e22]
+        - generic [ref=e23]:
+          - paragraph [ref=e24]: Ready when you are
+          - heading "No file selected yet" [level=3] [ref=e25]
+          - paragraph [ref=e26]: Choose a file to unlock the format steps and build a conversion route.
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - paragraph [ref=e29]: Step 2
+          - heading "Confirm the input format." [level=2] [ref=e30]
+          - paragraph [ref=e31]: We auto-detect when possible, but you can search and override it.
+        - generic [ref=e32]:
+          - text: Search input formats
+          - textbox "Search input formats" [ref=e33]:
+            - /placeholder: PNG, PDF, audio/wav...
+        - generic [ref=e34]: 0 formats
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - paragraph [ref=e37]: Step 3
+          - heading "Pick the output format." [level=2] [ref=e38]
+          - paragraph [ref=e39]: Search broadly or browse until the route looks right.
+        - generic [ref=e40]:
+          - text: Search output formats
+          - textbox "Search output formats" [ref=e41]:
+            - /placeholder: PDF, MP3, ZIP, JSON...
+        - generic [ref=e42]: 0 formats
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: Step 4
+          - heading "Review the conversion before you run it." [level=2] [ref=e46]
+          - paragraph [ref=e47]: Everything stays on-device. You can still jump back and tweak any step.
+        - generic [ref=e48]:
+          - article [ref=e49]:
+            - text: Files
+            - strong [ref=e50]: No files selected
+          - article [ref=e51]:
+            - text: From
+            - strong [ref=e52]: Pick an input format
+          - article [ref=e53]:
+            - text: To
+            - strong [ref=e54]: Pick an output format
+          - article [ref=e55]:
+            - text: Routing
+            - strong [ref=e56]: Simple mode
+        - generic [ref=e57]: Select a file and both formats to enable conversion.
+  - generic [ref=e58]:
+    - button "Back" [ref=e59]
+    - button "Continue" [ref=e60]
+    - button "Convert" [ref=e61]

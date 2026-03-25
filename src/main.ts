@@ -1,4 +1,6 @@
 import { Capacitor } from "@capacitor/core";
+import { Directory, Filesystem } from "@capacitor/filesystem";
+import { Share } from "@capacitor/share";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import type { ConvertPathNode, FileData, FileFormat, FormatHandler } from "./FormatHandler.js";
@@ -96,6 +98,57 @@ const formatBytes = (byteCount: number) => {
     unitIndex += 1;
   }
   return `${value >= 10 || unitIndex === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[unitIndex]}`;
+};
+
+const splitFileName = (name: string) => {
+  const lastDot = name.lastIndexOf(".");
+  if (lastDot <= 0) {
+    return { stem: name, extension: "" };
+  }
+  return {
+    stem: name.slice(0, lastDot),
+    extension: name.slice(lastDot)
+  };
+};
+
+const sanitizeFileName = (name: string) => {
+  const cleaned = name
+    .trim()
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "-")
+    .replace(/\s+/g, " ")
+    .replace(/\.+$/, "")
+    .trim();
+  return cleaned || `converted-${Date.now()}`;
+};
+
+const ensureUniqueFileNames = (files: FileData[]) => {
+  const usedNames = new Set<string>();
+  return files.map(file => {
+    const sanitizedName = sanitizeFileName(file.name);
+    const { stem, extension } = splitFileName(sanitizedName);
+    if (!usedNames.has(sanitizedName)) {
+      usedNames.add(sanitizedName);
+      return { ...file, name: sanitizedName };
+    }
+
+    let suffix = 2;
+    let nextName = `${stem}-${suffix}${extension}`;
+    while (usedNames.has(nextName)) {
+      suffix += 1;
+      nextName = `${stem}-${suffix}${extension}`;
+    }
+    usedNames.add(nextName);
+    return { ...file, name: nextName };
+  });
+};
+
+const bytesToBase64 = (bytes: Uint8Array) => {
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+  }
+  return btoa(binary);
 };
 
 const totalSelectedBytes = () => selectedFiles.reduce((total, file) => total + file.size, 0);
@@ -316,6 +369,7 @@ const updateVisibleCount = (list: HTMLDivElement, counter: HTMLSpanElement, labe
     return child instanceof HTMLButtonElement && child.style.display !== "none";
   }).length;
   counter.textContent = `${visibleCount} ${label}${visibleCount === 1 ? "" : "s"}`;
+  return visibleCount;
 };
 
 const filterButtonList = (list: HTMLDivElement, value: string, counter: HTMLSpanElement, label: string) => {
@@ -329,7 +383,33 @@ const filterButtonList = (list: HTMLDivElement, value: string, counter: HTMLSpan
     const matchesMime = option.format.mime.toLowerCase().includes(lowered);
     child.style.display = !lowered || matchesText || matchesExt || matchesMime ? "" : "none";
   }
-  updateVisibleCount(list, counter, label);
+  return updateVisibleCount(list, counter, label);
+};
+
+const clearSelection = (side: ListSide) => {
+  const list = side === "input" ? ui.inputList : ui.outputList;
+  if (side === "input") {
+    selectedInputRef = null;
+  } else {
+    selectedOutputRef = null;
+  }
+
+  for (const child of Array.from(list.children)) {
+    if (child instanceof HTMLButtonElement) {
+      child.classList.remove("selected");
+    }
+  }
+};
+
+const resetConversionFlow = () => {
+  clearSelection("input");
+  clearSelection("output");
+  ui.inputSearch.value = "";
+  ui.outputSearch.value = "";
+  filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
+  filterButtonList(ui.outputList, ui.outputSearch.value, ui.toCount, "format");
+  renderSummary();
+  syncStepUI();
 };
 
 const applySelection = (side: ListSide, button: HTMLButtonElement, autoAdvance = true) => {
@@ -602,13 +682,19 @@ const autoSelectInputFormat = (file: File) => {
     return;
   }
 
-  ui.inputSearch.value = file.name.split(".").pop()?.toLowerCase() ?? "";
-  filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
+  const fallbackSearchValue = file.name.split(".").pop()?.toLowerCase() ?? "";
+  ui.inputSearch.value = fallbackSearchValue;
+  const visibleCount = filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
+  if (visibleCount === 0) {
+    ui.inputSearch.value = "";
+    filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
+  }
   showToast("Input format was not confidently detected. Please pick it manually.", "warning");
 };
 
 const fileSelectHandler = (event: Event) => {
   let inputFiles: FileList | null | undefined;
+  let sourceInput: HTMLInputElement | null = null;
 
   if (event instanceof DragEvent) {
     event.preventDefault();
@@ -619,11 +705,13 @@ const fileSelectHandler = (event: Event) => {
   } else {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
+    sourceInput = target;
     inputFiles = target.files;
   }
 
   if (!inputFiles) return;
   const files = Array.from(inputFiles);
+  if (sourceInput) sourceInput.value = "";
   if (files.length === 0) return;
 
   if (files.some(file => file.type !== files[0].type)) {
@@ -633,6 +721,8 @@ const fileSelectHandler = (event: Event) => {
 
   files.sort((a, b) => a.name.localeCompare(b.name));
   selectedFiles = files;
+  resetConversionFlow();
+  window.hidePopup();
   renderSelectionCard();
   renderSummary();
   setCurrentStep("from");
@@ -730,8 +820,71 @@ const downloadFile = (bytes: Uint8Array, name: string) => {
   const link = document.createElement("a");
   link.href = url;
   link.download = name;
+  link.style.display = "none";
+  document.body.appendChild(link);
   link.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+  window.setTimeout(() => {
+    link.remove();
+    URL.revokeObjectURL(url);
+  }, 2000);
+};
+
+const exportNativeFiles = async (files: FileData[]) => {
+  const batchId = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
+  const exportFiles = ensureUniqueFileNames(files);
+  const fileUris: string[] = [];
+
+  for (const file of exportFiles) {
+    const path = `exports/${batchId}/${file.name}`;
+    await Filesystem.writeFile({
+      path,
+      data: bytesToBase64(file.bytes),
+      directory: Directory.Cache,
+      recursive: true
+    });
+    const { uri } = await Filesystem.getUri({
+      path,
+      directory: Directory.Cache
+    });
+    fileUris.push(uri);
+  }
+
+  const shareAvailable = await Share.canShare();
+  if (!shareAvailable.value) {
+    throw new Error("Native sharing is unavailable on this device.");
+  }
+
+  showToast(
+    fileUris.length === 1
+      ? "Choose where to save or share the converted file."
+      : `Choose where to save or share ${fileUris.length} converted files.`,
+    "neutral"
+  );
+
+  await Share.share({
+    title: fileUris.length === 1 ? exportFiles[0].name : "Converted files",
+    text: fileUris.length === 1
+      ? "Your converted file is ready."
+      : `${fileUris.length} converted files are ready.`,
+    files: fileUris,
+    dialogTitle: fileUris.length === 1 ? "Save converted file" : "Save converted files"
+  });
+};
+
+const deliverOutputFiles = async (files: FileData[]) => {
+  if (files.length === 0) return;
+  if (!Capacitor.isNativePlatform()) {
+    for (const file of files) {
+      downloadFile(file.bytes, file.name);
+    }
+    return;
+  }
+  await exportNativeFiles(files);
+};
+
+const finishConversionState = () => {
+  isConverting = false;
+  syncStepUI();
 };
 
 const convert = async () => {
@@ -749,6 +902,7 @@ const convert = async () => {
 
   try {
     const inputFileData: FileData[] = [];
+    const passthroughFiles: FileData[] = [];
     for (const inputFile of selectedFiles) {
       const inputBuffer = await inputFile.arrayBuffer();
       const inputBytes = new Uint8Array(inputBuffer);
@@ -756,14 +910,27 @@ const convert = async () => {
         inputOption.format.mime === outputOption.format.mime
         && inputOption.format.format === outputOption.format.format
       ) {
-        downloadFile(inputBytes, inputFile.name);
+        passthroughFiles.push({ name: inputFile.name, bytes: inputBytes });
         continue;
       }
       inputFileData.push({ name: inputFile.name, bytes: inputBytes });
     }
 
     if (inputFileData.length === 0) {
-      showToast("Source and target match. Original file downloaded.", "success");
+      await deliverOutputFiles(passthroughFiles);
+      finishConversionState();
+      const passthroughCount = passthroughFiles.length;
+      showToast(
+        passthroughCount === 1
+          ? "Source and target already match. File ready."
+          : "Source and target already match. Files ready.",
+        "success"
+      );
+      window.showPopup(
+        `<h2>No conversion needed</h2>` +
+        `<p>${passthroughCount === 1 ? "The original file is ready." : `The ${passthroughCount} original files are ready.`}</p>` +
+        `<button type="button" onclick="window.hidePopup()">Done</button>`
+      );
       return;
     }
 
@@ -772,32 +939,31 @@ const convert = async () => {
 
     const output = await window.tryConvertByTraversing(inputFileData, inputOption, outputOption);
     if (!output) {
-      isConverting = false;
+      finishConversionState();
       window.hidePopup();
-      syncStepUI();
       showToast("Failed to find a valid conversion route.", "danger");
       return;
     }
 
-    for (const file of output.files) {
-      downloadFile(file.bytes, file.name);
-    }
+    const finalFiles = [...passthroughFiles, ...output.files];
+    await deliverOutputFiles(finalFiles);
 
-    isConverting = false;
-    syncStepUI();
-    showToast("Conversion complete.", "success");
+    finishConversionState();
+    showToast(finalFiles.length === 1 ? "Conversion complete." : `${finalFiles.length} files are ready.`, "success");
 
     const pathUsed = escapeHtml(output.path.map(node => node.format.format).join(" -> "));
     window.showPopup(
       `<h2>Conversion complete</h2>` +
       `<p>Path used: <b>${pathUsed}</b>.</p>` +
+      `${passthroughFiles.length > 0
+        ? `<p>${passthroughFiles.length} file${passthroughFiles.length === 1 ? "" : "s"} already matched the target and were included as-is.</p>`
+        : ""}` +
       `<button type="button" onclick="window.hidePopup()">Done</button>`
     );
   } catch (error) {
     console.error(error);
-    isConverting = false;
+    finishConversionState();
     window.hidePopup();
-    syncStepUI();
     showToast(`Unexpected error during conversion: ${error}`, "danger");
   }
 };
@@ -826,7 +992,10 @@ window.addEventListener("unhandledrejection", event => {
 
 ui.inputSearch.addEventListener("input", searchHandler);
 ui.outputSearch.addEventListener("input", searchHandler);
-ui.fileSelectArea.addEventListener("click", () => ui.fileInput.click());
+ui.fileSelectArea.addEventListener("click", () => {
+  ui.fileInput.value = "";
+  ui.fileInput.click();
+});
 ui.fileInput.addEventListener("change", fileSelectHandler);
 window.addEventListener("drop", fileSelectHandler);
 window.addEventListener("dragover", event => event.preventDefault());

@@ -5,3 +5,6 @@ start.sh
 dist
 release
 cache.json
+android/keystore.properties
+android/*.jks
+android/*.keystore

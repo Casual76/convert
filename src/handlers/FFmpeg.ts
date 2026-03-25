@@ -6,6 +6,7 @@ import type { LogEvent } from "@ffmpeg/ffmpeg";
 import mime from "mime";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats from "src/CommonFormats.ts";
+import { assetUrl } from "../assetUrl.ts";
 
 class FFmpegHandler implements FormatHandler {
 
@@ -48,7 +49,7 @@ class FFmpegHandler implements FormatHandler {
   async loadFFmpeg () {
     if (!this.#ffmpeg) return;
     return await this.#ffmpeg.load({
-      coreURL: "/convert/wasm/ffmpeg-core.js"
+      coreURL: assetUrl("wasm/ffmpeg-core.js")
     });
   }
   terminateFFmpeg () {

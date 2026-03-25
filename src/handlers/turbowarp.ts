@@ -3,11 +3,12 @@
 import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { Packager, largeAssets, downloadProject } from "turbowarp-packager-browser";
+import { assetUrl } from "../assetUrl.ts";
 
 // patching some assets
-largeAssets.scaffolding.src = "/convert/js/turbowarp-scaffolding/scaffolding-full.js";
-largeAssets["scaffolding-min"].src = "/convert/js/turbowarp-scaffolding/scaffolding-min.js";
-largeAssets.addons.src = "/convert/js/turbowarp-scaffolding/addons.js";
+largeAssets.scaffolding.src = assetUrl("js/turbowarp-scaffolding/scaffolding-full.js");
+largeAssets["scaffolding-min"].src = assetUrl("js/turbowarp-scaffolding/scaffolding-min.js");
+largeAssets.addons.src = assetUrl("js/turbowarp-scaffolding/addons.js");
 
 class turbowarpHandler implements FormatHandler {
 

@@ -35,6 +35,7 @@ import {
   ConsoleStdout,
   PreopenDirectory,
 } from "@bjorn3/browser_wasi_shim";
+import { assetUrl } from "../../assetUrl.ts";
 
 const args = ["pandoc.wasm", "+RTS", "-H64m", "-RTS"];
 const env = [];
@@ -52,7 +53,7 @@ const fds = [
 const options = { debug: false };
 const wasi = new WASI(args, env, fds, options);
 const { instance } = await WebAssembly.instantiateStreaming(
-  fetch("/convert/wasm/pandoc.wasm"),
+  fetch(assetUrl("wasm/pandoc.wasm")),
   {
     wasi_snapshot_preview1: wasi.wasiImport,
   }

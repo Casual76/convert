@@ -1,6 +1,7 @@
 // https://github.com/neko782/xz-wasm
 
 import { WASI, File, OpenFile, ConsoleStdout, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
+import { assetUrl } from "../../assetUrl.ts";
 
 let instance: any | null = null;
 
@@ -39,7 +40,7 @@ export async function init() {
   ];
   const wasi = new WASI([], [], fds);
 
-  const wasm = await WebAssembly.compileStreaming(fetch("/convert/wasm/liblzma.wasm"));
+  const wasm = await WebAssembly.compileStreaming(fetch(assetUrl("wasm/liblzma.wasm")));
   instance = await WebAssembly.instantiate(wasm, {
     "wasi_snapshot_preview1": wasi.wasiImport,
   }) as any; // id die making a type for a wasm

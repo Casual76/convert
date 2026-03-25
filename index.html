@@ -178,7 +178,60 @@
   <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
   <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="src/main.ts"></script>
+  <script>
+    (() => {
+      const overlay = document.createElement("div");
+      overlay.id = "startup-fatal";
+      overlay.hidden = true;
+      overlay.setAttribute("role", "alert");
+      overlay.setAttribute("aria-live", "assertive");
+      overlay.style.position = "fixed";
+      overlay.style.inset = "0";
+      overlay.style.zIndex = "9999";
+      overlay.style.display = "none";
+      overlay.style.placeItems = "center";
+      overlay.style.padding = "24px";
+      overlay.style.background = "radial-gradient(circle at top, rgba(55, 102, 255, 0.16), rgba(8, 16, 31, 0.98) 58%)";
+      overlay.style.backdropFilter = "blur(18px)";
+      overlay.style.pointerEvents = "none";
+      overlay.innerHTML =
+        '<div style="max-width: 420px; border-radius: 28px; padding: 24px; color: #F7FAFF; background: rgba(8, 16, 31, 0.84); border: 1px solid rgba(181, 206, 255, 0.22); box-shadow: 0 22px 64px rgba(0, 0, 0, 0.45);">' +
+        '<p style="margin: 0 0 8px; font: 600 0.85rem/1.4 Manrope, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(189, 211, 255, 0.78);">Startup error</p>' +
+        '<h2 style="margin: 0 0 12px; font: 700 1.4rem/1.2 Space Grotesk, system-ui, sans-serif;">The app could not finish loading.</h2>' +
+        '<p id="startup-fatal-message" style="margin: 0; font: 500 0.98rem/1.6 Manrope, system-ui, sans-serif; color: rgba(240, 245, 255, 0.92);">Unknown error.</p>' +
+        '</div>';
+      document.body.appendChild(overlay);
+
+      const normalizeMessage = (error) => {
+        if (typeof error === "string" && error.trim()) return error;
+        if (error && typeof error.message === "string" && error.message.trim()) return error.message;
+        return "Unknown error.";
+      };
+
+      window.showStartupFatal = (error) => {
+        document.getElementById("startup-fatal-message").textContent = normalizeMessage(error);
+        overlay.hidden = false;
+        overlay.style.display = "grid";
+        overlay.style.pointerEvents = "auto";
+      };
+
+      window.addEventListener("error", (event) => {
+        if (!event.error && (!event.message || event.message === "Script error.")) return;
+        window.showStartupFatal(event.error ?? event.message);
+      });
+
+      window.addEventListener("unhandledrejection", (event) => {
+        window.showStartupFatal(event.reason);
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import("./src/main.ts").catch((error) => {
+      window.showStartupFatal(error);
+      console.error("Failed to load main entry.", error);
+    });
+  </script>
 
 </body>
 </html>

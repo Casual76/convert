@@ -6,6 +6,8 @@ import process from "node:process";
 const workdir = process.cwd();
 const androidDir = join(workdir, "android");
 const wrapperPath = join(androidDir, process.platform === "win32" ? "gradlew.bat" : "gradlew");
+const buildVariant = (process.argv[2] ?? "release").toLowerCase();
+const gradleTask = buildVariant === "debug" ? "assembleDebug" : "assembleRelease";
 
 if (!existsSync(wrapperPath)) {
   console.error("Missing Android Gradle wrapper. Run `npx cap add android` first.");
@@ -14,8 +16,8 @@ if (!existsSync(wrapperPath)) {
 
 const command = process.platform === "win32" ? "cmd.exe" : "./gradlew";
 const args = process.platform === "win32"
-  ? ["/c", "gradlew.bat", "assembleRelease"]
-  : ["assembleRelease"];
+  ? ["/c", "gradlew.bat", gradleTask]
+  : [gradleTask];
 
 const child = spawn(command, args, {
   cwd: androidDir,

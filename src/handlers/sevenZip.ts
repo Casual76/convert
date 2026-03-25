@@ -5,9 +5,10 @@ import CommonFormats, { Category } from "src/CommonFormats.ts";
 import SevenZip from "7z-wasm";
 import mime from "mime";
 import normalizeMimeType from "src/normalizeMimeType.ts";
+import { assetUrl } from "../assetUrl.ts";
 
 const defaultSevenZipOptions = {
-  locateFile: () => "/convert/wasm/7zz.wasm"
+  locateFile: () => assetUrl("wasm/7zz.wasm")
 }
 
 class sevenZipHandler implements FormatHandler {

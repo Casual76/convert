@@ -70,6 +70,15 @@ const allOptions: Array<{ format: FileFormat; handler: FormatHandler }> = [];
 window.supportedFormatCache = new Map();
 window.traversionGraph = new TraversionGraph();
 
+const hideNativeSplash = async () => {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await SplashScreen.hide();
+  } catch (error) {
+    console.warn("Failed to hide native splash screen.", error);
+  }
+};
+
 const escapeHtml = (value: string) => value
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -108,6 +117,20 @@ const showToast = (message: string, tone: ToastTone = "neutral") => {
   window.setTimeout(() => {
     toast.remove();
   }, 3600);
+};
+
+const reportStartupError = async (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error("Startup error:", error);
+  (window as any).showStartupFatal?.(message);
+  isConverting = false;
+  showToast(`Startup error: ${message}`, "danger");
+  window.showPopup(
+    `<h2>Startup error</h2>` +
+    `<p>${escapeHtml(message)}</p>` +
+    `<button type="button" onclick="window.hidePopup()">Close</button>`
+  );
+  await hideNativeSplash();
 };
 
 window.showPopup = (html: string) => {
@@ -790,6 +813,17 @@ const syncNativeShell = async () => {
   }
 };
 
+window.addEventListener("error", event => {
+  if (!event.error && (!event.message || event.message === "Script error.")) {
+    return;
+  }
+  void reportStartupError(event.error ?? event.message);
+});
+
+window.addEventListener("unhandledrejection", event => {
+  void reportStartupError(event.reason);
+});
+
 ui.inputSearch.addEventListener("input", searchHandler);
 ui.outputSearch.addEventListener("input", searchHandler);
 ui.fileSelectArea.addEventListener("click", () => ui.fileInput.click());
@@ -850,9 +884,15 @@ window.addEventListener("keydown", event => {
   if (!isConverting) window.hidePopup();
 });
 
-desktopMediaQuery.addEventListener("change", () => {
+const handleDesktopMediaChange = () => {
   syncStepUI();
-});
+};
+
+if (typeof desktopMediaQuery.addEventListener === "function") {
+  desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
+} else {
+  desktopMediaQuery.addListener(handleDesktopMediaChange);
+}
 
 {
   const commitSha = import.meta.env.VITE_COMMIT_SHA;
@@ -867,10 +907,10 @@ updateModeUI();
 syncStepUI();
 
 (async () => {
-  await syncNativeShell();
-  window.showPopup("<h2>Loading tools...</h2><p>Preparing the conversion graph.</p>");
-
   try {
+    await syncNativeShell();
+    window.showPopup("<h2>Loading tools...</h2><p>Preparing the conversion graph.</p>");
+
     const cacheJson = await fetch("cache.json").then(async response => {
       if (!response.ok) throw new Error("cache.json missing");
       return response.json();
@@ -882,14 +922,13 @@ syncStepUI();
       "Consider saving the output of printSupportedFormatCache() to cache.json."
     );
   } finally {
-    await buildOptionList();
-    console.log("Built initial format list.");
-    if (Capacitor.isNativePlatform()) {
-      try {
-        await SplashScreen.hide();
-      } catch (error) {
-        console.warn("Failed to hide native splash screen.", error);
-      }
+    try {
+      await buildOptionList();
+      console.log("Built initial format list.");
+    } finally {
+      await hideNativeSplash();
     }
   }
-})();
+})().catch(async error => {
+  await reportStartupError(error);
+});

@@ -2,6 +2,7 @@ import type { FileData, FileFormat, FormatHandler } from "../FormatHandler.ts";
 import normalizeMimeType from "../normalizeMimeType.ts";
 import CommonFormats from "src/CommonFormats.ts";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { assetUrl } from "../assetUrl.ts";
 
 function interleaveAudioBuffer(buffer: AudioBuffer): Float32Array {
   const { numberOfChannels, length } = buffer;
@@ -96,7 +97,7 @@ async function decodeWithFFmpeg(
   bytes: Uint8Array,
 ): Promise<{ samples: Float32Array; sampleRate: number; channels: number }> {
   const ffmpeg = new FFmpeg();
-  await ffmpeg.load({ coreURL: "/convert/wasm/ffmpeg-core.js" });
+  await ffmpeg.load({ coreURL: assetUrl("wasm/ffmpeg-core.js") });
   await ffmpeg.writeFile("infile", bytes);
   // produce f32le raw samples with WAV header so we can parse sampleRate/channels
   try {

@@ -1,0 +1,6 @@
+[    1049ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:4173/cache.json:0
+[    1049ms] [WARNING] Missing supported format precache.
+
+Consider saving the output of printSupportedFormatCache() to cache.json. @ http://127.0.0.1:4173/assets/main-CPHyConS.js:5476
+[    7893ms] [WARNING] using deprecated parameters for the initialization function; pass a single object instead @ http://127.0.0.1:4173/assets/flo.worker-Bf4M_AXQ.js:1
+[    7896ms] [WARNING] floHandler: failed to start reflo worker: TypeError: Failed to execute 'compile' on 'WebAssembly': HTTP status code is not ok @ http://127.0.0.1:4173/assets/main-CPHyConS.js:4292

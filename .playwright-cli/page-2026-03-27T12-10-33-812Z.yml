@@ -1,0 +1,1578 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
+      - generic [ref=e9]:
+        - region "Routing mode" [ref=e10]:
+          - generic [ref=e11]: Routing
+          - generic [ref=e12]:
+            - button "Simple" [ref=e13] [cursor=pointer]
+            - button "Advanced" [ref=e14] [cursor=pointer]
+        - region "Theme preference" [ref=e15]:
+          - generic [ref=e16]: Theme
+          - generic [ref=e17]:
+            - button "Auto" [ref=e18] [cursor=pointer]
+            - button "Light" [ref=e19] [cursor=pointer]
+            - button "Dark" [ref=e20] [cursor=pointer]
+        - link "Source" [ref=e21] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e22]:
+      - button "01 Upload Drop files or try a demo" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: "01"
+        - generic [ref=e25]: Upload
+        - generic [ref=e26]: Drop files or try a demo
+      - button "02 From Confirm the source format" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: "02"
+        - generic [ref=e29]: From
+        - generic [ref=e30]: Confirm the source format
+      - button "03 To Pick a target route" [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: "03"
+        - generic [ref=e33]: To
+        - generic [ref=e34]: Pick a target route
+      - button "04 Tune Budget CPU and inspect ETA" [disabled]:
+        - generic: "04"
+        - generic: Tune
+        - generic: Budget CPU and inspect ETA
+      - button "05 Review Preview and convert" [disabled]:
+        - generic: "05"
+        - generic: Review
+        - generic: Preview and convert
+    - main [ref=e48]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: Step 3
+          - heading "Pick the target format." [level=2] [ref=e97]
+          - paragraph [ref=e98]: Recommended outputs stay up top, while the full catalog remains searchable below.
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Recommended
+              - heading "Suggested for this source" [level=3] [ref=e103]
+            - paragraph [ref=e104]: Curated targets that fit the selected medium and stay pleasant to use.
+          - generic [ref=e105]:
+            - button "HTML Hypertext Markup Language text/html" [ref=e106] [cursor=pointer]:
+              - generic [ref=e107]: HTML
+              - strong [ref=e108]: Hypertext Markup Language
+              - generic [ref=e109]: text/html
+            - button "DOCX WordprocessingML Document application/vnd.openxmlformats-officedocument.wordprocessingml.document" [ref=e110] [cursor=pointer]:
+              - generic [ref=e111]: DOCX
+              - strong [ref=e112]: WordprocessingML Document
+              - generic [ref=e113]: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - button "ASCIIDOC modern AsciiDoc text/asciidoc" [ref=e114] [cursor=pointer]:
+              - generic [ref=e115]: ASCIIDOC
+              - strong [ref=e116]: modern AsciiDoc
+              - generic [ref=e117]: text/asciidoc
+            - button "BIBLATEX BibLaTeX bibliography text/biblatex" [ref=e118] [cursor=pointer]:
+              - generic [ref=e119]: BIBLATEX
+              - strong [ref=e120]: BibLaTeX bibliography
+              - generic [ref=e121]: text/biblatex
+            - button "BIBTEX BibTeX bibliography text/bibtex" [ref=e122] [cursor=pointer]:
+              - generic [ref=e123]: BIBTEX
+              - strong [ref=e124]: BibTeX bibliography
+              - generic [ref=e125]: text/bibtex
+            - button "COMMONMARK_X CommonMark with extensions text/markdown" [ref=e126] [cursor=pointer]:
+              - generic [ref=e127]: COMMONMARK_X
+              - strong [ref=e128]: CommonMark with extensions
+              - generic [ref=e129]: text/markdown
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]: Search output formats
+            - textbox "Search output formats" [ref=e133]:
+              - /placeholder: PDF, MP3, ZIP, JSON...
+          - generic [ref=e135]: 372 formats
+        - generic [ref=e136]:
+          - button "SVG Scalable Vector Graphics image/svg+xml | .svg" [ref=e137] [cursor=pointer]:
+            - generic [ref=e138]: SVG
+            - generic [ref=e139]: Scalable Vector Graphics
+            - generic [ref=e140]: image/svg+xml | .svg
+          - button "PNG Portable Network Graphics image/png | .png | lossless" [ref=e141] [cursor=pointer]:
+            - generic [ref=e142]: PNG
+            - generic [ref=e143]: Portable Network Graphics
+            - generic [ref=e144]: image/png | .png | lossless
+          - button "JPEG Joint Photographic Experts Group JFIF image/jpeg | .jpg" [ref=e145] [cursor=pointer]:
+            - generic [ref=e146]: JPEG
+            - generic [ref=e147]: Joint Photographic Experts Group JFIF
+            - generic [ref=e148]: image/jpeg | .jpg
+          - button "WEBP WebP image/webp | .webp" [ref=e149] [cursor=pointer]:
+            - generic [ref=e150]: WEBP
+            - generic [ref=e151]: WebP
+            - generic [ref=e152]: image/webp | .webp
+          - button "TEXT Plain Text text/plain | .txt" [ref=e153] [cursor=pointer]:
+            - generic [ref=e154]: TEXT
+            - generic [ref=e155]: Plain Text
+            - generic [ref=e156]: text/plain | .txt
+          - button "WAV Waveform Audio File Format audio/wav | .wav" [ref=e157] [cursor=pointer]:
+            - generic [ref=e158]: WAV
+            - generic [ref=e159]: Waveform Audio File Format
+            - generic [ref=e160]: audio/wav | .wav
+          - button "HTML Hypertext Markup Language text/html | .html | lossless" [ref=e161] [cursor=pointer]:
+            - generic [ref=e162]: HTML
+            - generic [ref=e163]: Hypertext Markup Language
+            - generic [ref=e164]: text/html | .html | lossless
+          - button "WEBM WebM video/webm | .webm | heavy" [ref=e165] [cursor=pointer]:
+            - generic [ref=e166]: WEBM
+            - generic [ref=e167]: WebM
+            - generic [ref=e168]: video/webm | .webm | heavy
+          - button "MP4 MPEG-4 Part 14 video/mp4 | .mp4 | heavy" [ref=e169] [cursor=pointer]:
+            - generic [ref=e170]: MP4
+            - generic [ref=e171]: MPEG-4 Part 14
+            - generic [ref=e172]: video/mp4 | .mp4 | heavy
+          - button "GIF CompuServe Graphics Interchange Format image/gif | .gif | heavy" [ref=e173] [cursor=pointer]:
+            - generic [ref=e174]: GIF
+            - generic [ref=e175]: CompuServe Graphics Interchange Format
+            - generic [ref=e176]: image/gif | .gif | heavy
+          - button "3G2 3GPP2 Multimedia Container video/3gpp2 | .3g2 | heavy" [ref=e177] [cursor=pointer]:
+            - generic [ref=e178]: 3G2
+            - generic [ref=e179]: 3GPP2 Multimedia Container
+            - generic [ref=e180]: video/3gpp2 | .3g2 | heavy
+          - button "3GP 3GPP Multimedia Container video/3gpp | .3gp | heavy" [ref=e181] [cursor=pointer]:
+            - generic [ref=e182]: 3GP
+            - generic [ref=e183]: 3GPP Multimedia Container
+            - generic [ref=e184]: video/3gpp | .3gp | heavy
+          - button "A64 a64 - video for Commodore 64 video/a64 | .a64 | heavy" [ref=e185] [cursor=pointer]:
+            - generic [ref=e186]: A64
+            - generic [ref=e187]: a64 - video for Commodore 64
+            - generic [ref=e188]: video/a64 | .a64 | heavy
+          - button "AC3 raw AC-3 audio/x-ac3 | .ac3 | heavy" [ref=e189] [cursor=pointer]:
+            - generic [ref=e190]: AC3
+            - generic [ref=e191]: raw AC-3
+            - generic [ref=e192]: audio/x-ac3 | .ac3 | heavy
+          - button "ADTS ADTS AAC audio/aac | .aac | heavy" [ref=e193] [cursor=pointer]:
+            - generic [ref=e194]: ADTS
+            - generic [ref=e195]: ADTS AAC
+            - generic [ref=e196]: audio/aac | .aac | heavy
+          - button "ADX CRI ADX video/adx | .adx | heavy" [ref=e197] [cursor=pointer]:
+            - generic [ref=e198]: ADX
+            - generic [ref=e199]: CRI ADX
+            - generic [ref=e200]: video/adx | .adx | heavy
+          - button "AIFF Audio IFF audio/aiff | .aif | heavy" [ref=e201] [cursor=pointer]:
+            - generic [ref=e202]: AIFF
+            - generic [ref=e203]: Audio IFF
+            - generic [ref=e204]: audio/aiff | .aif | heavy
+          - button "ALAW PCM A-law audio/alaw | .alaw | heavy" [ref=e205] [cursor=pointer]:
+            - generic [ref=e206]: ALAW
+            - generic [ref=e207]: PCM A-law
+            - generic [ref=e208]: audio/alaw | .alaw | heavy
+          - button "ALP LEGO Racers ALP audio/alp | .alp | heavy" [ref=e209] [cursor=pointer]:
+            - generic [ref=e210]: ALP
+            - generic [ref=e211]: LEGO Racers ALP
+            - generic [ref=e212]: audio/alp | .alp | heavy
+          - button "AMR 3GPP AMR audio/amr | .amr | heavy" [ref=e213] [cursor=pointer]:
+            - generic [ref=e214]: AMR
+            - generic [ref=e215]: 3GPP AMR
+            - generic [ref=e216]: audio/amr | .amr | heavy
+          - button "AMV AMV video/amv | .amv | heavy" [ref=e217] [cursor=pointer]:
+            - generic [ref=e218]: AMV
+            - generic [ref=e219]: AMV
+            - generic [ref=e220]: video/amv | .amv | heavy
+          - button "APM Ubisoft Rayman 2 APM audio/apm | .apm | heavy" [ref=e221] [cursor=pointer]:
+            - generic [ref=e222]: APM
+            - generic [ref=e223]: Ubisoft Rayman 2 APM
+            - generic [ref=e224]: audio/apm | .apm | heavy
+          - button "APNG Animated Portable Network Graphics image/png | .apng | heavy" [ref=e225] [cursor=pointer]:
+            - generic [ref=e226]: APNG
+            - generic [ref=e227]: Animated Portable Network Graphics
+            - generic [ref=e228]: image/png | .apng | heavy
+          - button "APTX raw aptX audio/aptx | .aptx | heavy" [ref=e229] [cursor=pointer]:
+            - generic [ref=e230]: APTX
+            - generic [ref=e231]: raw aptX
+            - generic [ref=e232]: audio/aptx | .aptx | heavy
+          - button "APTX_HD raw aptX HD audio/aptx_hd | .aptx_hd | heavy" [ref=e233] [cursor=pointer]:
+            - generic [ref=e234]: APTX_HD
+            - generic [ref=e235]: raw aptX HD
+            - generic [ref=e236]: audio/aptx_hd | .aptx_hd | heavy
+          - button "ARGO_ASF Argonaut Games ASF video/argo_asf | .argo_asf | heavy" [ref=e237] [cursor=pointer]:
+            - generic [ref=e238]: ARGO_ASF
+            - generic [ref=e239]: Argonaut Games ASF
+            - generic [ref=e240]: video/argo_asf | .argo_asf | heavy
+          - button "ARGO_CVG Argonaut Games CVG video/argo_cvg | .argo_cvg | heavy" [ref=e241] [cursor=pointer]:
+            - generic [ref=e242]: ARGO_CVG
+            - generic [ref=e243]: Argonaut Games CVG
+            - generic [ref=e244]: video/argo_cvg | .argo_cvg | heavy
+          - button "ASF Windows Media Video video/x-ms-asf | .asf | heavy" [ref=e245] [cursor=pointer]:
+            - generic [ref=e246]: ASF
+            - generic [ref=e247]: Windows Media Video
+            - generic [ref=e248]: video/x-ms-asf | .asf | heavy
+          - button "ASF_STREAM ASF video/x-ms-asf | .asf | heavy" [ref=e249] [cursor=pointer]:
+            - generic [ref=e250]: ASF_STREAM
+            - generic [ref=e251]: ASF
+            - generic [ref=e252]: video/x-ms-asf | .asf | heavy
+          - button "AST AST video/ast | .ast | heavy" [ref=e253] [cursor=pointer]:
+            - generic [ref=e254]: AST
+            - generic [ref=e255]: AST
+            - generic [ref=e256]: video/ast | .ast | heavy
+          - button "AU Sun AU audio/basic | .au | heavy" [ref=e257] [cursor=pointer]:
+            - generic [ref=e258]: AU
+            - generic [ref=e259]: Sun AU
+            - generic [ref=e260]: audio/basic | .au | heavy
+          - button "AVI AVI video/x-msvideo | .avi | heavy" [ref=e261] [cursor=pointer]:
+            - generic [ref=e262]: AVI
+            - generic [ref=e263]: AVI
+            - generic [ref=e264]: video/x-msvideo | .avi | heavy
+          - button "AVM2 SWF video/avm2 | .avm2 | heavy" [ref=e265] [cursor=pointer]:
+            - generic [ref=e266]: AVM2
+            - generic [ref=e267]: SWF
+            - generic [ref=e268]: video/avm2 | .avm2 | heavy
+          - button "AVS2 raw AVS2-P2/IEEE1857.4 video video/avs2 | .avs2 | heavy" [ref=e269] [cursor=pointer]:
+            - generic [ref=e270]: AVS2
+            - generic [ref=e271]: raw AVS2-P2/IEEE1857.4 video
+            - generic [ref=e272]: video/avs2 | .avs2 | heavy
+          - button "AVS3 AVS3-P2/IEEE1857.10 video/avs3 | .avs3 | heavy" [ref=e273] [cursor=pointer]:
+            - generic [ref=e274]: AVS3
+            - generic [ref=e275]: AVS3-P2/IEEE1857.10
+            - generic [ref=e276]: video/avs3 | .avs3 | heavy
+          - button "BIT G.729 BIT file format audio/bit | .bit | heavy" [ref=e277] [cursor=pointer]:
+            - generic [ref=e278]: BIT
+            - generic [ref=e279]: G.729 BIT file format
+            - generic [ref=e280]: audio/bit | .bit | heavy
+          - button "CAF Apple CAF audio/x-caf | .caf | heavy" [ref=e281] [cursor=pointer]:
+            - generic [ref=e282]: CAF
+            - generic [ref=e283]: Apple CAF
+            - generic [ref=e284]: audio/x-caf | .caf | heavy
+          - button "CAVSVIDEO raw Chinese AVS video video/cavsvideo | .cavsvideo | heavy" [ref=e285] [cursor=pointer]:
+            - generic [ref=e286]: CAVSVIDEO
+            - generic [ref=e287]: raw Chinese AVS video
+            - generic [ref=e288]: video/cavsvideo | .cavsvideo | heavy
+          - button "CODEC2 codec2 .c2 muxer audio/codec2 | .codec2 | heavy" [ref=e289] [cursor=pointer]:
+            - generic [ref=e290]: CODEC2
+            - generic [ref=e291]: codec2 .c2 muxer
+            - generic [ref=e292]: audio/codec2 | .codec2 | heavy
+          - button "CODEC2RAW raw codec2 muxer audio/codec2raw | .codec2raw | heavy" [ref=e293] [cursor=pointer]:
+            - generic [ref=e294]: CODEC2RAW
+            - generic [ref=e295]: raw codec2 muxer
+            - generic [ref=e296]: audio/codec2raw | .codec2raw | heavy
+          - button "CRC CRC testing video/crc | .crc | heavy" [ref=e297] [cursor=pointer]:
+            - generic [ref=e298]: CRC
+            - generic [ref=e299]: CRC testing
+            - generic [ref=e300]: video/crc | .crc | heavy
+          - button "DASH DASH Muxer video/dash | .dash | heavy" [ref=e301] [cursor=pointer]:
+            - generic [ref=e302]: DASH
+            - generic [ref=e303]: DASH Muxer
+            - generic [ref=e304]: video/dash | .dash | heavy
+          - button "DATA raw data video/data | .data | heavy" [ref=e305] [cursor=pointer]:
+            - generic [ref=e306]: DATA
+            - generic [ref=e307]: raw data
+            - generic [ref=e308]: video/data | .data | heavy
+          - button "DAUD D-Cinema audio video/daud | .daud | heavy" [ref=e309] [cursor=pointer]:
+            - generic [ref=e310]: DAUD
+            - generic [ref=e311]: D-Cinema audio
+            - generic [ref=e312]: video/daud | .daud | heavy
+          - button "DFPWM raw DFPWM1a audio/dfpwm | .dfpwm | heavy" [ref=e313] [cursor=pointer]:
+            - generic [ref=e314]: DFPWM
+            - generic [ref=e315]: raw DFPWM1a
+            - generic [ref=e316]: audio/dfpwm | .dfpwm | heavy
+          - button "DIRAC raw Dirac video/dirac | .dirac | heavy" [ref=e317] [cursor=pointer]:
+            - generic [ref=e318]: DIRAC
+            - generic [ref=e319]: raw Dirac
+            - generic [ref=e320]: video/dirac | .dirac | heavy
+          - button "DNXHD raw DNxHD video/dnxhd | .dnxhd | heavy" [ref=e321] [cursor=pointer]:
+            - generic [ref=e322]: DNXHD
+            - generic [ref=e323]: raw DNxHD
+            - generic [ref=e324]: video/dnxhd | .dnxhd | heavy
+          - button "DTS raw DTS audio/x-dca | .dts | heavy" [ref=e325] [cursor=pointer]:
+            - generic [ref=e326]: DTS
+            - generic [ref=e327]: raw DTS
+            - generic [ref=e328]: audio/x-dca | .dts | heavy
+          - button "DV DV video/dv | .dv | heavy" [ref=e329] [cursor=pointer]:
+            - generic [ref=e330]: DV
+            - generic [ref=e331]: DV
+            - generic [ref=e332]: video/dv | .dv | heavy
+          - button "DVD MPEG-2 PS video/mpeg | .dvd | heavy" [ref=e333] [cursor=pointer]:
+            - generic [ref=e334]: DVD
+            - generic [ref=e335]: MPEG-2 PS
+            - generic [ref=e336]: video/mpeg | .dvd | heavy
+          - button "EAC3 raw E-AC-3 audio/x-eac3 | .eac3 | heavy" [ref=e337] [cursor=pointer]:
+            - generic [ref=e338]: EAC3
+            - generic [ref=e339]: raw E-AC-3
+            - generic [ref=e340]: audio/x-eac3 | .eac3 | heavy
+          - button "F32BE PCM 32-bit floating-point big-endian audio/f32be | .f32be | heavy" [ref=e341] [cursor=pointer]:
+            - generic [ref=e342]: F32BE
+            - generic [ref=e343]: PCM 32-bit floating-point big-endian
+            - generic [ref=e344]: audio/f32be | .f32be | heavy
+          - button "F32LE PCM 32-bit floating-point little-endian audio/f32le | .f32le | heavy" [ref=e345] [cursor=pointer]:
+            - generic [ref=e346]: F32LE
+            - generic [ref=e347]: PCM 32-bit floating-point little-endian
+            - generic [ref=e348]: audio/f32le | .f32le | heavy
+          - button "F4V F4V Adobe Flash Video application/f4v | .f4v | heavy" [ref=e349] [cursor=pointer]:
+            - generic [ref=e350]: F4V
+            - generic [ref=e351]: F4V Adobe Flash Video
+            - generic [ref=e352]: application/f4v | .f4v | heavy
+          - button "F64BE PCM 64-bit floating-point big-endian audio/f64be | .f64be | heavy" [ref=e353] [cursor=pointer]:
+            - generic [ref=e354]: F64BE
+            - generic [ref=e355]: PCM 64-bit floating-point big-endian
+            - generic [ref=e356]: audio/f64be | .f64be | heavy
+          - button "F64LE PCM 64-bit floating-point little-endian audio/f64le | .f64le | heavy" [ref=e357] [cursor=pointer]:
+            - generic [ref=e358]: F64LE
+            - generic [ref=e359]: PCM 64-bit floating-point little-endian
+            - generic [ref=e360]: audio/f64le | .f64le | heavy
+          - button "FFMETADATA FFmpeg metadata in text video/ffmetadata | .ffmetadata | heavy" [ref=e361] [cursor=pointer]:
+            - generic [ref=e362]: FFMETADATA
+            - generic [ref=e363]: FFmpeg metadata in text
+            - generic [ref=e364]: video/ffmetadata | .ffmetadata | heavy
+          - button "FIFO_TEST Fifo test muxer video/fifo_test | .fifo_test | heavy" [ref=e365] [cursor=pointer]:
+            - generic [ref=e366]: FIFO_TEST
+            - generic [ref=e367]: Fifo test muxer
+            - generic [ref=e368]: video/fifo_test | .fifo_test | heavy
+          - button "FILM_CPK Sega FILM / CPK video/film_cpk | .film_cpk | heavy" [ref=e369] [cursor=pointer]:
+            - generic [ref=e370]: FILM_CPK
+            - generic [ref=e371]: Sega FILM / CPK
+            - generic [ref=e372]: video/film_cpk | .film_cpk | heavy
+          - button "FILMSTRIP Adobe Filmstrip video/filmstrip | .filmstrip | heavy" [ref=e373] [cursor=pointer]:
+            - generic [ref=e374]: FILMSTRIP
+            - generic [ref=e375]: Adobe Filmstrip
+            - generic [ref=e376]: video/filmstrip | .filmstrip | heavy
+          - button "FITS Flexible Image Transport System image/fits | .fits | heavy" [ref=e377] [cursor=pointer]:
+            - generic [ref=e378]: FITS
+            - generic [ref=e379]: Flexible Image Transport System
+            - generic [ref=e380]: image/fits | .fits | heavy
+          - button "FLAC Free Lossless Audio Codec audio/flac | .flac | heavy" [ref=e381] [cursor=pointer]:
+            - generic [ref=e382]: FLAC
+            - generic [ref=e383]: Free Lossless Audio Codec
+            - generic [ref=e384]: audio/flac | .flac | heavy
+          - button "FLV FLV video/x-flv | .flv | heavy" [ref=e385] [cursor=pointer]:
+            - generic [ref=e386]: FLV
+            - generic [ref=e387]: FLV
+            - generic [ref=e388]: video/x-flv | .flv | heavy
+          - button "FRAMECRC framecrc testing video/framecrc | .framecrc | heavy" [ref=e389] [cursor=pointer]:
+            - generic [ref=e390]: FRAMECRC
+            - generic [ref=e391]: framecrc testing
+            - generic [ref=e392]: video/framecrc | .framecrc | heavy
+          - button "FRAMEHASH Per-frame hash testing video/framehash | .framehash | heavy" [ref=e393] [cursor=pointer]:
+            - generic [ref=e394]: FRAMEHASH
+            - generic [ref=e395]: Per-frame hash testing
+            - generic [ref=e396]: video/framehash | .framehash | heavy
+          - button "FRAMEMD5 Per-frame MD5 testing video/framemd5 | .framemd5 | heavy" [ref=e397] [cursor=pointer]:
+            - generic [ref=e398]: FRAMEMD5
+            - generic [ref=e399]: Per-frame MD5 testing
+            - generic [ref=e400]: video/framemd5 | .framemd5 | heavy
+          - button "G722 raw G.722 audio/G722 | .g722 | heavy" [ref=e401] [cursor=pointer]:
+            - generic [ref=e402]: G722
+            - generic [ref=e403]: raw G.722
+            - generic [ref=e404]: audio/G722 | .g722 | heavy
+          - button "G723_1 raw G.723.1 audio/g723 | .tco | heavy" [ref=e405] [cursor=pointer]:
+            - generic [ref=e406]: G723_1
+            - generic [ref=e407]: raw G.723.1
+            - generic [ref=e408]: audio/g723 | .tco | heavy
+          - button "G726 raw big-endian G.726 video/g726 | .g726 | heavy" [ref=e409] [cursor=pointer]:
+            - generic [ref=e410]: G726
+            - generic [ref=e411]: raw big-endian G.726
+            - generic [ref=e412]: video/g726 | .g726 | heavy
+          - button "G726LE raw little-endian G.726 video/g726le | .g726le | heavy" [ref=e413] [cursor=pointer]:
+            - generic [ref=e414]: G726LE
+            - generic [ref=e415]: raw little-endian G.726
+            - generic [ref=e416]: video/g726le | .g726le | heavy
+          - button "GSM raw GSM audio/x-gsm | .gsm | heavy" [ref=e417] [cursor=pointer]:
+            - generic [ref=e418]: GSM
+            - generic [ref=e419]: raw GSM
+            - generic [ref=e420]: audio/x-gsm | .gsm | heavy
+          - button "GXF GXF application/gxf | .gxf | heavy" [ref=e421] [cursor=pointer]:
+            - generic [ref=e422]: GXF
+            - generic [ref=e423]: GXF
+            - generic [ref=e424]: application/gxf | .gxf | heavy
+          - button "H261 raw H.261 video/x-h261 | .h261 | heavy" [ref=e425] [cursor=pointer]:
+            - generic [ref=e426]: H261
+            - generic [ref=e427]: raw H.261
+            - generic [ref=e428]: video/x-h261 | .h261 | heavy
+          - button "H263 raw H.263 video/x-h263 | .h263 | heavy" [ref=e429] [cursor=pointer]:
+            - generic [ref=e430]: H263
+            - generic [ref=e431]: raw H.263
+            - generic [ref=e432]: video/x-h263 | .h263 | heavy
+          - button "H264 raw H.264 video video/h264 | .h264 | heavy" [ref=e433] [cursor=pointer]:
+            - generic [ref=e434]: H264
+            - generic [ref=e435]: raw H.264 video
+            - generic [ref=e436]: video/h264 | .h264 | heavy
+          - button "HASH Hash testing video/hash | .hash | heavy" [ref=e437] [cursor=pointer]:
+            - generic [ref=e438]: HASH
+            - generic [ref=e439]: Hash testing
+            - generic [ref=e440]: video/hash | .hash | heavy
+          - button "HDS HDS Muxer video/hds | .hds | heavy" [ref=e441] [cursor=pointer]:
+            - generic [ref=e442]: HDS
+            - generic [ref=e443]: HDS Muxer
+            - generic [ref=e444]: video/hds | .hds | heavy
+          - button "HLS Apple HTTP Live Streaming video/hls | .hls | heavy" [ref=e445] [cursor=pointer]:
+            - generic [ref=e446]: HLS
+            - generic [ref=e447]: Apple HTTP Live Streaming
+            - generic [ref=e448]: video/hls | .hls | heavy
+          - button "ICO Microsoft Windows ICO image/vnd.microsoft.icon | .ico | heavy" [ref=e449] [cursor=pointer]:
+            - generic [ref=e450]: ICO
+            - generic [ref=e451]: Microsoft Windows ICO
+            - generic [ref=e452]: image/vnd.microsoft.icon | .ico | heavy
+          - button "ILBC iLBC storage audio/iLBC | .lbc | heavy" [ref=e453] [cursor=pointer]:
+            - generic [ref=e454]: ILBC
+            - generic [ref=e455]: iLBC storage
+            - generic [ref=e456]: audio/iLBC | .lbc | heavy
+          - button "IMAGE2 image2 sequence video/image2 | .image2 | heavy" [ref=e457] [cursor=pointer]:
+            - generic [ref=e458]: IMAGE2
+            - generic [ref=e459]: image2 sequence
+            - generic [ref=e460]: video/image2 | .image2 | heavy
+          - button "IPOD iPod H.264 MP4 video/mp4 | .m4v | heavy" [ref=e461] [cursor=pointer]:
+            - generic [ref=e462]: IPOD
+            - generic [ref=e463]: iPod H.264 MP4
+            - generic [ref=e464]: video/mp4 | .m4v | heavy
+          - button "IRCAM Berkeley/IRCAM/CARL Sound Format video/ircam | .ircam | heavy" [ref=e465] [cursor=pointer]:
+            - generic [ref=e466]: IRCAM
+            - generic [ref=e467]: Berkeley/IRCAM/CARL Sound Format
+            - generic [ref=e468]: video/ircam | .ircam | heavy
+          - button "ISMV ISMV/ISMA video/mp4 | .ismv | heavy" [ref=e469] [cursor=pointer]:
+            - generic [ref=e470]: ISMV
+            - generic [ref=e471]: ISMV/ISMA
+            - generic [ref=e472]: video/mp4 | .ismv | heavy
+          - button "IVF On2 IVF video/ivf | .ivf | heavy" [ref=e473] [cursor=pointer]:
+            - generic [ref=e474]: IVF
+            - generic [ref=e475]: On2 IVF
+            - generic [ref=e476]: video/ivf | .ivf | heavy
+          - button "KVAG Simon & Schuster Interactive VAG video/kvag | .kvag | heavy" [ref=e477] [cursor=pointer]:
+            - generic [ref=e478]: KVAG
+            - generic [ref=e479]: Simon & Schuster Interactive VAG
+            - generic [ref=e480]: video/kvag | .kvag | heavy
+          - button "LATM LOAS/LATM audio/MP4A-LATM | .latm | heavy" [ref=e481] [cursor=pointer]:
+            - generic [ref=e482]: LATM
+            - generic [ref=e483]: LOAS/LATM
+            - generic [ref=e484]: audio/MP4A-LATM | .latm | heavy
+          - button "LRC LRC lyrics video/lrc | .lrc | heavy" [ref=e485] [cursor=pointer]:
+            - generic [ref=e486]: LRC
+            - generic [ref=e487]: LRC lyrics
+            - generic [ref=e488]: video/lrc | .lrc | heavy
+          - button "M4V raw MPEG-4 video video/x-m4v | .m4v | heavy" [ref=e489] [cursor=pointer]:
+            - generic [ref=e490]: M4V
+            - generic [ref=e491]: raw MPEG-4 video
+            - generic [ref=e492]: video/x-m4v | .m4v | heavy
+          - button "MATROSKA Matroska / WebM video/x-matroska | .mkv | heavy" [ref=e493] [cursor=pointer]:
+            - generic [ref=e494]: MATROSKA
+            - generic [ref=e495]: Matroska / WebM
+            - generic [ref=e496]: video/x-matroska | .mkv | heavy
+          - button "MD5 MD5 testing video/md5 | .md5 | heavy" [ref=e497] [cursor=pointer]:
+            - generic [ref=e498]: MD5
+            - generic [ref=e499]: MD5 testing
+            - generic [ref=e500]: video/md5 | .md5 | heavy
+          - button "MJPEG raw MJPEG video video/x-mjpeg | .mjpg | heavy" [ref=e501] [cursor=pointer]:
+            - generic [ref=e502]: MJPEG
+            - generic [ref=e503]: raw MJPEG video
+            - generic [ref=e504]: video/x-mjpeg | .mjpg | heavy
+          - button "MKVTIMESTAMP_V2 extract pts as timecode v2 format, as defined by mkvtoolnix video/mkvtimestamp_v2 | .mkvtimestamp_v2 | heavy" [ref=e505] [cursor=pointer]:
+            - generic [ref=e506]: MKVTIMESTAMP_V2
+            - generic [ref=e507]: extract pts as timecode v2 format, as defined by mkvtoolnix
+            - generic [ref=e508]: video/mkvtimestamp_v2 | .mkvtimestamp_v2 | heavy
+          - button "MLP raw MLP application/vnd.dolby.mlp | .mlp | heavy" [ref=e509] [cursor=pointer]:
+            - generic [ref=e510]: MLP
+            - generic [ref=e511]: raw MLP
+            - generic [ref=e512]: application/vnd.dolby.mlp | .mlp | heavy
+          - button "MMF Yamaha SMAF application/vnd.smaf | .mmf | heavy" [ref=e513] [cursor=pointer]:
+            - generic [ref=e514]: MMF
+            - generic [ref=e515]: Yamaha SMAF
+            - generic [ref=e516]: application/vnd.smaf | .mmf | heavy
+          - button "MOV QuickTime / MOV video/quicktime | .mov | heavy" [ref=e517] [cursor=pointer]:
+            - generic [ref=e518]: MOV
+            - generic [ref=e519]: QuickTime / MOV
+            - generic [ref=e520]: video/quicktime | .mov | heavy
+          - button "MP2 MP2 audio/mpeg | .mp2 | heavy" [ref=e521] [cursor=pointer]:
+            - generic [ref=e522]: MP2
+            - generic [ref=e523]: MP2
+            - generic [ref=e524]: audio/mpeg | .mp2 | heavy
+          - button "MP3 MP3 Audio audio/mpeg | .mp3 | heavy" [ref=e525] [cursor=pointer]:
+            - generic [ref=e526]: MP3
+            - generic [ref=e527]: MP3 Audio
+            - generic [ref=e528]: audio/mpeg | .mp3 | heavy
+          - button "MPEG MPEG-1 Systems / MPEG program stream video/mpeg | .mpg | heavy" [ref=e529] [cursor=pointer]:
+            - generic [ref=e530]: MPEG
+            - generic [ref=e531]: MPEG-1 Systems / MPEG program stream
+            - generic [ref=e532]: video/mpeg | .mpg | heavy
+          - button "MPEG1VIDEO raw MPEG-1 video video/mpeg | .mpg | heavy" [ref=e533] [cursor=pointer]:
+            - generic [ref=e534]: MPEG1VIDEO
+            - generic [ref=e535]: raw MPEG-1 video
+            - generic [ref=e536]: video/mpeg | .mpg | heavy
+          - button "MPEG2VIDEO raw MPEG-2 video video/mpeg2video | .mpeg2video | heavy" [ref=e537] [cursor=pointer]:
+            - generic [ref=e538]: MPEG2VIDEO
+            - generic [ref=e539]: raw MPEG-2 video
+            - generic [ref=e540]: video/mpeg2video | .mpeg2video | heavy
+          - button "MPEGTS MPEG-TS video/MP2T | .ts | heavy" [ref=e541] [cursor=pointer]:
+            - generic [ref=e542]: MPEGTS
+            - generic [ref=e543]: MPEG-TS
+            - generic [ref=e544]: video/MP2T | .ts | heavy
+          - button "MPJPEG MIME multipart JPEG multipart/x-mixed-replace;boundary=ffmpeg | .mjpg | heavy" [ref=e545] [cursor=pointer]:
+            - generic [ref=e546]: MPJPEG
+            - generic [ref=e547]: MIME multipart JPEG
+            - generic [ref=e548]: multipart/x-mixed-replace;boundary=ffmpeg | .mjpg | heavy
+          - button "MULAW PCM mu-law audio/mulaw | .mulaw | heavy" [ref=e549] [cursor=pointer]:
+            - generic [ref=e550]: MULAW
+            - generic [ref=e551]: PCM mu-law
+            - generic [ref=e552]: audio/mulaw | .mulaw | heavy
+          - button "MXF MXF application/mxf | .mxf | heavy" [ref=e553] [cursor=pointer]:
+            - generic [ref=e554]: MXF
+            - generic [ref=e555]: MXF
+            - generic [ref=e556]: application/mxf | .mxf | heavy
+          - button "MXF_D10 MXF D-10 Mapping video/mxf_d10 | .mxf_d10 | heavy" [ref=e557] [cursor=pointer]:
+            - generic [ref=e558]: MXF_D10
+            - generic [ref=e559]: MXF D-10 Mapping
+            - generic [ref=e560]: video/mxf_d10 | .mxf_d10 | heavy
+          - button "MXF_OPATOM MXF Operational Pattern Atom application/mxf | .mxf | heavy" [ref=e561] [cursor=pointer]:
+            - generic [ref=e562]: MXF_OPATOM
+            - generic [ref=e563]: MXF Operational Pattern Atom
+            - generic [ref=e564]: application/mxf | .mxf | heavy
+          - button "NULL raw null video video/null | .null | heavy" [ref=e565] [cursor=pointer]:
+            - generic [ref=e566]: "NULL"
+            - generic [ref=e567]: raw null video
+            - generic [ref=e568]: video/null | .null | heavy
+          - button "NUT NUT video/x-nut | .nut | heavy" [ref=e569] [cursor=pointer]:
+            - generic [ref=e570]: NUT
+            - generic [ref=e571]: NUT
+            - generic [ref=e572]: video/x-nut | .nut | heavy
+          - button "OBU AV1 low overhead OBU video/obu | .obu | heavy" [ref=e573] [cursor=pointer]:
+            - generic [ref=e574]: OBU
+            - generic [ref=e575]: AV1 low overhead OBU
+            - generic [ref=e576]: video/obu | .obu | heavy
+          - button "OGA Ogg Audio audio/ogg | .oga | heavy" [ref=e577] [cursor=pointer]:
+            - generic [ref=e578]: OGA
+            - generic [ref=e579]: Ogg Audio
+            - generic [ref=e580]: audio/ogg | .oga | heavy
+          - button "OGG Ogg Audio audio/ogg | .ogg | heavy" [ref=e581] [cursor=pointer]:
+            - generic [ref=e582]: OGG
+            - generic [ref=e583]: Ogg Audio
+            - generic [ref=e584]: audio/ogg | .ogg | heavy
+          - button "OGV Ogg Video video/ogg | .ogv | heavy" [ref=e585] [cursor=pointer]:
+            - generic [ref=e586]: OGV
+            - generic [ref=e587]: Ogg Video
+            - generic [ref=e588]: video/ogg | .ogv | heavy
+          - button "OMA Sony OpenMG audio audio/x-oma | .oma | heavy" [ref=e589] [cursor=pointer]:
+            - generic [ref=e590]: OMA
+            - generic [ref=e591]: Sony OpenMG audio
+            - generic [ref=e592]: audio/x-oma | .oma | heavy
+          - button "OPUS Ogg Opus audio/ogg | .opus | heavy" [ref=e593] [cursor=pointer]:
+            - generic [ref=e594]: OPUS
+            - generic [ref=e595]: Ogg Opus
+            - generic [ref=e596]: audio/ogg | .opus | heavy
+          - button "PSP PSP MP4 video/psp | .psp | heavy" [ref=e597] [cursor=pointer]:
+            - generic [ref=e598]: PSP
+            - generic [ref=e599]: PSP MP4
+            - generic [ref=e600]: video/psp | .psp | heavy
+          - button "RAWVIDEO raw video video/rawvideo | .rawvideo | heavy" [ref=e601] [cursor=pointer]:
+            - generic [ref=e602]: RAWVIDEO
+            - generic [ref=e603]: raw video
+            - generic [ref=e604]: video/rawvideo | .rawvideo | heavy
+          - button "RM RealMedia application/vnd.rn-realmedia | .rm | heavy" [ref=e605] [cursor=pointer]:
+            - generic [ref=e606]: RM
+            - generic [ref=e607]: RealMedia
+            - generic [ref=e608]: application/vnd.rn-realmedia | .rm | heavy
+          - button "ROQ raw id RoQ video/roq | .roq | heavy" [ref=e609] [cursor=pointer]:
+            - generic [ref=e610]: ROQ
+            - generic [ref=e611]: raw id RoQ
+            - generic [ref=e612]: video/roq | .roq | heavy
+          - button "RSO Lego Mindstorms RSO video/rso | .rso | heavy" [ref=e613] [cursor=pointer]:
+            - generic [ref=e614]: RSO
+            - generic [ref=e615]: Lego Mindstorms RSO
+            - generic [ref=e616]: video/rso | .rso | heavy
+          - button "RTP RTP output video/rtp | .rtp | heavy" [ref=e617] [cursor=pointer]:
+            - generic [ref=e618]: RTP
+            - generic [ref=e619]: RTP output
+            - generic [ref=e620]: video/rtp | .rtp | heavy
+          - button "RTP_MPEGTS RTP/mpegts output format video/rtp_mpegts | .rtp_mpegts | heavy" [ref=e621] [cursor=pointer]:
+            - generic [ref=e622]: RTP_MPEGTS
+            - generic [ref=e623]: RTP/mpegts output format
+            - generic [ref=e624]: video/rtp_mpegts | .rtp_mpegts | heavy
+          - button "S16BE PCM signed 16-bit big-endian audio/s16be | .s16be | heavy" [ref=e625] [cursor=pointer]:
+            - generic [ref=e626]: S16BE
+            - generic [ref=e627]: PCM signed 16-bit big-endian
+            - generic [ref=e628]: audio/s16be | .s16be | heavy
+          - button "S16LE PCM signed 16-bit little-endian audio/s16le | .s16le | heavy" [ref=e629] [cursor=pointer]:
+            - generic [ref=e630]: S16LE
+            - generic [ref=e631]: PCM signed 16-bit little-endian
+            - generic [ref=e632]: audio/s16le | .s16le | heavy
+          - button "S24BE PCM signed 24-bit big-endian audio/s24be | .s24be | heavy" [ref=e633] [cursor=pointer]:
+            - generic [ref=e634]: S24BE
+            - generic [ref=e635]: PCM signed 24-bit big-endian
+            - generic [ref=e636]: audio/s24be | .s24be | heavy
+          - button "S24LE PCM signed 24-bit little-endian audio/s24le | .s24le | heavy" [ref=e637] [cursor=pointer]:
+            - generic [ref=e638]: S24LE
+            - generic [ref=e639]: PCM signed 24-bit little-endian
+            - generic [ref=e640]: audio/s24le | .s24le | heavy
+          - button "S32BE PCM signed 32-bit big-endian audio/s32be | .s32be | heavy" [ref=e641] [cursor=pointer]:
+            - generic [ref=e642]: S32BE
+            - generic [ref=e643]: PCM signed 32-bit big-endian
+            - generic [ref=e644]: audio/s32be | .s32be | heavy
+          - button "S32LE PCM signed 32-bit little-endian audio/s32le | .s32le | heavy" [ref=e645] [cursor=pointer]:
+            - generic [ref=e646]: S32LE
+            - generic [ref=e647]: PCM signed 32-bit little-endian
+            - generic [ref=e648]: audio/s32le | .s32le | heavy
+          - button "S8 PCM signed 8-bit audio/s8 | .s8 | heavy" [ref=e649] [cursor=pointer]:
+            - generic [ref=e650]: S8
+            - generic [ref=e651]: PCM signed 8-bit
+            - generic [ref=e652]: audio/s8 | .s8 | heavy
+          - button "SAP SAP output video/sap | .sap | heavy" [ref=e653] [cursor=pointer]:
+            - generic [ref=e654]: SAP
+            - generic [ref=e655]: SAP output
+            - generic [ref=e656]: video/sap | .sap | heavy
+          - button "SBC raw SBC audio/x-sbc | .sbc | heavy" [ref=e657] [cursor=pointer]:
+            - generic [ref=e658]: SBC
+            - generic [ref=e659]: raw SBC
+            - generic [ref=e660]: audio/x-sbc | .sbc | heavy
+          - button "SCC Scenarist Closed Captions video/scc | .scc | heavy" [ref=e661] [cursor=pointer]:
+            - generic [ref=e662]: SCC
+            - generic [ref=e663]: Scenarist Closed Captions
+            - generic [ref=e664]: video/scc | .scc | heavy
+          - button "SEGMENT segment video/segment | .segment | heavy" [ref=e665] [cursor=pointer]:
+            - generic [ref=e666]: SEGMENT
+            - generic [ref=e667]: segment
+            - generic [ref=e668]: video/segment | .segment | heavy
+          - button "SMJPEG Loki SDL MJPEG video/smjpeg | .smjpeg | heavy" [ref=e669] [cursor=pointer]:
+            - generic [ref=e670]: SMJPEG
+            - generic [ref=e671]: Loki SDL MJPEG
+            - generic [ref=e672]: video/smjpeg | .smjpeg | heavy
+          - button "SMOOTHSTREAMING Smooth Streaming Muxer video/smoothstreaming | .smoothstreaming | heavy" [ref=e673] [cursor=pointer]:
+            - generic [ref=e674]: SMOOTHSTREAMING
+            - generic [ref=e675]: Smooth Streaming Muxer
+            - generic [ref=e676]: video/smoothstreaming | .smoothstreaming | heavy
+          - button "SOX SoX native video/sox | .sox | heavy" [ref=e677] [cursor=pointer]:
+            - generic [ref=e678]: SOX
+            - generic [ref=e679]: SoX native
+            - generic [ref=e680]: video/sox | .sox | heavy
+          - button "SPDIF IEC 61937 video/spdif | .spdif | heavy" [ref=e681] [cursor=pointer]:
+            - generic [ref=e682]: SPDIF
+            - generic [ref=e683]: IEC 61937
+            - generic [ref=e684]: video/spdif | .spdif | heavy
+          - button "SPX Ogg Speex audio/ogg | .spx | heavy" [ref=e685] [cursor=pointer]:
+            - generic [ref=e686]: SPX
+            - generic [ref=e687]: Ogg Speex
+            - generic [ref=e688]: audio/ogg | .spx | heavy
+          - button "STREAM_SEGMENT streaming segment muxer / stream_segment video/stream_segment | .stream_segment | heavy" [ref=e689] [cursor=pointer]:
+            - generic [ref=e690]: STREAM_SEGMENT
+            - generic [ref=e691]: streaming segment muxer / stream_segment
+            - generic [ref=e692]: video/stream_segment | .stream_segment | heavy
+          - button "SSEGMENT streaming segment muxer / ssegment video/ssegment | .ssegment | heavy" [ref=e693] [cursor=pointer]:
+            - generic [ref=e694]: SSEGMENT
+            - generic [ref=e695]: streaming segment muxer / ssegment
+            - generic [ref=e696]: video/ssegment | .ssegment | heavy
+          - button "STREAMHASH Per-stream hash testing video/streamhash | .streamhash | heavy" [ref=e697] [cursor=pointer]:
+            - generic [ref=e698]: STREAMHASH
+            - generic [ref=e699]: Per-stream hash testing
+            - generic [ref=e700]: video/streamhash | .streamhash | heavy
+          - button "SVCD MPEG-2 PS video/mpeg | .vob | heavy" [ref=e701] [cursor=pointer]:
+            - generic [ref=e702]: SVCD
+            - generic [ref=e703]: MPEG-2 PS
+            - generic [ref=e704]: video/mpeg | .vob | heavy
+          - button "SWF SWF application/x-shockwave-flash | .swf | heavy" [ref=e705] [cursor=pointer]:
+            - generic [ref=e706]: SWF
+            - generic [ref=e707]: SWF
+            - generic [ref=e708]: application/x-shockwave-flash | .swf | heavy
+          - button "TEE Multiple muxer tee video/tee | .tee | heavy" [ref=e709] [cursor=pointer]:
+            - generic [ref=e710]: TEE
+            - generic [ref=e711]: Multiple muxer tee
+            - generic [ref=e712]: video/tee | .tee | heavy
+          - button "TRUEHD raw TrueHD video/truehd | .truehd | heavy" [ref=e713] [cursor=pointer]:
+            - generic [ref=e714]: TRUEHD
+            - generic [ref=e715]: raw TrueHD
+            - generic [ref=e716]: video/truehd | .truehd | heavy
+          - button "TTA TTA audio/x-tta | .tta | heavy" [ref=e717] [cursor=pointer]:
+            - generic [ref=e718]: TTA
+            - generic [ref=e719]: TTA
+            - generic [ref=e720]: audio/x-tta | .tta | heavy
+          - button "U16BE PCM unsigned 16-bit big-endian audio/u16be | .u16be | heavy" [ref=e721] [cursor=pointer]:
+            - generic [ref=e722]: U16BE
+            - generic [ref=e723]: PCM unsigned 16-bit big-endian
+            - generic [ref=e724]: audio/u16be | .u16be | heavy
+          - button "U16LE PCM unsigned 16-bit little-endian audio/u16le | .u16le | heavy" [ref=e725] [cursor=pointer]:
+            - generic [ref=e726]: U16LE
+            - generic [ref=e727]: PCM unsigned 16-bit little-endian
+            - generic [ref=e728]: audio/u16le | .u16le | heavy
+          - button "U24BE PCM unsigned 24-bit big-endian audio/u24be | .u24be | heavy" [ref=e729] [cursor=pointer]:
+            - generic [ref=e730]: U24BE
+            - generic [ref=e731]: PCM unsigned 24-bit big-endian
+            - generic [ref=e732]: audio/u24be | .u24be | heavy
+          - button "U24LE PCM unsigned 24-bit little-endian audio/u24le | .u24le | heavy" [ref=e733] [cursor=pointer]:
+            - generic [ref=e734]: U24LE
+            - generic [ref=e735]: PCM unsigned 24-bit little-endian
+            - generic [ref=e736]: audio/u24le | .u24le | heavy
+          - button "U32BE PCM unsigned 32-bit big-endian audio/u32be | .u32be | heavy" [ref=e737] [cursor=pointer]:
+            - generic [ref=e738]: U32BE
+            - generic [ref=e739]: PCM unsigned 32-bit big-endian
+            - generic [ref=e740]: audio/u32be | .u32be | heavy
+          - button "U32LE PCM unsigned 32-bit little-endian audio/u32le | .u32le | heavy" [ref=e741] [cursor=pointer]:
+            - generic [ref=e742]: U32LE
+            - generic [ref=e743]: PCM unsigned 32-bit little-endian
+            - generic [ref=e744]: audio/u32le | .u32le | heavy
+          - button "U8 PCM unsigned 8-bit audio/u8 | .u8 | heavy" [ref=e745] [cursor=pointer]:
+            - generic [ref=e746]: U8
+            - generic [ref=e747]: PCM unsigned 8-bit
+            - generic [ref=e748]: audio/u8 | .u8 | heavy
+          - button "UNCODEDFRAMECRC uncoded framecrc testing video/uncodedframecrc | .uncodedframecrc | heavy" [ref=e749] [cursor=pointer]:
+            - generic [ref=e750]: UNCODEDFRAMECRC
+            - generic [ref=e751]: uncoded framecrc testing
+            - generic [ref=e752]: video/uncodedframecrc | .uncodedframecrc | heavy
+          - button "VC1 raw VC-1 video video/vc1 | .vc1 | heavy" [ref=e753] [cursor=pointer]:
+            - generic [ref=e754]: VC1
+            - generic [ref=e755]: raw VC-1 video
+            - generic [ref=e756]: video/vc1 | .vc1 | heavy
+          - button "VC1TEST VC-1 test bitstream video/vc1test | .vc1test | heavy" [ref=e757] [cursor=pointer]:
+            - generic [ref=e758]: VC1TEST
+            - generic [ref=e759]: VC-1 test bitstream
+            - generic [ref=e760]: video/vc1test | .vc1test | heavy
+          - button "VCD MPEG-1 Systems / MPEG program stream application/x-cdlink | .vcd | heavy" [ref=e761] [cursor=pointer]:
+            - generic [ref=e762]: VCD
+            - generic [ref=e763]: MPEG-1 Systems / MPEG program stream
+            - generic [ref=e764]: application/x-cdlink | .vcd | heavy
+          - button "VIDC PCM Archimedes VIDC audio/vidc | .vidc | heavy" [ref=e765] [cursor=pointer]:
+            - generic [ref=e766]: VIDC
+            - generic [ref=e767]: PCM Archimedes VIDC
+            - generic [ref=e768]: audio/vidc | .vidc | heavy
+          - button "VOB MPEG-2 PS video/mpeg | .vob | heavy" [ref=e769] [cursor=pointer]:
+            - generic [ref=e770]: VOB
+            - generic [ref=e771]: MPEG-2 PS
+            - generic [ref=e772]: video/mpeg | .vob | heavy
+          - button "VOC Creative Voice audio/x-voc | .voc | heavy" [ref=e773] [cursor=pointer]:
+            - generic [ref=e774]: VOC
+            - generic [ref=e775]: Creative Voice
+            - generic [ref=e776]: audio/x-voc | .voc | heavy
+          - button "W64 Sony Wave64 video/w64 | .w64 | heavy" [ref=e777] [cursor=pointer]:
+            - generic [ref=e778]: W64
+            - generic [ref=e779]: Sony Wave64
+            - generic [ref=e780]: video/w64 | .w64 | heavy
+          - button "WEBM_CHUNK WebM Chunk Muxer video/webm | .chk | heavy" [ref=e781] [cursor=pointer]:
+            - generic [ref=e782]: WEBM_CHUNK
+            - generic [ref=e783]: WebM Chunk Muxer
+            - generic [ref=e784]: video/webm | .chk | heavy
+          - button "WSAUD Westwood Studios audio video/wsaud | .wsaud | heavy" [ref=e785] [cursor=pointer]:
+            - generic [ref=e786]: WSAUD
+            - generic [ref=e787]: Westwood Studios audio
+            - generic [ref=e788]: video/wsaud | .wsaud | heavy
+          - button "WTV Windows Television video/wtv | .wtv | heavy" [ref=e789] [cursor=pointer]:
+            - generic [ref=e790]: WTV
+            - generic [ref=e791]: Windows Television
+            - generic [ref=e792]: video/wtv | .wtv | heavy
+          - button "WV raw WavPack audio/x-wavpack | .wv | heavy" [ref=e793] [cursor=pointer]:
+            - generic [ref=e794]: WV
+            - generic [ref=e795]: raw WavPack
+            - generic [ref=e796]: audio/x-wavpack | .wv | heavy
+          - button "YUV4MPEGPIPE YUV4MPEG pipe video/yuv4mpegpipe | .yuv4mpegpipe | heavy" [ref=e797] [cursor=pointer]:
+            - generic [ref=e798]: YUV4MPEGPIPE
+            - generic [ref=e799]: YUV4MPEG pipe
+            - generic [ref=e800]: video/yuv4mpegpipe | .yuv4mpegpipe | heavy
+          - button "QTA QuickTime Audio video/quicktime | .qta | heavy" [ref=e801] [cursor=pointer]:
+            - generic [ref=e802]: QTA
+            - generic [ref=e803]: QuickTime Audio
+            - generic [ref=e804]: video/quicktime | .qta | heavy
+          - button "WMV Windows Media Video video/x-ms-asf | .wmv | heavy" [ref=e805] [cursor=pointer]:
+            - generic [ref=e806]: WMV
+            - generic [ref=e807]: Windows Media Video
+            - generic [ref=e808]: video/x-ms-asf | .wmv | heavy
+          - button "PDF Portable Document Format application/pdf | .pdf | heavy" [ref=e809] [cursor=pointer]:
+            - generic [ref=e810]: PDF
+            - generic [ref=e811]: Portable Document Format
+            - generic [ref=e812]: application/pdf | .pdf | heavy
+          - button "AI Adobe Illustrator CS2 application/pdf | .ai | heavy" [ref=e813] [cursor=pointer]:
+            - generic [ref=e814]: AI
+            - generic [ref=e815]: Adobe Illustrator CS2
+            - generic [ref=e816]: application/pdf | .ai | heavy
+          - button "AVIF AV1 Image File Format image/avif | .avif | heavy" [ref=e817] [cursor=pointer]:
+            - generic [ref=e818]: AVIF
+            - generic [ref=e819]: AV1 Image File Format
+            - generic [ref=e820]: image/avif | .avif | heavy
+          - button "BMP Microsoft Windows bitmap image image/bmp | .bmp | heavy | lossless" [ref=e821] [cursor=pointer]:
+            - generic [ref=e822]: BMP
+            - generic [ref=e823]: Microsoft Windows bitmap image
+            - generic [ref=e824]: image/bmp | .bmp | heavy | lossless
+          - button "BMP2 Microsoft Windows bitmap image image/bmp | .bmp2 | heavy" [ref=e825] [cursor=pointer]:
+            - generic [ref=e826]: BMP2
+            - generic [ref=e827]: Microsoft Windows bitmap image
+            - generic [ref=e828]: image/bmp | .bmp2 | heavy
+          - button "BMP3 Microsoft Windows bitmap image image/bmp | .bmp3 | heavy" [ref=e829] [cursor=pointer]:
+            - generic [ref=e830]: BMP3
+            - generic [ref=e831]: Microsoft Windows bitmap image
+            - generic [ref=e832]: image/bmp | .bmp3 | heavy
+          - button "DDS Microsoft DirectDraw Surface image/vnd.ms-dds | .dds | heavy" [ref=e833] [cursor=pointer]:
+            - generic [ref=e834]: DDS
+            - generic [ref=e835]: Microsoft DirectDraw Surface
+            - generic [ref=e836]: image/vnd.ms-dds | .dds | heavy
+          - button "DPX SMPTE 268M-2003 image/dpx | .dpx | heavy" [ref=e837] [cursor=pointer]:
+            - generic [ref=e838]: DPX
+            - generic [ref=e839]: SMPTE 268M-2003
+            - generic [ref=e840]: image/dpx | .dpx | heavy
+          - button "EPDF Encapsulated Portable Document Format application/pdf | .epdf | heavy" [ref=e841] [cursor=pointer]:
+            - generic [ref=e842]: EPDF
+            - generic [ref=e843]: Encapsulated Portable Document Format
+            - generic [ref=e844]: application/pdf | .epdf | heavy
+          - button "EPI Encapsulated PostScript Interchange format application/postscript | .epi | heavy" [ref=e845] [cursor=pointer]:
+            - generic [ref=e846]: EPI
+            - generic [ref=e847]: Encapsulated PostScript Interchange format
+            - generic [ref=e848]: application/postscript | .epi | heavy
+          - button "EPS Encapsulated PostScript application/postscript | .eps | heavy" [ref=e849] [cursor=pointer]:
+            - generic [ref=e850]: EPS
+            - generic [ref=e851]: Encapsulated PostScript
+            - generic [ref=e852]: application/postscript | .eps | heavy
+          - button "EPS2 Level II Encapsulated PostScript application/postscript | .eps2 | heavy" [ref=e853] [cursor=pointer]:
+            - generic [ref=e854]: EPS2
+            - generic [ref=e855]: Level II Encapsulated PostScript
+            - generic [ref=e856]: application/postscript | .eps2 | heavy
+          - button "EPS3 Level III Encapsulated PostScript application/postscript | .eps3 | heavy" [ref=e857] [cursor=pointer]:
+            - generic [ref=e858]: EPS3
+            - generic [ref=e859]: Level III Encapsulated PostScript
+            - generic [ref=e860]: application/postscript | .eps3 | heavy
+          - button "EPSF Encapsulated PostScript application/postscript | .epsf | heavy" [ref=e861] [cursor=pointer]:
+            - generic [ref=e862]: EPSF
+            - generic [ref=e863]: Encapsulated PostScript
+            - generic [ref=e864]: application/postscript | .epsf | heavy
+          - button "EPSI Encapsulated PostScript Interchange format application/postscript | .epsi | heavy" [ref=e865] [cursor=pointer]:
+            - generic [ref=e866]: EPSI
+            - generic [ref=e867]: Encapsulated PostScript Interchange format
+            - generic [ref=e868]: application/postscript | .epsi | heavy
+          - button "EXR High Dynamic-range image/aces | .exr | heavy" [ref=e869] [cursor=pointer]:
+            - generic [ref=e870]: EXR
+            - generic [ref=e871]: High Dynamic-range
+            - generic [ref=e872]: image/aces | .exr | heavy
+          - button "G3 Group 3 FAX image/g3fax | .g3 | heavy" [ref=e873] [cursor=pointer]:
+            - generic [ref=e874]: G3
+            - generic [ref=e875]: Group 3 FAX
+            - generic [ref=e876]: image/g3fax | .g3 | heavy
+          - button "GIF87 CompuServe Graphics Interchange Format image/gif | .gif87 | heavy" [ref=e877] [cursor=pointer]:
+            - generic [ref=e878]: GIF87
+            - generic [ref=e879]: CompuServe Graphics Interchange Format
+            - generic [ref=e880]: image/gif | .gif87 | heavy
+          - button "GROUP4 Raw CCITT Group4 image/tiff | .group4 | heavy" [ref=e881] [cursor=pointer]:
+            - generic [ref=e882]: GROUP4
+            - generic [ref=e883]: Raw CCITT Group4
+            - generic [ref=e884]: image/tiff | .group4 | heavy
+          - button "J2C JPEG-2000 Code Stream Syntax image/jp2 | .j2c | heavy" [ref=e885] [cursor=pointer]:
+            - generic [ref=e886]: J2C
+            - generic [ref=e887]: JPEG-2000 Code Stream Syntax
+            - generic [ref=e888]: image/jp2 | .j2c | heavy
+          - button "J2K JPEG-2000 Code Stream Syntax image/jp2 | .j2k | heavy" [ref=e889] [cursor=pointer]:
+            - generic [ref=e890]: J2K
+            - generic [ref=e891]: JPEG-2000 Code Stream Syntax
+            - generic [ref=e892]: image/jp2 | .j2k | heavy
+          - button "JNG JPEG Network Graphics image/x-jng | .jng | heavy" [ref=e893] [cursor=pointer]:
+            - generic [ref=e894]: JNG
+            - generic [ref=e895]: JPEG Network Graphics
+            - generic [ref=e896]: image/x-jng | .jng | heavy
+          - button "JP2 JPEG-2000 File Format Syntax image/jp2 | .jp2 | heavy" [ref=e897] [cursor=pointer]:
+            - generic [ref=e898]: JP2
+            - generic [ref=e899]: JPEG-2000 File Format Syntax
+            - generic [ref=e900]: image/jp2 | .jp2 | heavy
+          - button "JPC JPEG-2000 Code Stream Syntax image/jp2 | .jpc | heavy" [ref=e901] [cursor=pointer]:
+            - generic [ref=e902]: JPC
+            - generic [ref=e903]: JPEG-2000 Code Stream Syntax
+            - generic [ref=e904]: image/jp2 | .jpc | heavy
+          - button "JPE Joint Photographic Experts Group JFIF image/jpeg | .jpe | heavy" [ref=e905] [cursor=pointer]:
+            - generic [ref=e906]: JPE
+            - generic [ref=e907]: Joint Photographic Experts Group JFIF
+            - generic [ref=e908]: image/jpeg | .jpe | heavy
+          - button "JPM JPEG-2000 File Format Syntax image/jp2 | .jpm | heavy" [ref=e909] [cursor=pointer]:
+            - generic [ref=e910]: JPM
+            - generic [ref=e911]: JPEG-2000 File Format Syntax
+            - generic [ref=e912]: image/jp2 | .jpm | heavy
+          - button "JPS Joint Photographic Experts Group JFIF image/jpeg | .jps | heavy" [ref=e913] [cursor=pointer]:
+            - generic [ref=e914]: JPS
+            - generic [ref=e915]: Joint Photographic Experts Group JFIF
+            - generic [ref=e916]: image/jpeg | .jps | heavy
+          - button "JPT JPEG-2000 File Format Syntax image/jp2 | .jpt | heavy" [ref=e917] [cursor=pointer]:
+            - generic [ref=e918]: JPT
+            - generic [ref=e919]: JPEG-2000 File Format Syntax
+            - generic [ref=e920]: image/jp2 | .jpt | heavy
+          - button "JXL JPEG XL image/jxl | .jxl | heavy" [ref=e921] [cursor=pointer]:
+            - generic [ref=e922]: JXL
+            - generic [ref=e923]: JPEG XL
+            - generic [ref=e924]: image/jxl | .jxl | heavy
+          - button "MPC Magick Pixel Cache image format application/vnd.mophun.certificate | .mpc | heavy" [ref=e925] [cursor=pointer]:
+            - generic [ref=e926]: MPC
+            - generic [ref=e927]: Magick Pixel Cache image format
+            - generic [ref=e928]: application/vnd.mophun.certificate | .mpc | heavy
+          - button "MSL Magick Scripting Language application/vnd.mobius.msl | .msl | heavy" [ref=e929] [cursor=pointer]:
+            - generic [ref=e930]: MSL
+            - generic [ref=e931]: Magick Scripting Language
+            - generic [ref=e932]: application/vnd.mobius.msl | .msl | heavy
+          - button "PAM Common 2-dimensional bitmap format image/x-portable-anymap | .pam | heavy" [ref=e933] [cursor=pointer]:
+            - generic [ref=e934]: PAM
+            - generic [ref=e935]: Common 2-dimensional bitmap format
+            - generic [ref=e936]: image/x-portable-anymap | .pam | heavy
+          - button "PBM Portable bitmap format image/x-portable-bitmap | .pbm | heavy" [ref=e937] [cursor=pointer]:
+            - generic [ref=e938]: PBM
+            - generic [ref=e939]: Portable bitmap format
+            - generic [ref=e940]: image/x-portable-bitmap | .pbm | heavy
+          - button "PCL Printer Control Language application/vnd.hp-pcl | .pcl | heavy" [ref=e941] [cursor=pointer]:
+            - generic [ref=e942]: PCL
+            - generic [ref=e943]: Printer Control Language
+            - generic [ref=e944]: application/vnd.hp-pcl | .pcl | heavy
+          - button "PCT Apple Macintosh QuickDraw/PICT image/x-pict | .pct | heavy" [ref=e945] [cursor=pointer]:
+            - generic [ref=e946]: PCT
+            - generic [ref=e947]: Apple Macintosh QuickDraw/PICT
+            - generic [ref=e948]: image/x-pict | .pct | heavy
+          - button "PCX ZSoft IBM PC Paintbrush image/vnd.zbrush.pcx | .pcx | heavy" [ref=e949] [cursor=pointer]:
+            - generic [ref=e950]: PCX
+            - generic [ref=e951]: ZSoft IBM PC Paintbrush
+            - generic [ref=e952]: image/vnd.zbrush.pcx | .pcx | heavy
+          - button "PDB Palm Database ImageViewer Format application/vnd.palm | .pdb | heavy" [ref=e953] [cursor=pointer]:
+            - generic [ref=e954]: PDB
+            - generic [ref=e955]: Palm Database ImageViewer Format
+            - generic [ref=e956]: application/vnd.palm | .pdb | heavy
+          - button "PDFA Portable Document Archive Format application/pdf | .pdfa | heavy" [ref=e957] [cursor=pointer]:
+            - generic [ref=e958]: PDFA
+            - generic [ref=e959]: Portable Document Archive Format
+            - generic [ref=e960]: application/pdf | .pdfa | heavy
+          - button "PFM Portable float format application/x-font-type1 | .pfm | heavy" [ref=e961] [cursor=pointer]:
+            - generic [ref=e962]: PFM
+            - generic [ref=e963]: Portable float format
+            - generic [ref=e964]: application/x-font-type1 | .pfm | heavy
+          - button "PGM Portable graymap format image/x-portable-greymap | .pgm | heavy" [ref=e965] [cursor=pointer]:
+            - generic [ref=e966]: PGM
+            - generic [ref=e967]: Portable graymap format
+            - generic [ref=e968]: image/x-portable-greymap | .pgm | heavy
+          - button "PJPEG Joint Photographic Experts Group JFIF image/jpeg | .pjpeg | heavy" [ref=e969] [cursor=pointer]:
+            - generic [ref=e970]: PJPEG
+            - generic [ref=e971]: Joint Photographic Experts Group JFIF
+            - generic [ref=e972]: image/jpeg | .pjpeg | heavy
+          - button "PNG00 PNG inheriting bit-depth, color-type from original, if possible image/png | .png00 | heavy" [ref=e973] [cursor=pointer]:
+            - generic [ref=e974]: PNG00
+            - generic [ref=e975]: PNG inheriting bit-depth, color-type from original, if possible
+            - generic [ref=e976]: image/png | .png00 | heavy
+          - button "PNG24 opaque or binary transparent 24-bit RGB image/png | .png24 | heavy" [ref=e977] [cursor=pointer]:
+            - generic [ref=e978]: PNG24
+            - generic [ref=e979]: opaque or binary transparent 24-bit RGB
+            - generic [ref=e980]: image/png | .png24 | heavy
+          - button "PNG32 opaque or transparent 32-bit RGBA image/png | .png32 | heavy" [ref=e981] [cursor=pointer]:
+            - generic [ref=e982]: PNG32
+            - generic [ref=e983]: opaque or transparent 32-bit RGBA
+            - generic [ref=e984]: image/png | .png32 | heavy
+          - button "PNG48 opaque or binary transparent 48-bit RGB image/png | .png48 | heavy" [ref=e985] [cursor=pointer]:
+            - generic [ref=e986]: PNG48
+            - generic [ref=e987]: opaque or binary transparent 48-bit RGB
+            - generic [ref=e988]: image/png | .png48 | heavy
+          - button "PNG64 opaque or transparent 64-bit RGBA image/png | .png64 | heavy" [ref=e989] [cursor=pointer]:
+            - generic [ref=e990]: PNG64
+            - generic [ref=e991]: opaque or transparent 64-bit RGBA
+            - generic [ref=e992]: image/png | .png64 | heavy
+          - button "PNG8 8-bit indexed with optional binary transparency image/png | .png8 | heavy" [ref=e993] [cursor=pointer]:
+            - generic [ref=e994]: PNG8
+            - generic [ref=e995]: 8-bit indexed with optional binary transparency
+            - generic [ref=e996]: image/png | .png8 | heavy
+          - button "PNM Portable anymap image/x-portable-pixmap | .pnm | heavy" [ref=e997] [cursor=pointer]:
+            - generic [ref=e998]: PNM
+            - generic [ref=e999]: Portable anymap
+            - generic [ref=e1000]: image/x-portable-pixmap | .pnm | heavy
+          - button "POCKETMOD Pocketmod Personal Organizer application/pdf | .pocketmod | heavy" [ref=e1001] [cursor=pointer]:
+            - generic [ref=e1002]: POCKETMOD
+            - generic [ref=e1003]: Pocketmod Personal Organizer
+            - generic [ref=e1004]: application/pdf | .pocketmod | heavy
+          - button "PPM Portable pixmap format image/x-portable-pixmap | .ppm | heavy" [ref=e1005] [cursor=pointer]:
+            - generic [ref=e1006]: PPM
+            - generic [ref=e1007]: Portable pixmap format
+            - generic [ref=e1008]: image/x-portable-pixmap | .ppm | heavy
+          - button "PS PostScript application/postscript | .ps | heavy" [ref=e1009] [cursor=pointer]:
+            - generic [ref=e1010]: PS
+            - generic [ref=e1011]: PostScript
+            - generic [ref=e1012]: application/postscript | .ps | heavy
+          - button "PS2 Level II PostScript application/postscript | .ps2 | heavy" [ref=e1013] [cursor=pointer]:
+            - generic [ref=e1014]: PS2
+            - generic [ref=e1015]: Level II PostScript
+            - generic [ref=e1016]: application/postscript | .ps2 | heavy
+          - button "PS3 Level III PostScript application/postscript | .ps3 | heavy" [ref=e1017] [cursor=pointer]:
+            - generic [ref=e1018]: PS3
+            - generic [ref=e1019]: Level III PostScript
+            - generic [ref=e1020]: application/postscript | .ps3 | heavy
+          - button "PSB Adobe Large Document Format application/vnd.3gpp.pic-bw-small | .psb | heavy" [ref=e1021] [cursor=pointer]:
+            - generic [ref=e1022]: PSB
+            - generic [ref=e1023]: Adobe Large Document Format
+            - generic [ref=e1024]: application/vnd.3gpp.pic-bw-small | .psb | heavy
+          - button "PSD Adobe Photoshop bitmap image/vnd.adobe.photoshop | .psd | heavy" [ref=e1025] [cursor=pointer]:
+            - generic [ref=e1026]: PSD
+            - generic [ref=e1027]: Adobe Photoshop bitmap
+            - generic [ref=e1028]: image/vnd.adobe.photoshop | .psd | heavy
+          - button "PTIF Pyramid encoded TIFF image/tiff | .ptif | heavy" [ref=e1029] [cursor=pointer]:
+            - generic [ref=e1030]: PTIF
+            - generic [ref=e1031]: Pyramid encoded TIFF
+            - generic [ref=e1032]: image/tiff | .ptif | heavy
+          - button "RAS SUN Rasterfile image/x-cmu-raster | .ras | heavy" [ref=e1033] [cursor=pointer]:
+            - generic [ref=e1034]: RAS
+            - generic [ref=e1035]: SUN Rasterfile
+            - generic [ref=e1036]: image/x-cmu-raster | .ras | heavy
+          - button "RGB Raw red, green, and blue samples image/x-rgb | .rgb | heavy" [ref=e1037] [cursor=pointer]:
+            - generic [ref=e1038]: RGB
+            - generic [ref=e1039]: Raw red, green, and blue samples
+            - generic [ref=e1040]: image/x-rgb | .rgb | heavy
+          - button "SF3 Simple File Format Family Images image/x.sf3 | .sf3 | heavy" [ref=e1041] [cursor=pointer]:
+            - generic [ref=e1042]: SF3
+            - generic [ref=e1043]: Simple File Format Family Images
+            - generic [ref=e1044]: image/x.sf3 | .sf3 | heavy
+          - button "SGI Irix RGB image image/sgi | .sgi | heavy" [ref=e1045] [cursor=pointer]:
+            - generic [ref=e1046]: SGI
+            - generic [ref=e1047]: Irix RGB image
+            - generic [ref=e1048]: image/sgi | .sgi | heavy
+          - button "SVGZ Compressed Scalable Vector Graphics image/svg+xml | .svgz | heavy" [ref=e1049] [cursor=pointer]:
+            - generic [ref=e1050]: SVGZ
+            - generic [ref=e1051]: Compressed Scalable Vector Graphics
+            - generic [ref=e1052]: image/svg+xml | .svgz | heavy
+          - button "TGA Truevision Targa image image/x-tga | .tga | heavy" [ref=e1053] [cursor=pointer]:
+            - generic [ref=e1054]: TGA
+            - generic [ref=e1055]: Truevision Targa image
+            - generic [ref=e1056]: image/x-tga | .tga | heavy
+          - button "TIFF Tagged Image File Format image/tiff | .tiff | heavy | lossless" [ref=e1057] [cursor=pointer]:
+            - generic [ref=e1058]: TIFF
+            - generic [ref=e1059]: Tagged Image File Format
+            - generic [ref=e1060]: image/tiff | .tiff | heavy | lossless
+          - button "TIFF64 Tagged Image File Format image/tiff | .tiff64 | heavy" [ref=e1061] [cursor=pointer]:
+            - generic [ref=e1062]: TIFF64
+            - generic [ref=e1063]: Tagged Image File Format
+            - generic [ref=e1064]: image/tiff | .tiff64 | heavy
+          - button "VST Microsoft Visio Template application/vnd.visio | .vst | heavy" [ref=e1065] [cursor=pointer]:
+            - generic [ref=e1066]: VST
+            - generic [ref=e1067]: Microsoft Visio Template
+            - generic [ref=e1068]: application/vnd.visio | .vst | heavy
+          - button "WBMP Wireless Bitmap image image/vnd.wap.wbmp | .wbmp | heavy" [ref=e1069] [cursor=pointer]:
+            - generic [ref=e1070]: WBMP
+            - generic [ref=e1071]: Wireless Bitmap image
+            - generic [ref=e1072]: image/vnd.wap.wbmp | .wbmp | heavy
+          - button "XBM X Windows system bitmap image/x-xbitmap | .xbm | heavy" [ref=e1073] [cursor=pointer]:
+            - generic [ref=e1074]: XBM
+            - generic [ref=e1075]: X Windows system bitmap
+            - generic [ref=e1076]: image/x-xbitmap | .xbm | heavy
+          - button "XPM X Windows system pixmap image/x-xpixmap | .xpm | heavy" [ref=e1077] [cursor=pointer]:
+            - generic [ref=e1078]: XPM
+            - generic [ref=e1079]: X Windows system pixmap
+            - generic [ref=e1080]: image/x-xpixmap | .xpm | heavy
+          - button "ANI Microsoft Windows ANI application/x-navi-animation | .ani" [ref=e1081] [cursor=pointer]:
+            - generic [ref=e1082]: ANI
+            - generic [ref=e1083]: Microsoft Windows ANI
+            - generic [ref=e1084]: application/x-navi-animation | .ani
+          - button "CUR Microsoft Windows CUR image/vnd.microsoft.icon | .cur" [ref=e1085] [cursor=pointer]:
+            - generic [ref=e1086]: CUR
+            - generic [ref=e1087]: Microsoft Windows CUR
+            - generic [ref=e1088]: image/vnd.microsoft.icon | .cur
+          - button "RGBA Raw red, green, blue, and alpha samples image/x-rgba | .rgba | lossless" [ref=e1089] [cursor=pointer]:
+            - generic [ref=e1090]: RGBA
+            - generic [ref=e1091]: Raw red, green, blue, and alpha samples
+            - generic [ref=e1092]: image/x-rgba | .rgba | lossless
+          - button "ZIP ZIP Archive application/zip | .zip" [ref=e1093] [cursor=pointer]:
+            - generic [ref=e1094]: ZIP
+            - generic [ref=e1095]: ZIP Archive
+            - generic [ref=e1096]: application/zip | .zip
+          - button "JSON JavaScript Object Notation application/json | .json" [ref=e1097] [cursor=pointer]:
+            - generic [ref=e1098]: JSON
+            - generic [ref=e1099]: JavaScript Object Notation
+            - generic [ref=e1100]: application/json | .json
+          - button "QOI Quite OK Image image/x-qoi | .qoi | lossless" [ref=e1101] [cursor=pointer]:
+            - generic [ref=e1102]: QOI
+            - generic [ref=e1103]: Quite OK Image
+            - generic [ref=e1104]: image/x-qoi | .qoi | lossless
+          - button "SQLITE3 SQLite3 application/vnd.sqlite3 | .db | medium" [ref=e1105] [cursor=pointer]:
+            - generic [ref=e1106]: SQLITE3
+            - generic [ref=e1107]: SQLite3
+            - generic [ref=e1108]: application/vnd.sqlite3 | .db | medium
+          - button "CSV Comma Separated Values text/csv | .csv | medium" [ref=e1109] [cursor=pointer]:
+            - generic [ref=e1110]: CSV
+            - generic [ref=e1111]: Comma Separated Values
+            - generic [ref=e1112]: text/csv | .csv | medium
+          - button "MCMAP Minecraft Map File application/x-minecraft-map | .dat | medium" [ref=e1113] [cursor=pointer]:
+            - generic [ref=e1114]: MCMAP
+            - generic [ref=e1115]: Minecraft Map File
+            - generic [ref=e1116]: application/x-minecraft-map | .dat | medium
+          - button "MCMAP_GRID Minecraft Map File application/x-minecraft-map | .dat | medium" [ref=e1117] [cursor=pointer]:
+            - generic [ref=e1118]: MCMAP_GRID
+            - generic [ref=e1119]: Minecraft Map File
+            - generic [ref=e1120]: application/x-minecraft-map | .dat | medium
+          - button "TAR tar archive application/x-tar | .tar | heavy" [ref=e1121] [cursor=pointer]:
+            - generic [ref=e1122]: TAR
+            - generic [ref=e1123]: tar archive
+            - generic [ref=e1124]: application/x-tar | .tar | heavy
+          - button "7Z 7z archive application/x-7z-compressed | .7z | heavy" [ref=e1125] [cursor=pointer]:
+            - generic [ref=e1126]: 7Z
+            - generic [ref=e1127]: 7z archive
+            - generic [ref=e1128]: application/x-7z-compressed | .7z | heavy
+          - button "TAR.BZ2 bzip2 compressed tar archive application/x-bzip2 | .bz2 | heavy" [ref=e1129] [cursor=pointer]:
+            - generic [ref=e1130]: TAR.BZ2
+            - generic [ref=e1131]: bzip2 compressed tar archive
+            - generic [ref=e1132]: application/x-bzip2 | .bz2 | heavy
+          - button "TAR.GZ gzip compressed tar archive application/gzip | .gz | heavy" [ref=e1133] [cursor=pointer]:
+            - generic [ref=e1134]: TAR.GZ
+            - generic [ref=e1135]: gzip compressed tar archive
+            - generic [ref=e1136]: application/gzip | .gz | heavy
+          - button "WIM wim archive application/wim | .wim | heavy" [ref=e1137] [cursor=pointer]:
+            - generic [ref=e1138]: WIM
+            - generic [ref=e1139]: wim archive
+            - generic [ref=e1140]: application/wim | .wim | heavy
+          - button "TAR.XZ xz compressed tar archive application/x-xz | .xz | heavy" [ref=e1141] [cursor=pointer]:
+            - generic [ref=e1142]: TAR.XZ
+            - generic [ref=e1143]: xz compressed tar archive
+            - generic [ref=e1144]: application/x-xz | .xz | heavy
+          - button "JSON5 JSON5 application/json5 | .json5 | light | lossless" [ref=e1145] [cursor=pointer]:
+            - generic [ref=e1146]: JSON5
+            - generic [ref=e1147]: JSON5
+            - generic [ref=e1148]: application/json5 | .json5 | light | lossless
+          - button "XML Extensible Markup Language application/xml | .xml" [ref=e1149] [cursor=pointer]:
+            - generic [ref=e1150]: XML
+            - generic [ref=e1151]: Extensible Markup Language
+            - generic [ref=e1152]: application/xml | .xml
+          - button "QOA Quite OK Audio audio/x-qoa | .qoa" [ref=e1153] [cursor=pointer]:
+            - generic [ref=e1154]: QOA
+            - generic [ref=e1155]: Quite OK Audio
+            - generic [ref=e1156]: audio/x-qoa | .qoa
+          - button "PY Python Script text/x-python | .py" [ref=e1157] [cursor=pointer]:
+            - generic [ref=e1158]: PY
+            - generic [ref=e1159]: Python Script
+            - generic [ref=e1160]: text/x-python | .py
+          - button "YAML YAML Ain't Markup Language application/yaml | .yml | light" [ref=e1161] [cursor=pointer]:
+            - generic [ref=e1162]: YAML
+            - generic [ref=e1163]: YAML Ain't Markup Language
+            - generic [ref=e1164]: application/yaml | .yml | light
+          - button "NBT Named Binary Tag application/x-minecraft-nbt | .nbt | lossless" [ref=e1165] [cursor=pointer]:
+            - generic [ref=e1166]: NBT
+            - generic [ref=e1167]: Named Binary Tag
+            - generic [ref=e1168]: application/x-minecraft-nbt | .nbt | lossless
+          - button "SNBT String Named Binary Tag application/x-minecraft-snbt | .snbt | lossless" [ref=e1169] [cursor=pointer]:
+            - generic [ref=e1170]: SNBT
+            - generic [ref=e1171]: String Named Binary Tag
+            - generic [ref=e1172]: application/x-minecraft-snbt | .snbt | lossless
+          - button "FLO Flo Audio audio/flo | .flo | medium" [ref=e1173] [cursor=pointer]:
+            - generic [ref=e1174]: FLO
+            - generic [ref=e1175]: Flo Audio
+            - generic [ref=e1176]: audio/flo | .flo | medium
+          - button "F32LE Raw PCM Float32LE video/f32le | .pcm | medium | lossless" [ref=e1177] [cursor=pointer]:
+            - generic [ref=e1178]: F32LE
+            - generic [ref=e1179]: Raw PCM Float32LE
+            - generic [ref=e1180]: video/f32le | .pcm | medium | lossless
+          - button "EXE Windows Portable Executable application/vnd.microsoft.portable-executable | .exe | medium | lossless" [ref=e1181] [cursor=pointer]:
+            - generic [ref=e1182]: EXE
+            - generic [ref=e1183]: Windows Portable Executable
+            - generic [ref=e1184]: application/vnd.microsoft.portable-executable | .exe | medium | lossless
+          - button "UTF-8 WITHOUT BOM Plain Text text/plain; charset=UTF-8 without BOM | .txt | light | lossless" [ref=e1185] [cursor=pointer]:
+            - generic [ref=e1186]: UTF-8 WITHOUT BOM
+            - generic [ref=e1187]: Plain Text
+            - generic [ref=e1188]: text/plain; charset=UTF-8 without BOM | .txt | light | lossless
+          - button "UTF-8 WITH BOM Plain Text text/plain; charset=UTF-8 with BOM | .txt | light | lossless" [ref=e1189] [cursor=pointer]:
+            - generic [ref=e1190]: UTF-8 WITH BOM
+            - generic [ref=e1191]: Plain Text
+            - generic [ref=e1192]: text/plain; charset=UTF-8 with BOM | .txt | light | lossless
+          - button "UTF-16 LE Plain Text text/plain; charset=UTF-16LE | .txt | light | lossless" [ref=e1193] [cursor=pointer]:
+            - generic [ref=e1194]: UTF-16 LE
+            - generic [ref=e1195]: Plain Text
+            - generic [ref=e1196]: text/plain; charset=UTF-16LE | .txt | light | lossless
+          - button "UTF-16 BE Plain Text text/plain; charset=UTF-16BE | .txt | light | lossless" [ref=e1197] [cursor=pointer]:
+            - generic [ref=e1198]: UTF-16 BE
+            - generic [ref=e1199]: Plain Text
+            - generic [ref=e1200]: text/plain; charset=UTF-16BE | .txt | light | lossless
+          - button "UTF-32 LE Plain Text text/plain; charset=UTF-32LE | .txt | light | lossless" [ref=e1201] [cursor=pointer]:
+            - generic [ref=e1202]: UTF-32 LE
+            - generic [ref=e1203]: Plain Text
+            - generic [ref=e1204]: text/plain; charset=UTF-32LE | .txt | light | lossless
+          - button "UTF-32 BE Plain Text text/plain; charset=UTF-32BE | .txt | light | lossless" [ref=e1205] [cursor=pointer]:
+            - generic [ref=e1206]: UTF-32 BE
+            - generic [ref=e1207]: Plain Text
+            - generic [ref=e1208]: text/plain; charset=UTF-32BE | .txt | light | lossless
+          - button "C C Source File text/x-c | .c | light" [ref=e1209] [cursor=pointer]:
+            - generic [ref=e1210]: C
+            - generic [ref=e1211]: C Source File
+            - generic [ref=e1212]: text/x-c | .c | light
+          - button "MID MIDI audio/midi | .mid | medium | lossless" [ref=e1213] [cursor=pointer]:
+            - generic [ref=e1214]: MID
+            - generic [ref=e1215]: MIDI
+            - generic [ref=e1216]: audio/midi | .mid | medium | lossless
+          - button "RTTTL RTTTL audio/rtttl | .rtttl | medium" [ref=e1217] [cursor=pointer]:
+            - generic [ref=e1218]: RTTTL
+            - generic [ref=e1219]: RTTTL
+            - generic [ref=e1220]: audio/rtttl | .rtttl | medium
+          - button "GRUB GRUB Init Tune text/plain | .grub | medium" [ref=e1221] [cursor=pointer]:
+            - generic [ref=e1222]: GRUB
+            - generic [ref=e1223]: GRUB Init Tune
+            - generic [ref=e1224]: text/plain | .grub | medium
+          - button "LZH LZH/LHA Archive application/x-lzh-compressed | .lzh | lossless" [ref=e1225] [cursor=pointer]:
+            - generic [ref=e1226]: LZH
+            - generic [ref=e1227]: LZH/LHA Archive
+            - generic [ref=e1228]: application/x-lzh-compressed | .lzh | lossless
+          - button "WAD Doom WAD Archive application/x-doom-wad | .wad | lossless" [ref=e1229] [cursor=pointer]:
+            - generic [ref=e1230]: WAD
+            - generic [ref=e1231]: Doom WAD Archive
+            - generic [ref=e1232]: application/x-doom-wad | .wad | lossless
+          - button "ASCIIDOC modern AsciiDoc text/asciidoc | .adoc | heavy | lossless" [ref=e1233] [cursor=pointer]:
+            - generic [ref=e1234]: ASCIIDOC
+            - generic [ref=e1235]: modern AsciiDoc
+            - generic [ref=e1236]: text/asciidoc | .adoc | heavy | lossless
+          - button "BIBLATEX BibLaTeX bibliography text/biblatex | .bib | heavy | lossless" [ref=e1237] [cursor=pointer]:
+            - generic [ref=e1238]: BIBLATEX
+            - generic [ref=e1239]: BibLaTeX bibliography
+            - generic [ref=e1240]: text/biblatex | .bib | heavy | lossless
+          - button "BIBTEX BibTeX bibliography text/bibtex | .bib | heavy | lossless" [ref=e1241] [cursor=pointer]:
+            - generic [ref=e1242]: BIBTEX
+            - generic [ref=e1243]: BibTeX bibliography
+            - generic [ref=e1244]: text/bibtex | .bib | heavy | lossless
+          - button "COMMONMARK CommonMark Markdown text/markdown | .md | heavy | lossless" [ref=e1245] [cursor=pointer]:
+            - generic [ref=e1246]: COMMONMARK
+            - generic [ref=e1247]: CommonMark Markdown
+            - generic [ref=e1248]: text/markdown | .md | heavy | lossless
+          - button "COMMONMARK_X CommonMark with extensions text/markdown | .md | heavy | lossless" [ref=e1249] [cursor=pointer]:
+            - generic [ref=e1250]: COMMONMARK_X
+            - generic [ref=e1251]: CommonMark with extensions
+            - generic [ref=e1252]: text/markdown | .md | heavy | lossless
+          - button "DJOT Djot markup text/djot | .dj | heavy | lossless" [ref=e1253] [cursor=pointer]:
+            - generic [ref=e1254]: DJOT
+            - generic [ref=e1255]: Djot markup
+            - generic [ref=e1256]: text/djot | .dj | heavy | lossless
+          - button "DOCX WordprocessingML Document application/vnd.openxmlformats-officedocument.wordprocessingml.document | .docx | heavy" [ref=e1257] [cursor=pointer]:
+            - generic [ref=e1258]: DOCX
+            - generic [ref=e1259]: WordprocessingML Document
+            - generic [ref=e1260]: application/vnd.openxmlformats-officedocument.wordprocessingml.document | .docx | heavy
+          - button "DOKUWIKI DokuWiki markup text/dokuwiki | .dokuwiki | heavy | lossless" [ref=e1261] [cursor=pointer]:
+            - generic [ref=e1262]: DOKUWIKI
+            - generic [ref=e1263]: DokuWiki markup
+            - generic [ref=e1264]: text/dokuwiki | .dokuwiki | heavy | lossless
+          - button "EPUB EPUB v3 application/epub+zip | .epub | heavy | lossless" [ref=e1265] [cursor=pointer]:
+            - generic [ref=e1266]: EPUB
+            - generic [ref=e1267]: EPUB v3
+            - generic [ref=e1268]: application/epub+zip | .epub | heavy | lossless
+          - button "FB2 FictionBook2 text/fb2 | .fb2 | heavy | lossless" [ref=e1269] [cursor=pointer]:
+            - generic [ref=e1270]: FB2
+            - generic [ref=e1271]: FictionBook2
+            - generic [ref=e1272]: text/fb2 | .fb2 | heavy | lossless
+          - button "GFM GitHub-Flavored Markdown text/markdown | .md | heavy | lossless" [ref=e1273] [cursor=pointer]:
+            - generic [ref=e1274]: GFM
+            - generic [ref=e1275]: GitHub-Flavored Markdown
+            - generic [ref=e1276]: text/markdown | .md | heavy | lossless
+          - button "HADDOCK Haddock markup text/haddock | .haddock | heavy | lossless" [ref=e1277] [cursor=pointer]:
+            - generic [ref=e1278]: HADDOCK
+            - generic [ref=e1279]: Haddock markup
+            - generic [ref=e1280]: text/haddock | .haddock | heavy | lossless
+          - button "IPYNB Jupyter notebook application/x-ipynb+json | .ipynb | heavy | lossless" [ref=e1281] [cursor=pointer]:
+            - generic [ref=e1282]: IPYNB
+            - generic [ref=e1283]: Jupyter notebook
+            - generic [ref=e1284]: application/x-ipynb+json | .ipynb | heavy | lossless
+          - button "JIRA Jira/Confluence wiki markup text/jira | .jira | heavy | lossless" [ref=e1285] [cursor=pointer]:
+            - generic [ref=e1286]: JIRA
+            - generic [ref=e1287]: Jira/Confluence wiki markup
+            - generic [ref=e1288]: text/jira | .jira | heavy | lossless
+          - button "LATEX LaTeX application/x-tex | .tex | heavy | lossless" [ref=e1289] [cursor=pointer]:
+            - generic [ref=e1290]: LATEX
+            - generic [ref=e1291]: LaTeX
+            - generic [ref=e1292]: application/x-tex | .tex | heavy | lossless
+          - button "MAN roff man text/man | .1 | heavy | lossless" [ref=e1293] [cursor=pointer]:
+            - generic [ref=e1294]: MAN
+            - generic [ref=e1295]: roff man
+            - generic [ref=e1296]: text/man | .1 | heavy | lossless
+          - button "MARKDOWN Pandoc's Markdown text/markdown | .md | heavy | lossless" [ref=e1297] [cursor=pointer]:
+            - generic [ref=e1298]: MARKDOWN
+            - generic [ref=e1299]: Pandoc's Markdown
+            - generic [ref=e1300]: text/markdown | .md | heavy | lossless
+          - button "MARKDOWN_GITHUB GitHub-Flavored Markdown text/markdown | .md | heavy | lossless" [ref=e1301] [cursor=pointer]:
+            - generic [ref=e1302]: MARKDOWN_GITHUB
+            - generic [ref=e1303]: GitHub-Flavored Markdown
+            - generic [ref=e1304]: text/markdown | .md | heavy | lossless
+          - button "MARKDOWN_MMD MultiMarkdown text/markdown | .md | heavy | lossless" [ref=e1305] [cursor=pointer]:
+            - generic [ref=e1306]: MARKDOWN_MMD
+            - generic [ref=e1307]: MultiMarkdown
+            - generic [ref=e1308]: text/markdown | .md | heavy | lossless
+          - button "MARKDOWN_PHPEXTRA PHP Markdown Extra text/markdown | .md | heavy | lossless" [ref=e1309] [cursor=pointer]:
+            - generic [ref=e1310]: MARKDOWN_PHPEXTRA
+            - generic [ref=e1311]: PHP Markdown Extra
+            - generic [ref=e1312]: text/markdown | .md | heavy | lossless
+          - button "MARKDOWN_STRICT original unextended Markdown text/markdown | .md | heavy | lossless" [ref=e1313] [cursor=pointer]:
+            - generic [ref=e1314]: MARKDOWN_STRICT
+            - generic [ref=e1315]: original unextended Markdown
+            - generic [ref=e1316]: text/markdown | .md | heavy | lossless
+          - button "MEDIAWIKI MediaWiki markup text/mediawiki | .wiki | heavy | lossless" [ref=e1317] [cursor=pointer]:
+            - generic [ref=e1318]: MEDIAWIKI
+            - generic [ref=e1319]: MediaWiki markup
+            - generic [ref=e1320]: text/mediawiki | .wiki | heavy | lossless
+          - button "MUSE Muse text/muse | .muse | heavy | lossless" [ref=e1321] [cursor=pointer]:
+            - generic [ref=e1322]: MUSE
+            - generic [ref=e1323]: Muse
+            - generic [ref=e1324]: text/muse | .muse | heavy | lossless
+          - button "NATIVE native Haskell text/native | .native | heavy | lossless" [ref=e1325] [cursor=pointer]:
+            - generic [ref=e1326]: NATIVE
+            - generic [ref=e1327]: native Haskell
+            - generic [ref=e1328]: text/native | .native | heavy | lossless
+          - button "ODT OpenDocument Text application/vnd.oasis.opendocument.text | .odt | heavy" [ref=e1329] [cursor=pointer]:
+            - generic [ref=e1330]: ODT
+            - generic [ref=e1331]: OpenDocument Text
+            - generic [ref=e1332]: application/vnd.oasis.opendocument.text | .odt | heavy
+          - button "OPML OPML text/x-opml | .opml | heavy | lossless" [ref=e1333] [cursor=pointer]:
+            - generic [ref=e1334]: OPML
+            - generic [ref=e1335]: OPML
+            - generic [ref=e1336]: text/x-opml | .opml | heavy | lossless
+          - button "ORG Emacs Org mode application/vnd.lotus-organizer | .org | heavy | lossless" [ref=e1337] [cursor=pointer]:
+            - generic [ref=e1338]: ORG
+            - generic [ref=e1339]: Emacs Org mode
+            - generic [ref=e1340]: application/vnd.lotus-organizer | .org | heavy | lossless
+          - button "PPTX PresentationML Presentation application/vnd.openxmlformats-officedocument.presentationml.presentation | .pptx | heavy" [ref=e1341] [cursor=pointer]:
+            - generic [ref=e1342]: PPTX
+            - generic [ref=e1343]: PresentationML Presentation
+            - generic [ref=e1344]: application/vnd.openxmlformats-officedocument.presentationml.presentation | .pptx | heavy
+          - button "RST reStructuredText text/rst | .rst | heavy | lossless" [ref=e1345] [cursor=pointer]:
+            - generic [ref=e1346]: RST
+            - generic [ref=e1347]: reStructuredText
+            - generic [ref=e1348]: text/rst | .rst | heavy | lossless
+          - button "RTF Rich Text Format application/rtf | .rtf | heavy | lossless" [ref=e1349] [cursor=pointer]:
+            - generic [ref=e1350]: RTF
+            - generic [ref=e1351]: Rich Text Format
+            - generic [ref=e1352]: application/rtf | .rtf | heavy | lossless
+          - button "TEXTILE Textile text/textile | .textile | heavy | lossless" [ref=e1353] [cursor=pointer]:
+            - generic [ref=e1354]: TEXTILE
+            - generic [ref=e1355]: Textile
+            - generic [ref=e1356]: text/textile | .textile | heavy | lossless
+          - button "TYPST Typst text/typst | .typ | heavy | lossless" [ref=e1357] [cursor=pointer]:
+            - generic [ref=e1358]: TYPST
+            - generic [ref=e1359]: Typst
+            - generic [ref=e1360]: text/typst | .typ | heavy | lossless
+          - button "ANSI ANSI terminal text/ansi | .ansi | heavy | lossless" [ref=e1361] [cursor=pointer]:
+            - generic [ref=e1362]: ANSI
+            - generic [ref=e1363]: ANSI terminal
+            - generic [ref=e1364]: text/ansi | .ansi | heavy | lossless
+          - button "ASCIIDOC_LEGACY AsciiDoc for asciidoc-py text/asciidoc_legacy | .adoc | heavy | lossless" [ref=e1365] [cursor=pointer]:
+            - generic [ref=e1366]: ASCIIDOC_LEGACY
+            - generic [ref=e1367]: AsciiDoc for asciidoc-py
+            - generic [ref=e1368]: text/asciidoc_legacy | .adoc | heavy | lossless
+          - button "ASCIIDOCTOR AsciiDoctor text/asciidoctor | .adoc | heavy | lossless" [ref=e1369] [cursor=pointer]:
+            - generic [ref=e1370]: ASCIIDOCTOR
+            - generic [ref=e1371]: AsciiDoctor
+            - generic [ref=e1372]: text/asciidoctor | .adoc | heavy | lossless
+          - button "BBCODE BBCode text/bbcode | .bbcode | heavy | lossless" [ref=e1373] [cursor=pointer]:
+            - generic [ref=e1374]: BBCODE
+            - generic [ref=e1375]: BBCode
+            - generic [ref=e1376]: text/bbcode | .bbcode | heavy | lossless
+          - button "BBCODE_FLUXBB bbcode_fluxbb text/bbcode_fluxbb | .bbcode_fluxbb | heavy | lossless" [ref=e1377] [cursor=pointer]:
+            - generic [ref=e1378]: BBCODE_FLUXBB
+            - generic [ref=e1379]: bbcode_fluxbb
+            - generic [ref=e1380]: text/bbcode_fluxbb | .bbcode_fluxbb | heavy | lossless
+          - button "BBCODE_HUBZILLA bbcode_hubzilla text/bbcode_hubzilla | .bbcode_hubzilla | heavy | lossless" [ref=e1381] [cursor=pointer]:
+            - generic [ref=e1382]: BBCODE_HUBZILLA
+            - generic [ref=e1383]: bbcode_hubzilla
+            - generic [ref=e1384]: text/bbcode_hubzilla | .bbcode_hubzilla | heavy | lossless
+          - button "BBCODE_PHPBB bbcode_phpbb text/bbcode_phpbb | .bbcode_phpbb | heavy | lossless" [ref=e1385] [cursor=pointer]:
+            - generic [ref=e1386]: BBCODE_PHPBB
+            - generic [ref=e1387]: bbcode_phpbb
+            - generic [ref=e1388]: text/bbcode_phpbb | .bbcode_phpbb | heavy | lossless
+          - button "BBCODE_STEAM bbcode_steam text/bbcode_steam | .bbcode_steam | heavy | lossless" [ref=e1389] [cursor=pointer]:
+            - generic [ref=e1390]: BBCODE_STEAM
+            - generic [ref=e1391]: bbcode_steam
+            - generic [ref=e1392]: text/bbcode_steam | .bbcode_steam | heavy | lossless
+          - button "BBCODE_XENFORO bbcode_xenforo text/bbcode_xenforo | .bbcode_xenforo | heavy | lossless" [ref=e1393] [cursor=pointer]:
+            - generic [ref=e1394]: BBCODE_XENFORO
+            - generic [ref=e1395]: bbcode_xenforo
+            - generic [ref=e1396]: text/bbcode_xenforo | .bbcode_xenforo | heavy | lossless
+          - button "BEAMER LaTeX Beamer slides application/x-tex | .tex | heavy | lossless" [ref=e1397] [cursor=pointer]:
+            - generic [ref=e1398]: BEAMER
+            - generic [ref=e1399]: LaTeX Beamer slides
+            - generic [ref=e1400]: application/x-tex | .tex | heavy | lossless
+          - button "CHUNKEDHTML zip of linked HTML files application/zip | .zip | heavy | lossless" [ref=e1401] [cursor=pointer]:
+            - generic [ref=e1402]: CHUNKEDHTML
+            - generic [ref=e1403]: zip of linked HTML files
+            - generic [ref=e1404]: application/zip | .zip | heavy | lossless
+          - button "CONTEXT ConTeXt application/x-tex | .tex | heavy | lossless" [ref=e1405] [cursor=pointer]:
+            - generic [ref=e1406]: CONTEXT
+            - generic [ref=e1407]: ConTeXt
+            - generic [ref=e1408]: application/x-tex | .tex | heavy | lossless
+          - button "DZSLIDES DZSlides HTML slides text/html | .html | heavy | lossless" [ref=e1409] [cursor=pointer]:
+            - generic [ref=e1410]: DZSLIDES
+            - generic [ref=e1411]: DZSlides HTML slides
+            - generic [ref=e1412]: text/html | .html | heavy | lossless
+          - button "EPUB2 EPUB v2 application/epub+zip | .epub | heavy | lossless" [ref=e1413] [cursor=pointer]:
+            - generic [ref=e1414]: EPUB2
+            - generic [ref=e1415]: EPUB v2
+            - generic [ref=e1416]: application/epub+zip | .epub | heavy | lossless
+          - button "EPUB3 EPUB v3 application/epub+zip | .epub | heavy | lossless" [ref=e1417] [cursor=pointer]:
+            - generic [ref=e1418]: EPUB3
+            - generic [ref=e1419]: EPUB v3
+            - generic [ref=e1420]: application/epub+zip | .epub | heavy | lossless
+          - button "HTML4 XHTML 1.0 Transitional text/html | .html | heavy | lossless" [ref=e1421] [cursor=pointer]:
+            - generic [ref=e1422]: HTML4
+            - generic [ref=e1423]: XHTML 1.0 Transitional
+            - generic [ref=e1424]: text/html | .html | heavy | lossless
+          - button "HTML5 Hypertext Markup Language text/html | .html | heavy | lossless" [ref=e1425] [cursor=pointer]:
+            - generic [ref=e1426]: HTML5
+            - generic [ref=e1427]: Hypertext Markup Language
+            - generic [ref=e1428]: text/html | .html | heavy | lossless
+          - button "ICML InDesign ICML text/icml | .icml | heavy | lossless" [ref=e1429] [cursor=pointer]:
+            - generic [ref=e1430]: ICML
+            - generic [ref=e1431]: InDesign ICML
+            - generic [ref=e1432]: text/icml | .icml | heavy | lossless
+          - button "JATS_ARCHIVING jats_archiving text/jats_archiving | .jats_archiving | heavy | lossless" [ref=e1433] [cursor=pointer]:
+            - generic [ref=e1434]: JATS_ARCHIVING
+            - generic [ref=e1435]: jats_archiving
+            - generic [ref=e1436]: text/jats_archiving | .jats_archiving | heavy | lossless
+          - button "JATS_ARTICLEAUTHORING jats_articleauthoring text/jats_articleauthoring | .jats_articleauthoring | heavy | lossless" [ref=e1437] [cursor=pointer]:
+            - generic [ref=e1438]: JATS_ARTICLEAUTHORING
+            - generic [ref=e1439]: jats_articleauthoring
+            - generic [ref=e1440]: text/jats_articleauthoring | .jats_articleauthoring | heavy | lossless
+          - button "JATS_PUBLISHING jats_publishing text/jats_publishing | .jats_publishing | heavy | lossless" [ref=e1441] [cursor=pointer]:
+            - generic [ref=e1442]: JATS_PUBLISHING
+            - generic [ref=e1443]: jats_publishing
+            - generic [ref=e1444]: text/jats_publishing | .jats_publishing | heavy | lossless
+          - button "MARKUA Markua text/markua | .markua | heavy | lossless" [ref=e1445] [cursor=pointer]:
+            - generic [ref=e1446]: MARKUA
+            - generic [ref=e1447]: Markua
+            - generic [ref=e1448]: text/markua | .markua | heavy | lossless
+          - button "MS roff ms text/troff | .ms | heavy | lossless" [ref=e1449] [cursor=pointer]:
+            - generic [ref=e1450]: MS
+            - generic [ref=e1451]: roff ms
+            - generic [ref=e1452]: text/troff | .ms | heavy | lossless
+          - button "S5 S5 HTML slides text/html | .html | heavy | lossless" [ref=e1453] [cursor=pointer]:
+            - generic [ref=e1454]: S5
+            - generic [ref=e1455]: S5 HTML slides
+            - generic [ref=e1456]: text/html | .html | heavy | lossless
+          - button "SLIDEOUS Slideous HTML slides text/html | .html | heavy | lossless" [ref=e1457] [cursor=pointer]:
+            - generic [ref=e1458]: SLIDEOUS
+            - generic [ref=e1459]: Slideous HTML slides
+            - generic [ref=e1460]: text/html | .html | heavy | lossless
+          - button "SLIDY Slidy HTML slides text/html | .html | heavy | lossless" [ref=e1461] [cursor=pointer]:
+            - generic [ref=e1462]: SLIDY
+            - generic [ref=e1463]: Slidy HTML slides
+            - generic [ref=e1464]: text/html | .html | heavy | lossless
+          - button "TEXINFO GNU Texinfo application/x-texinfo | .texi | heavy | lossless" [ref=e1465] [cursor=pointer]:
+            - generic [ref=e1466]: TEXINFO
+            - generic [ref=e1467]: GNU Texinfo
+            - generic [ref=e1468]: application/x-texinfo | .texi | heavy | lossless
+          - button "VIMDOC Vimdoc text/plain | .txt | heavy | lossless" [ref=e1469] [cursor=pointer]:
+            - generic [ref=e1470]: VIMDOC
+            - generic [ref=e1471]: Vimdoc
+            - generic [ref=e1472]: text/plain | .txt | heavy | lossless
+          - button "XWIKI XWiki markup text/xwiki | .xwiki | heavy | lossless" [ref=e1473] [cursor=pointer]:
+            - generic [ref=e1474]: XWIKI
+            - generic [ref=e1475]: XWiki markup
+            - generic [ref=e1476]: text/xwiki | .xwiki | heavy | lossless
+          - button "ZIMWIKI ZimWiki markup text/zimwiki | .zimwiki | heavy | lossless" [ref=e1477] [cursor=pointer]:
+            - generic [ref=e1478]: ZIMWIKI
+            - generic [ref=e1479]: ZimWiki markup
+            - generic [ref=e1480]: text/zimwiki | .zimwiki | heavy | lossless
+          - button "MATHML Mathematical Markup Language application/mathml+xml | .mml | heavy | lossless" [ref=e1481] [cursor=pointer]:
+            - generic [ref=e1482]: MATHML
+            - generic [ref=e1483]: Mathematical Markup Language
+            - generic [ref=e1484]: application/mathml+xml | .mml | heavy | lossless
+          - button "CSLJSON CSL JSON bibliography application/json | .json | heavy | lossless" [ref=e1485] [cursor=pointer]:
+            - generic [ref=e1486]: CSLJSON
+            - generic [ref=e1487]: CSL JSON bibliography
+            - generic [ref=e1488]: application/json | .json | heavy | lossless
+          - button "DOCBOOK DocBook v4 application/xml | .xml | heavy | lossless" [ref=e1489] [cursor=pointer]:
+            - generic [ref=e1490]: DOCBOOK
+            - generic [ref=e1491]: DocBook v4
+            - generic [ref=e1492]: application/xml | .xml | heavy | lossless
+          - button "JATS JATS XML application/xml | .xml | heavy | lossless" [ref=e1493] [cursor=pointer]:
+            - generic [ref=e1494]: JATS
+            - generic [ref=e1495]: JATS XML
+            - generic [ref=e1496]: application/xml | .xml | heavy | lossless
+          - button "DOCBOOK4 docbook4 application/xml | .xml | heavy | lossless" [ref=e1497] [cursor=pointer]:
+            - generic [ref=e1498]: DOCBOOK4
+            - generic [ref=e1499]: docbook4
+            - generic [ref=e1500]: application/xml | .xml | heavy | lossless
+          - button "DOCBOOK5 DocBook v5 application/xml | .xml | heavy | lossless" [ref=e1501] [cursor=pointer]:
+            - generic [ref=e1502]: DOCBOOK5
+            - generic [ref=e1503]: DocBook v5
+            - generic [ref=e1504]: application/xml | .xml | heavy | lossless
+          - button "OPENDOCUMENT OpenDocument XML application/xml | .xml | heavy | lossless" [ref=e1505] [cursor=pointer]:
+            - generic [ref=e1506]: OPENDOCUMENT
+            - generic [ref=e1507]: OpenDocument XML
+            - generic [ref=e1508]: application/xml | .xml | heavy | lossless
+          - button "TEI TEI Simple application/xml | .xml | heavy | lossless" [ref=e1509] [cursor=pointer]:
+            - generic [ref=e1510]: TEI
+            - generic [ref=e1511]: TEI Simple
+            - generic [ref=e1512]: application/xml | .xml | heavy | lossless
+          - button "IC Infinite Craft Save File application/x-infinite-craft-ic | .ic" [ref=e1513] [cursor=pointer]:
+            - generic [ref=e1514]: IC
+            - generic [ref=e1515]: Infinite Craft Save File
+            - generic [ref=e1516]: application/x-infinite-craft-ic | .ic
+          - button "BATCH Windows Batch file text/windows-batch | .bat | light | lossless" [ref=e1517] [cursor=pointer]:
+            - generic [ref=e1518]: BATCH
+            - generic [ref=e1519]: Windows Batch file
+            - generic [ref=e1520]: text/windows-batch | .bat | light | lossless
+          - button "OTF OpenType Font font/otf | .otf | lossless" [ref=e1521] [cursor=pointer]:
+            - generic [ref=e1522]: OTF
+            - generic [ref=e1523]: OpenType Font
+            - generic [ref=e1524]: font/otf | .otf | lossless
+          - button "WOFF2 Web Open Font Format 2.0 font/woff2 | .woff2 | lossless" [ref=e1525] [cursor=pointer]:
+            - generic [ref=e1526]: WOFF2
+            - generic [ref=e1527]: Web Open Font Format 2.0
+            - generic [ref=e1528]: font/woff2 | .woff2 | lossless
+          - button "ICNS Apple Icon Image image/icns | .icns" [ref=e1529] [cursor=pointer]:
+            - generic [ref=e1530]: ICNS
+            - generic [ref=e1531]: Apple Icon Image
+            - generic [ref=e1532]: image/icns | .icns
+          - button "SCHEMATIC Minecraft Schematic application/x-minecraft-schematic | .schematic | lossless" [ref=e1533] [cursor=pointer]:
+            - generic [ref=e1534]: SCHEMATIC
+            - generic [ref=e1535]: Minecraft Schematic
+            - generic [ref=e1536]: application/x-minecraft-schematic | .schematic | lossless
+          - button "SCHEM Sponge Schematic application/x-minecraft-schem | .schem | lossless" [ref=e1537] [cursor=pointer]:
+            - generic [ref=e1538]: SCHEM
+            - generic [ref=e1539]: Sponge Schematic
+            - generic [ref=e1540]: application/x-minecraft-schem | .schem | lossless
+          - button "LITEMATIC Litematica Schematic application/x-minecraft-litematic | .litematic | lossless" [ref=e1541] [cursor=pointer]:
+            - generic [ref=e1542]: LITEMATIC
+            - generic [ref=e1543]: Litematica Schematic
+            - generic [ref=e1544]: application/x-minecraft-litematic | .litematic | lossless
+          - button "BSON Binary JSON application/bson | .bson | light | lossless" [ref=e1545] [cursor=pointer]:
+            - generic [ref=e1546]: BSON
+            - generic [ref=e1547]: Binary JSON
+            - generic [ref=e1548]: application/bson | .bson | light | lossless
+          - button "Z64 Nintendo 64 ROM application/x-n64-rom | .z64 | lossless" [ref=e1549] [cursor=pointer]:
+            - generic [ref=e1550]: Z64
+            - generic [ref=e1551]: Nintendo 64 ROM
+            - generic [ref=e1552]: application/x-n64-rom | .z64 | lossless
+          - button "N64 Nintendo 64 ROM application/x-n64-rom | .n64 | lossless" [ref=e1553] [cursor=pointer]:
+            - generic [ref=e1554]: N64
+            - generic [ref=e1555]: Nintendo 64 ROM
+            - generic [ref=e1556]: application/x-n64-rom | .n64 | lossless
+          - button "V64 Nintendo 64 ROM application/x-n64-rom | .v64 | lossless" [ref=e1557] [cursor=pointer]:
+            - generic [ref=e1558]: V64
+            - generic [ref=e1559]: Nintendo 64 ROM
+            - generic [ref=e1560]: application/x-n64-rom | .v64 | lossless
+          - button "TOON Token-Oriented Object Notation text/toon | .toon | light | lossless" [ref=e1561] [cursor=pointer]:
+            - generic [ref=e1562]: TOON
+            - generic [ref=e1563]: Token-Oriented Object Notation
+            - generic [ref=e1564]: text/toon | .toon | light | lossless
+          - button "OTA Over The Air bitmap image/x-ota | .otb" [ref=e1565] [cursor=pointer]:
+            - generic [ref=e1566]: OTA
+            - generic [ref=e1567]: Over The Air bitmap
+            - generic [ref=e1568]: image/x-ota | .otb
+          - button "CBZ Comic Book Archive application/vnd.comicbook+zip | .cbz | lossless" [ref=e1569] [cursor=pointer]:
+            - generic [ref=e1570]: CBZ
+            - generic [ref=e1571]: Comic Book Archive
+            - generic [ref=e1572]: application/vnd.comicbook+zip | .cbz | lossless
+          - button "CBT Comic Book Archive application/vnd.comicbook+tar | .cbt | lossless" [ref=e1573] [cursor=pointer]:
+            - generic [ref=e1574]: CBT
+            - generic [ref=e1575]: Comic Book Archive
+            - generic [ref=e1576]: application/vnd.comicbook+tar | .cbt | lossless
+          - button "MINECRAFT-LANG Minecraft Language Localization File text/plain | .lang | lossless" [ref=e1577] [cursor=pointer]:
+            - generic [ref=e1578]: MINECRAFT-LANG
+            - generic [ref=e1579]: Minecraft Language Localization File
+            - generic [ref=e1580]: text/plain | .lang | lossless
+          - button "OBJ Wavefront OBJ model/obj | .obj" [ref=e1581] [cursor=pointer]:
+            - generic [ref=e1582]: OBJ
+            - generic [ref=e1583]: Wavefront OBJ
+            - generic [ref=e1584]: model/obj | .obj
+          - button "ECMAP Editable Celaria Map application/x-editable-celaria-map | .ecmap" [ref=e1585] [cursor=pointer]:
+            - generic [ref=e1586]: ECMAP
+            - generic [ref=e1587]: Editable Celaria Map
+            - generic [ref=e1588]: application/x-editable-celaria-map | .ecmap
+          - button "CGP ULTRAKILL CyberGrind Pattern text/plain | .cgp" [ref=e1589] [cursor=pointer]:
+            - generic [ref=e1590]: CGP
+            - generic [ref=e1591]: ULTRAKILL CyberGrind Pattern
+            - generic [ref=e1592]: text/plain | .cgp
+          - button "JS Javascript Source File text/javascript | .js | light | lossless" [ref=e1593] [cursor=pointer]:
+            - generic [ref=e1594]: JS
+            - generic [ref=e1595]: Javascript Source File
+            - generic [ref=e1596]: text/javascript | .js | light | lossless
+          - button "CPP C++ Source File text/x-c++src | .cpp | light | lossless" [ref=e1597] [cursor=pointer]:
+            - generic [ref=e1598]: CPP
+            - generic [ref=e1599]: C++ Source File
+            - generic [ref=e1600]: text/x-c++src | .cpp | light | lossless
+          - button "GO Go Source File text/x-go | .go | light | lossless" [ref=e1601] [cursor=pointer]:
+            - generic [ref=e1602]: GO
+            - generic [ref=e1603]: Go Source File
+            - generic [ref=e1604]: text/x-go | .go | light | lossless
+          - button "SH Shell Script application/x-sh | .sh | light | lossless" [ref=e1605] [cursor=pointer]:
+            - generic [ref=e1606]: SH
+            - generic [ref=e1607]: Shell Script
+            - generic [ref=e1608]: application/x-sh | .sh | light | lossless
+          - button "CS C# Source File text/csharp | .cs | light | lossless" [ref=e1609] [cursor=pointer]:
+            - generic [ref=e1610]: CS
+            - generic [ref=e1611]: C# Source File
+            - generic [ref=e1612]: text/csharp | .cs | light | lossless
+          - button "RS Rust Source File text/rust | .rs | light | lossless" [ref=e1613] [cursor=pointer]:
+            - generic [ref=e1614]: RS
+            - generic [ref=e1615]: Rust Source File
+            - generic [ref=e1616]: text/rust | .rs | light | lossless
+          - button "FEN Forsyth–Edwards Notation application/vnd.chess-fen | .fen | light" [ref=e1617] [cursor=pointer]:
+            - generic [ref=e1618]: FEN
+            - generic [ref=e1619]: Forsyth–Edwards Notation
+            - generic [ref=e1620]: application/vnd.chess-fen | .fen | light
+          - button "PGN Portable Game Notation application/vnd.chess-pgn | .pgn | light | lossless" [ref=e1621] [cursor=pointer]:
+            - generic [ref=e1622]: PGN
+            - generic [ref=e1623]: Portable Game Notation
+            - generic [ref=e1624]: application/vnd.chess-pgn | .pgn | light | lossless
+    - generic [ref=e43]:
+      - button "Back" [ref=e44] [cursor=pointer]
+      - button "Tune route" [disabled]

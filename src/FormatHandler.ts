@@ -29,6 +29,9 @@ export interface FileFormat extends IFormatDefinition {
   lossless?: boolean;
 }
 
+export type BatchStrategy = "whole-batch" | "per-file";
+export type PerformanceClass = "light" | "medium" | "heavy";
+
 /**
  * Class containing format definition and method used to produce FileFormat
  * that can be supported by handlers.
@@ -162,6 +165,10 @@ export interface FormatHandler {
   name: string;
   /** List of supported input/output {@link FileFormat}s. */
   supportedFormats?: FileFormat[];
+  /** Optional hint that describes whether files can be processed independently. */
+  batchStrategy?: BatchStrategy;
+  /** Optional hint used for UI estimates and scheduling. */
+  performanceClass?: PerformanceClass;
 
   /** Whether the handler supports input of any type.
    * Conversion using this handler will be performed only if no other direct conversion is found.

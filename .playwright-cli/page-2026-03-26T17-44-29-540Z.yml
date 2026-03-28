@@ -1,0 +1,40 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with a phone-first flow that stays fast even when the formats get weird.
+      - generic [ref=e9]:
+        - 'button "Routing: Simple" [ref=e10] [cursor=pointer]'
+        - link "Source" [ref=e11] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e12]:
+      - button "01 Upload" [ref=e13] [cursor=pointer]:
+        - generic [ref=e14]: "01"
+        - generic [ref=e15]: Upload
+      - button "02 From" [disabled]:
+        - generic: "02"
+        - generic: From
+      - button "03 To" [disabled]:
+        - generic: "03"
+        - generic: To
+      - button "04 Convert" [disabled]:
+        - generic: "04"
+        - generic: Convert
+    - main [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - paragraph [ref=e19]: Step 1
+          - heading "Drop your file and let the app guess the route." [level=2] [ref=e20]
+        - button "Tap to add a file or drag, drop, or paste it here" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: Tap to add a file
+          - generic [ref=e23]: or drag, drop, or paste it here
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Ready when you are
+          - heading "No file selected yet" [level=3] [ref=e26]
+          - paragraph [ref=e27]: Choose a file to unlock the format steps and build a conversion route.
+          - generic [ref=e29]: No files
+  - generic [ref=e141]:
+    - button "Choose input format" [disabled]

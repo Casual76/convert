@@ -1,0 +1,48 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
+      - generic [ref=e9]:
+        - region "Routing mode" [ref=e10]:
+          - generic [ref=e11]: Routing
+          - generic [ref=e12]:
+            - button "Simple" [ref=e13] [cursor=pointer]
+            - button "Advanced" [ref=e14] [cursor=pointer]
+        - region "Theme preference" [ref=e15]:
+          - generic [ref=e16]: Theme
+          - generic [ref=e17]:
+            - button "Auto" [ref=e18] [cursor=pointer]
+            - button "Light" [ref=e19] [cursor=pointer]
+            - button "Dark" [ref=e20] [cursor=pointer]
+        - link "Source" [ref=e21] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e22]:
+      - button "01 Upload Drop files or try a demo" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: "01"
+        - generic [ref=e25]: Upload
+        - generic [ref=e26]: Drop files or try a demo
+      - button "02 From Confirm the source format" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: "02"
+        - generic [ref=e29]: From
+        - generic [ref=e30]: Confirm the source format
+      - button "03 To Pick a target route" [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: "03"
+        - generic [ref=e33]: To
+        - generic [ref=e34]: Pick a target route
+      - button "04 Tune Budget CPU and inspect ETA" [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: "04"
+        - generic [ref=e37]: Tune
+        - generic [ref=e38]: Budget CPU and inspect ETA
+      - button "05 Review Preview and convert" [ref=e39] [cursor=pointer]:
+        - generic [ref=e40]: "05"
+        - generic [ref=e41]: Review
+        - generic [ref=e42]: Preview and convert
+    - main
+    - generic [ref=e43]:
+      - button "Back" [ref=e44] [cursor=pointer]
+      - button "Continue" [ref=e45] [cursor=pointer]
+      - button "Convert" [ref=e46] [cursor=pointer]

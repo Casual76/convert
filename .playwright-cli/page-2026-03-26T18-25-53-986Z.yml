@@ -1,0 +1,106 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
+      - generic [ref=e9]:
+        - region "Routing mode" [ref=e10]:
+          - generic [ref=e11]: Routing
+          - generic [ref=e12]:
+            - button "Simple" [ref=e13] [cursor=pointer]
+            - button "Advanced" [ref=e14] [cursor=pointer]
+        - region "Theme preference" [ref=e15]:
+          - generic [ref=e16]: Theme
+          - generic [ref=e17]:
+            - button "Auto" [ref=e18] [cursor=pointer]
+            - button "Light" [ref=e19] [cursor=pointer]
+            - button "Dark" [ref=e20] [cursor=pointer]
+        - link "Source" [ref=e21] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e22]:
+      - button "01 Upload Drop files or try a demo" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: "01"
+        - generic [ref=e25]: Upload
+        - generic [ref=e26]: Drop files or try a demo
+      - button "02 From Confirm the source format" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: "02"
+        - generic [ref=e29]: From
+        - generic [ref=e30]: Confirm the source format
+      - button "03 To Pick a target route" [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: "03"
+        - generic [ref=e33]: To
+        - generic [ref=e34]: Pick a target route
+      - button "04 Tune Budget CPU and inspect ETA" [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: "04"
+        - generic [ref=e37]: Tune
+        - generic [ref=e38]: Budget CPU and inspect ETA
+      - button "05 Review Preview and convert" [ref=e39] [cursor=pointer]:
+        - generic [ref=e40]: "05"
+        - generic [ref=e41]: Review
+        - generic [ref=e42]: Preview and convert
+    - main [ref=e48]:
+      - generic [ref=e94]:
+        - generic [ref=e95]:
+          - paragraph [ref=e96]: Step 4
+          - heading "Tune the route around your machine." [level=2] [ref=e97]
+          - paragraph [ref=e98]: Choose how aggressively the app should use CPU, then inspect ETA, route weight and why that path was chosen.
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Performance preset
+              - heading "CPU budget" [level=3] [ref=e103]
+            - paragraph [ref=e104]: Never fully saturates the system, but each preset shifts the balance between responsiveness and throughput.
+          - generic [ref=e105]:
+            - button "Responsive" [ref=e106] [cursor=pointer]
+            - button "Balanced" [ref=e107] [cursor=pointer]
+            - button "Max" [ref=e108] [cursor=pointer]
+        - generic [ref=e109]:
+          - article [ref=e110]:
+            - generic [ref=e111]: Profile
+            - strong [ref=e112]: Benchmarked in 181 ms
+            - paragraph [ref=e113]: 12 logical threads detected. Balanced mode targets 10 threads and up to 6 concurrent jobs.
+            - paragraph [ref=e114]: Benchmark-first estimate using local compute and memory throughput. Device score 2.10.
+          - article [ref=e115]:
+            - generic [ref=e116]: ETA
+            - strong [ref=e117]: <5s
+            - paragraph [ref=e118]: Estimated duration band for the selected route.
+          - article [ref=e119]:
+            - generic [ref=e120]: Intensity
+            - strong [ref=e121]: Light
+            - paragraph [ref=e122]: Relative weight of the route across handlers and medium jumps.
+          - article [ref=e123]:
+            - generic [ref=e124]: CPU Impact
+            - strong [ref=e125]: High impact
+            - paragraph [ref=e126]: Estimated reactivity impact after reserving headroom for the rest of the system.
+          - article [ref=e127]:
+            - generic [ref=e128]: Parallel Jobs
+            - strong [ref=e129]: 6 jobs
+            - paragraph [ref=e130]: Maximum safe fan-out the planner will try for compatible steps.
+          - article [ref=e131]:
+            - generic [ref=e132]: Confidence
+            - strong [ref=e133]: Medium confidence
+            - paragraph [ref=e134]: Raised by a local benchmark and by timings captured on this device.
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - paragraph [ref=e138]: Route preview
+              - heading "Planned conversion steps" [level=3] [ref=e139]
+            - paragraph [ref=e140]: Every step shows the handler, expected weight and how much it can fan out safely.
+          - article [ref=e142]:
+            - generic [ref=e143]: Step 1
+            - generic [ref=e144]:
+              - strong [ref=e145]: SVG -> PNG
+              - paragraph [ref=e146]: canvasToBlob | medium | whole-batch
+            - generic [ref=e147]:
+              - generic [ref=e148]: 533 ms
+              - generic [ref=e149]: Runs as a whole-batch step, so scaling is more limited.
+        - group [ref=e150]:
+          - generic "Why this route" [ref=e151] [cursor=pointer]
+    - generic [ref=e43]:
+      - button "Back" [ref=e44] [cursor=pointer]
+      - button "Review conversion" [ref=e152] [cursor=pointer]
+  - generic [ref=e154]: Vector to PNG example loaded.
+  - generic [ref=e47]: Vector to PNG example loaded.

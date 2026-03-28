@@ -3,14 +3,31 @@ import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Share } from "@capacitor/share";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { StatusBar, Style } from "@capacitor/status-bar";
-import type { ConvertPathNode, FileData, FileFormat, FormatHandler } from "./FormatHandler.js";
+import { ConvertPathNode, type FileData, type FileFormat, type FormatHandler } from "./FormatHandler.js";
+import type {
+  DevicePerformanceProfile,
+  ExecutionPolicy,
+  PerformancePreset,
+  RouteEstimate
+} from "./performanceProfile.js";
 import handlers from "./handlers";
+import {
+  buildExecutionPolicy,
+  createHeuristicProfile,
+  loadDeviceProfile
+} from "./performanceProfile.js";
+import {
+  estimateRoute,
+  getRouteKey,
+  recordRouteObservation
+} from "./routeEstimator.js";
 import normalizeMimeType from "./normalizeMimeType.js";
 import { TraversionGraph } from "./TraversionGraph.js";
 
-type StepId = "upload" | "from" | "to" | "review";
+type StepId = "upload" | "from" | "to" | "tune" | "review";
 type ListSide = "input" | "output";
 type ToastTone = "neutral" | "success" | "warning" | "danger";
+type ThemePreference = "auto" | "light" | "dark";
 
 interface FormatOptionRef {
   mime: string;
@@ -19,7 +36,79 @@ interface FormatOptionRef {
   internal: string;
 }
 
-const stepOrder: StepId[] = ["upload", "from", "to", "review"];
+interface ExamplePreset {
+  id: string;
+  title: string;
+  description: string;
+  sourceUrl: string;
+  fileName: string;
+  output: {
+    format: string;
+    mime: string;
+  };
+}
+
+interface RoutePlanState {
+  status: "idle" | "loading" | "ready" | "unavailable";
+  path: ConvertPathNode[] | null;
+  estimate: RouteEstimate | null;
+  error: string | null;
+}
+
+interface PreviewState {
+  status: "idle" | "loading" | "ready" | "disabled" | "error";
+  message: string;
+  files: FileData[] | null;
+}
+
+const stepOrder: StepId[] = ["upload", "from", "to", "tune", "review"];
+const examplePresets: ExamplePreset[] = [
+  {
+    id: "example-vector",
+    title: "Vector to PNG",
+    description: "Use a tiny SVG sample and land on a crisp PNG output.",
+    sourceUrl: `${import.meta.env.BASE_URL}examples/vector-card.svg`,
+    fileName: "vector-card.svg",
+    output: { format: "png", mime: "image/png" }
+  },
+  {
+    id: "example-voice",
+    title: "Text to WAV",
+    description: "Feed a short note and preview a speech-friendly route.",
+    sourceUrl: `${import.meta.env.BASE_URL}examples/welcome.txt`,
+    fileName: "welcome.txt",
+    output: { format: "wav", mime: "audio/wav" }
+  },
+  {
+    id: "example-doc",
+    title: "Markdown to DOCX",
+    description: "Try a document flow with a simple markdown note.",
+    sourceUrl: `${import.meta.env.BASE_URL}examples/notes.md`,
+    fileName: "notes.md",
+    output: {
+      format: "docx",
+      mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    }
+  }
+];
+
+const preferredOutputsByCategory: Record<string, string[]> = {
+  image: ["png", "jpeg", "webp", "gif", "svg", "pdf"],
+  video: ["mp4", "webm", "gif", "png", "mp3"],
+  audio: ["wav", "mp3", "flac", "ogg", "txt"],
+  document: ["pdf", "docx", "html", "txt", "png"],
+  text: ["txt", "md", "html", "pdf", "wav", "docx"],
+  data: ["json", "csv", "xml", "yaml", "txt"],
+  archive: ["zip", "tar", "cbz"],
+  font: ["woff2", "otf", "ttf", "png"],
+  code: ["txt", "json", "js", "cpp", "cs"],
+  presentation: ["pptx", "pdf", "png"],
+  spreadsheet: ["xlsx", "csv", "json"],
+  default: ["pdf", "png", "txt", "zip", "json"]
+};
+
+const THEME_STORAGE_KEY = "convert-to-it.theme-preference.v1";
+const PRESET_STORAGE_KEY = "convert-to-it.performance-preset.v1";
 
 let selectedFiles: File[] = [];
 let simpleMode = true;
@@ -27,12 +116,25 @@ let currentStep: StepId = "upload";
 let selectedInputRef: FormatOptionRef | null = null;
 let selectedOutputRef: FormatOptionRef | null = null;
 let isConverting = false;
+let routePlan: RoutePlanState = { status: "idle", path: null, estimate: null, error: null };
+let previewState: PreviewState = {
+  status: "disabled",
+  message: "Pick a source file and target format to unlock preview.",
+  files: null
+};
 let deadEndAttempts: ConvertPathNode[][] = [];
-
-const desktopMediaQuery = window.matchMedia("(min-width: 961px)");
+let themePreference: ThemePreference = loadThemePreference();
+let performancePreset: PerformancePreset = loadPerformancePreset();
+let deviceProfile: DevicePerformanceProfile = createHeuristicProfile();
+let executionPolicy: ExecutionPolicy = buildExecutionPolicy(deviceProfile, performancePreset);
+let routePlanRequestId = 0;
+let previewRequestId = 0;
+let activePreviewUrls: string[] = [];
+let profileWarmupStarted = false;
 
 const ui = {
   body: document.body,
+  appShell: document.querySelector("#app-shell") as HTMLDivElement,
   fileInput: document.querySelector("#file-input") as HTMLInputElement,
   fileSelectArea: document.querySelector("#file-area") as HTMLButtonElement,
   inputList: document.querySelector("#from-list") as HTMLDivElement,
@@ -43,15 +145,16 @@ const ui = {
   selectionMeta: document.querySelector("#selection-meta") as HTMLParagraphElement,
   selectionKicker: document.querySelector("#selection-kicker") as HTMLParagraphElement,
   selectionList: document.querySelector("#selection-list") as HTMLDivElement,
+  sourceInsight: document.querySelector("#source-insight") as HTMLParagraphElement,
   summaryFiles: document.querySelector("#summary-files") as HTMLElement,
   summaryFrom: document.querySelector("#summary-from") as HTMLElement,
   summaryTo: document.querySelector("#summary-to") as HTMLElement,
   summaryMode: document.querySelector("#summary-mode") as HTMLElement,
+  summaryPolicy: document.querySelector("#summary-policy") as HTMLElement,
   reviewHint: document.querySelector("#review-hint") as HTMLDivElement,
-  modeButton: document.querySelector("#mode-button") as HTMLButtonElement,
-  modeSheet: document.querySelector("#mode-sheet") as HTMLElement,
-  modeSheetBackdrop: document.querySelector("#mode-sheet-backdrop") as HTMLDivElement,
-  modeOptionButtons: Array.from(document.querySelectorAll<HTMLButtonElement>("[data-routing-mode]")),
+  routingButtons: Array.from(document.querySelectorAll<HTMLButtonElement>("[data-routing-mode]")),
+  themeButtons: Array.from(document.querySelectorAll<HTMLButtonElement>("[data-theme-preference]")),
+  performanceButtons: Array.from(document.querySelectorAll<HTMLButtonElement>("[data-performance-preset]")),
   popupBg: document.querySelector("#popup-bg") as HTMLDivElement,
   popup: document.querySelector("#popup") as HTMLDivElement,
   popupContent: document.querySelector("#popup-content") as HTMLDivElement,
@@ -64,13 +167,42 @@ const ui = {
   toCount: document.querySelector("#to-count") as HTMLSpanElement,
   stepButtons: Array.from(document.querySelectorAll<HTMLButtonElement>("[data-step-target]")),
   stages: Array.from(document.querySelectorAll<HTMLElement>(".wizard-stage")),
-  commitId: document.querySelector("#commit-id") as HTMLAnchorElement
+  commitId: document.querySelector("#commit-id") as HTMLAnchorElement,
+  outputSuggestions: document.querySelector("#to-suggestions") as HTMLDivElement,
+  exampleList: document.querySelector("#example-list") as HTMLDivElement,
+  tuneProfileStatus: document.querySelector("#tune-profile-status") as HTMLSpanElement,
+  tuneProfileSummary: document.querySelector("#tune-profile-summary") as HTMLParagraphElement,
+  tuneProfileDetail: document.querySelector("#tune-profile-detail") as HTMLParagraphElement,
+  tuneEta: document.querySelector("#tune-eta") as HTMLElement,
+  tuneIntensity: document.querySelector("#tune-intensity") as HTMLElement,
+  tuneCpu: document.querySelector("#tune-cpu") as HTMLElement,
+  tuneJobs: document.querySelector("#tune-jobs") as HTMLElement,
+  tuneConfidence: document.querySelector("#tune-confidence") as HTMLElement,
+  tuneRouteList: document.querySelector("#tune-route-list") as HTMLDivElement,
+  tuneWhyList: document.querySelector("#tune-why-list") as HTMLUListElement,
+  reviewRoute: document.querySelector("#review-route") as HTMLDivElement,
+  reviewPolicy: document.querySelector("#review-policy") as HTMLParagraphElement,
+  reviewPreviewStatus: document.querySelector("#review-preview-status") as HTMLParagraphElement,
+  reviewPreviewMeta: document.querySelector("#review-preview-meta") as HTMLParagraphElement,
+  reviewPreviewFrame: document.querySelector("#review-preview-frame") as HTMLDivElement
 };
 
 const allOptions: Array<{ format: FileFormat; handler: FormatHandler }> = [];
 
 window.supportedFormatCache = new Map();
 window.traversionGraph = new TraversionGraph();
+
+function loadThemePreference (): ThemePreference {
+  const raw = localStorage.getItem(THEME_STORAGE_KEY);
+  if (raw === "light" || raw === "dark" || raw === "auto") return raw;
+  return "auto";
+}
+
+function loadPerformancePreset (): PerformancePreset {
+  const raw = localStorage.getItem(PRESET_STORAGE_KEY);
+  if (raw === "responsive" || raw === "balanced" || raw === "max") return raw;
+  return "balanced";
+}
 
 const hideNativeSplash = async () => {
   if (!Capacitor.isNativePlatform()) return;
@@ -98,6 +230,12 @@ const formatBytes = (byteCount: number) => {
     unitIndex += 1;
   }
   return `${value >= 10 || unitIndex === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[unitIndex]}`;
+};
+
+const formatMillis = (value: number) => {
+  if (value < 1000) return `${Math.max(1, Math.round(value))} ms`;
+  if (value < 10_000) return `${(value / 1000).toFixed(1)} s`;
+  return `${Math.round(value / 1000)} s`;
 };
 
 const splitFileName = (name: string) => {
@@ -172,10 +310,25 @@ const showToast = (message: string, tone: ToastTone = "neutral") => {
   }, 3600);
 };
 
+const waitForPaint = () => new Promise(resolve => {
+  requestAnimationFrame(() => requestAnimationFrame(resolve));
+});
+
+const toFileData = async (file: File): Promise<FileData> => ({
+  name: file.name,
+  bytes: new Uint8Array(await file.arrayBuffer())
+});
+
+const normalizeMessage = (error: unknown) => {
+  if (typeof error === "string" && error.trim()) return error;
+  if (error instanceof Error && error.message.trim()) return error.message;
+  return "Unknown error.";
+};
+
 const reportStartupError = async (error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
+  const message = normalizeMessage(error);
   console.error("Startup error:", error);
-  (window as any).showStartupFatal?.(message);
+  (window as Window & { showStartupFatal?: (value: string) => void }).showStartupFatal?.(message);
   isConverting = false;
   showToast(`Startup error: ${message}`, "danger");
   window.showPopup(
@@ -206,8 +359,6 @@ window.printSupportedFormatCache = () => {
   return JSON.stringify(entries, null, 2);
 };
 
-const isDesktopLayout = () => desktopMediaQuery.matches;
-
 const cleanFormatName = (name: string) => name
   .split("(")
   .join(")")
@@ -218,7 +369,7 @@ const cleanFormatName = (name: string) => name
   .trim();
 
 const createOptionRef = (option: { format: FileFormat; handler: FormatHandler }): FormatOptionRef => ({
-  mime: option.format.mime,
+  mime: normalizeFormatMime(option.format.mime),
   format: option.format.format,
   handlerName: option.handler.name,
   internal: option.format.internal
@@ -235,7 +386,7 @@ const optionMatchesSelection = (
   exact: boolean
 ) => {
   if (!selection) return false;
-  if (option.format.mime !== selection.mime || option.format.format !== selection.format) {
+  if (normalizeFormatMime(option.format.mime) !== selection.mime || option.format.format !== selection.format) {
     return false;
   }
   if (!exact) return true;
@@ -250,6 +401,156 @@ const findOptionBySelection = (selection: FormatOptionRef | null) => {
 
 const getSelectedOption = (side: ListSide) => findOptionBySelection(side === "input" ? selectedInputRef : selectedOutputRef);
 
+const getPrimaryCategory = (format: FileFormat) => {
+  if (Array.isArray(format.category)) return format.category[0] || format.mime.split("/")[0];
+  return format.category || format.mime.split("/")[0];
+};
+
+const getFileExtension = (fileName: string) => fileName.split(".").pop()?.toLowerCase() ?? "";
+const normalizeFormatMime = (mime: string) => normalizeMimeType(mime || "");
+const isGenericMime = (mime: string) => !mime || mime === "application/octet-stream";
+
+const filesShareCompatibleInputSignature = (files: File[]) => {
+  if (files.length <= 1) return true;
+
+  const distinctKnownMimes = new Set(
+    files
+      .map(file => normalizeFormatMime(file.type))
+      .filter(mime => !isGenericMime(mime))
+  );
+
+  if (distinctKnownMimes.size <= 1) {
+    return true;
+  }
+
+  const distinctExtensions = new Set(
+    files
+      .map(file => getFileExtension(file.name))
+      .filter(Boolean)
+  );
+
+  return distinctExtensions.size === 1 && distinctExtensions.size > 0;
+};
+
+const getSourceInsightText = () => {
+  if (selectedFiles.length === 0) {
+    return "Try one of the examples or drop your own file to unlock route planning, preview and performance tuning.";
+  }
+
+  const leadFile = selectedFiles[0];
+  const mime = normalizeMimeType(leadFile.type);
+  if (mime.startsWith("image/")) {
+    return "Image inputs get fast visual routes, thumbnail-friendly previews and same-medium suggestions first.";
+  }
+  if (mime.startsWith("audio/")) {
+    return "Audio routes emphasize playable targets and will highlight when the path needs a heavier medium jump.";
+  }
+  if (mime.startsWith("video/")) {
+    return "Video inputs can trigger heavier routes, so the Tune step will show CPU impact before you commit.";
+  }
+  if (mime.startsWith("text/") || mime.includes("json") || mime.includes("xml")) {
+    return "Text-like inputs stay easy to browse and can branch into document, data and speech-friendly outputs.";
+  }
+  return "The app will auto-detect what it can, then surface route cost, CPU budget and preview options before conversion.";
+};
+
+const revokePreviewUrls = () => {
+  for (const url of activePreviewUrls) {
+    URL.revokeObjectURL(url);
+  }
+  activePreviewUrls = [];
+};
+
+const renderReviewPreview = () => {
+  ui.reviewPreviewStatus.textContent = previewState.message;
+  ui.reviewPreviewFrame.innerHTML = "";
+  ui.reviewPreviewMeta.textContent = "";
+
+  if (previewState.status !== "ready" || !previewState.files || previewState.files.length === 0) {
+    ui.reviewPreviewFrame.innerHTML = `<div class="preview-placeholder">${escapeHtml(previewState.status === "loading" ? "Generating preview..." : "No live preview yet")}</div>`;
+    return;
+  }
+
+  const outputOption = getSelectedOption("output");
+  if (!outputOption) return;
+
+  const primaryFile = previewState.files[0];
+  const blob = new Blob([primaryFile.bytes as BlobPart], { type: outputOption.format.mime });
+  const url = URL.createObjectURL(blob);
+  activePreviewUrls.push(url);
+
+  if (outputOption.format.mime.startsWith("image/")) {
+    const image = document.createElement("img");
+    image.className = "preview-image";
+    image.src = url;
+    image.alt = primaryFile.name;
+    ui.reviewPreviewFrame.appendChild(image);
+  } else if (outputOption.format.mime.startsWith("audio/")) {
+    const audio = document.createElement("audio");
+    audio.className = "preview-media";
+    audio.controls = true;
+    audio.src = url;
+    ui.reviewPreviewFrame.appendChild(audio);
+  } else if (outputOption.format.mime.startsWith("video/")) {
+    const video = document.createElement("video");
+    video.className = "preview-media";
+    video.controls = true;
+    video.muted = true;
+    video.src = url;
+    ui.reviewPreviewFrame.appendChild(video);
+  } else if (
+    outputOption.format.mime.startsWith("text/")
+    || outputOption.format.mime.includes("json")
+    || outputOption.format.mime.includes("xml")
+    || outputOption.format.mime.includes("javascript")
+  ) {
+    const preview = document.createElement("pre");
+    preview.className = "preview-text";
+    preview.textContent = new TextDecoder().decode(primaryFile.bytes.slice(0, 3200));
+    ui.reviewPreviewFrame.appendChild(preview);
+    URL.revokeObjectURL(url);
+    activePreviewUrls.pop();
+  } else if (outputOption.format.mime === "application/pdf") {
+    const frame = document.createElement("iframe");
+    frame.className = "preview-frame";
+    frame.src = url;
+    frame.title = primaryFile.name;
+    ui.reviewPreviewFrame.appendChild(frame);
+  } else {
+    const generic = document.createElement("div");
+    generic.className = "preview-placeholder";
+    generic.textContent = `${previewState.files.length} file${previewState.files.length === 1 ? "" : "s"} generated.`;
+    ui.reviewPreviewFrame.appendChild(generic);
+  }
+
+  ui.reviewPreviewMeta.textContent =
+    `${previewState.files.length} preview file${previewState.files.length === 1 ? "" : "s"} rendered using a single safe job.`;
+};
+
+const resetPreviewState = (message = "Preview will appear here after the route is tuned and review is active.") => {
+  previewState = {
+    status: "disabled",
+    message,
+    files: null
+  };
+  revokePreviewUrls();
+  renderReviewPreview();
+};
+
+const clearRoutePlan = () => {
+  routePlanRequestId += 1;
+  routePlan = {
+    status: "idle",
+    path: null,
+    estimate: null,
+    error: null
+  };
+  resetPreviewState();
+  renderTunePanel();
+  renderSummary();
+  syncStepUI();
+};
+
 const renderSelectionBadges = () => {
   ui.selectionList.innerHTML = "";
   if (selectedFiles.length === 0) {
@@ -259,13 +560,12 @@ const renderSelectionBadges = () => {
     return;
   }
 
+  const leadFile = selectedFiles[0];
   const chips = [
     `${selectedFiles.length} file${selectedFiles.length === 1 ? "" : "s"}`,
-    formatBytes(totalSelectedBytes())
+    formatBytes(totalSelectedBytes()),
+    leadFile.type ? normalizeMimeType(leadFile.type) : `.${getFileExtension(leadFile.name)}`
   ];
-
-  const mime = normalizeMimeType(selectedFiles[0].type);
-  if (mime) chips.push(mime);
 
   for (const value of chips) {
     const chip = document.createElement("span");
@@ -275,10 +575,12 @@ const renderSelectionBadges = () => {
 };
 
 const renderSelectionCard = () => {
+  ui.appShell.dataset.hasSelection = selectedFiles.length > 0 ? "true" : "false";
   if (selectedFiles.length === 0) {
     ui.selectionKicker.textContent = "Ready when you are";
     ui.selectionTitle.textContent = "No file selected yet";
-    ui.selectionMeta.textContent = "Choose a file to unlock the format steps and build a conversion route.";
+    ui.selectionMeta.textContent = "Load a file to unlock route planning, performance tuning and live preview.";
+    ui.sourceInsight.textContent = getSourceInsightText();
     renderSelectionBadges();
     return;
   }
@@ -288,8 +590,218 @@ const renderSelectionCard = () => {
   ui.selectionTitle.textContent = selectedFiles.length === 1
     ? leadFile.name
     : `${leadFile.name} and ${selectedFiles.length - 1} more`;
-  ui.selectionMeta.textContent = "Input format can be auto-detected, but you can always change it before converting.";
+  ui.selectionMeta.textContent = selectedFiles.length === 1
+    ? `Detected as ${normalizeMimeType(leadFile.type) || `.${getFileExtension(leadFile.name)}`}. You can still override the input format before converting.`
+    : "Batch mode is enabled. Compatible steps may fan out across files depending on the selected performance preset.";
+  ui.sourceInsight.textContent = getSourceInsightText();
   renderSelectionBadges();
+};
+
+const renderThemeUI = () => {
+  const resolvedTheme = themePreference === "auto"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : themePreference;
+
+  document.documentElement.dataset.theme = resolvedTheme;
+  document.documentElement.dataset.themePreference = themePreference;
+  ui.body.dataset.theme = resolvedTheme;
+
+  for (const button of ui.themeButtons) {
+    const selected = button.dataset.themePreference === themePreference;
+    button.dataset.selected = selected ? "true" : "false";
+  }
+};
+
+const renderRoutingUI = () => {
+  document.documentElement.dataset.routingMode = simpleMode ? "simple" : "advanced";
+  for (const button of ui.routingButtons) {
+    const selected = (button.dataset.routingMode === "simple") === simpleMode;
+    button.dataset.selected = selected ? "true" : "false";
+  }
+};
+
+const renderPerformanceUI = () => {
+  for (const button of ui.performanceButtons) {
+    const selected = button.dataset.performancePreset === performancePreset;
+    button.dataset.selected = selected ? "true" : "false";
+  }
+};
+
+const scoreSuggestedOutput = (
+  option: { format: FileFormat; handler: FormatHandler },
+  inputOption: { format: FileFormat; handler: FormatHandler },
+  preferredFormats: string[]
+) => {
+  let score = 0;
+  const inputCategory = getPrimaryCategory(inputOption.format);
+  const outputCategory = getPrimaryCategory(option.format);
+  if (option.format.mime === inputOption.format.mime && option.format.format === inputOption.format.format) {
+    score -= 12;
+  }
+  if (inputCategory === outputCategory) score += 22;
+  if (preferredFormats.includes(option.format.format)) {
+    score += 18 - preferredFormats.indexOf(option.format.format);
+  }
+  if (option.format.lossless) score += 2;
+  if (option.handler.performanceClass === "light") score += 1;
+  if (option.handler.performanceClass === "heavy" && outputCategory !== inputCategory) score -= 2;
+  return score;
+};
+
+const renderExamples = () => {
+  ui.exampleList.innerHTML = "";
+  for (const preset of examplePresets) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "example-card";
+    button.innerHTML =
+      `<span class="example-overline">Example</span>` +
+      `<strong>${escapeHtml(preset.title)}</strong>` +
+      `<span>${escapeHtml(preset.description)}</span>`;
+    button.addEventListener("click", () => {
+      void loadExamplePreset(preset);
+    });
+    ui.exampleList.appendChild(button);
+  }
+};
+
+const renderOutputSuggestions = () => {
+  ui.outputSuggestions.innerHTML = "";
+  const inputOption = getSelectedOption("input");
+  if (!inputOption) {
+    const placeholder = document.createElement("p");
+    placeholder.className = "inline-note";
+    placeholder.textContent = "Input detection will unlock a tighter set of suggested targets here.";
+    ui.outputSuggestions.appendChild(placeholder);
+    return;
+  }
+
+  const preferredFormats = preferredOutputsByCategory[getPrimaryCategory(inputOption.format)]
+    || preferredOutputsByCategory.default;
+
+  const candidates = Array.from(ui.outputList.children)
+    .filter((child): child is HTMLButtonElement => child instanceof HTMLButtonElement)
+    .map(button => ({ button, option: optionFromButton(button) }))
+    .filter((entry): entry is { button: HTMLButtonElement; option: { format: FileFormat; handler: FormatHandler } } => Boolean(entry.option))
+    .sort((left, right) => scoreSuggestedOutput(right.option, inputOption, preferredFormats) - scoreSuggestedOutput(left.option, inputOption, preferredFormats))
+    .slice(0, 6);
+
+  if (candidates.length === 0) {
+    const placeholder = document.createElement("p");
+    placeholder.className = "inline-note";
+    placeholder.textContent = "No suggestions yet. Search the full output list below.";
+    ui.outputSuggestions.appendChild(placeholder);
+    return;
+  }
+
+  for (const candidate of candidates) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "suggestion-card";
+    button.innerHTML =
+      `<span class="suggestion-overline">${escapeHtml(candidate.option.format.format.toUpperCase())}</span>` +
+      `<strong>${escapeHtml(cleanFormatName(candidate.option.format.name))}</strong>` +
+      `<span>${escapeHtml(candidate.option.format.mime)}</span>`;
+    button.addEventListener("click", () => {
+      ui.outputSearch.value = "";
+      filterButtonList(ui.outputList, "", ui.toCount, "format");
+      candidate.button.click();
+    });
+    ui.outputSuggestions.appendChild(button);
+  }
+};
+
+const renderTunePanel = () => {
+  ui.tuneProfileStatus.textContent = deviceProfile.source === "benchmark"
+    ? `Benchmarked in ${Math.round(deviceProfile.benchmarkDurationMs)} ms`
+    : "Hardware fallback profile";
+  ui.tuneProfileSummary.textContent =
+    `${deviceProfile.hardwareConcurrency} logical thread${deviceProfile.hardwareConcurrency === 1 ? "" : "s"} detected. ` +
+    `${performancePreset[0].toUpperCase()}${performancePreset.slice(1)} mode targets ${executionPolicy.targetThreads} threads and up to ${executionPolicy.maxParallelJobs} concurrent job${executionPolicy.maxParallelJobs === 1 ? "" : "s"}.`;
+  ui.tuneProfileDetail.textContent = deviceProfile.source === "benchmark"
+    ? `Benchmark-first estimate using local compute and memory throughput. Device score ${deviceProfile.overallScore.toFixed(2)}.`
+    : "Benchmark is not ready yet or was unavailable, so estimates are currently using hardware hints only.";
+
+  if (routePlan.status === "loading") {
+    ui.tuneEta.textContent = "Analyzing...";
+    ui.tuneIntensity.textContent = "Pending";
+    ui.tuneCpu.textContent = `${Math.round(executionPolicy.cpuFraction * 100)}% budget`;
+    ui.tuneJobs.textContent = `${executionPolicy.maxParallelJobs} jobs`;
+    ui.tuneConfidence.textContent = deviceProfile.source === "benchmark" ? "Medium confidence" : "Low confidence";
+    ui.tuneRouteList.innerHTML = `<p class="inline-note">Searching for the first viable route for this combination...</p>`;
+    ui.tuneWhyList.innerHTML = "";
+    return;
+  }
+
+  if (routePlan.status === "unavailable") {
+    ui.tuneEta.textContent = "Unavailable";
+    ui.tuneIntensity.textContent = "No route";
+    ui.tuneCpu.textContent = "No estimate";
+    ui.tuneJobs.textContent = `${executionPolicy.maxParallelJobs} jobs`;
+    ui.tuneConfidence.textContent = "Low confidence";
+    ui.tuneRouteList.innerHTML = `<p class="inline-note">${escapeHtml(routePlan.error ?? "The planner could not find a valid route.")}</p>`;
+    ui.tuneWhyList.innerHTML = "";
+    return;
+  }
+
+  if (routePlan.status !== "ready" || !routePlan.estimate || !routePlan.path) {
+    ui.tuneEta.textContent = "--";
+    ui.tuneIntensity.textContent = "--";
+    ui.tuneCpu.textContent = `${Math.round(executionPolicy.cpuFraction * 100)}% budget`;
+    ui.tuneJobs.textContent = `${executionPolicy.maxParallelJobs} jobs`;
+    ui.tuneConfidence.textContent = deviceProfile.source === "benchmark" ? "Medium confidence" : "Low confidence";
+    ui.tuneRouteList.innerHTML = `<p class="inline-note">Pick both formats to inspect the route, ETA and CPU cost.</p>`;
+    ui.tuneWhyList.innerHTML = "";
+    return;
+  }
+
+  ui.tuneEta.textContent = routePlan.estimate.etaLabel;
+  ui.tuneIntensity.textContent = routePlan.estimate.intensity;
+  ui.tuneCpu.textContent = routePlan.estimate.cpuImpactLabel;
+  ui.tuneJobs.textContent = `${routePlan.estimate.maxParallelJobs} jobs`;
+  ui.tuneConfidence.textContent = routePlan.estimate.confidenceLabel;
+
+  ui.tuneRouteList.innerHTML = "";
+  for (const [index, stepEstimate] of routePlan.estimate.stepEstimates.entries()) {
+    const card = document.createElement("article");
+    card.className = "route-step";
+    card.innerHTML =
+      `<span class="route-step-index">Step ${index + 1}</span>` +
+      `<div class="route-step-main">` +
+      `<strong>${escapeHtml(stepEstimate.fromLabel)} -> ${escapeHtml(stepEstimate.toLabel)}</strong>` +
+      `<p>${escapeHtml(stepEstimate.handlerName)} | ${escapeHtml(stepEstimate.performanceClass)} | ${escapeHtml(stepEstimate.batchStrategy)}</p>` +
+      `</div>` +
+      `<div class="route-step-meta">` +
+      `<span>${escapeHtml(formatMillis(stepEstimate.estimatedMs))}</span>` +
+      `<span>${escapeHtml(stepEstimate.note)}</span>` +
+      `</div>`;
+    ui.tuneRouteList.appendChild(card);
+  }
+
+  ui.tuneWhyList.innerHTML = "";
+  for (const reason of routePlan.estimate.reasons) {
+    const item = document.createElement("li");
+    item.textContent = reason;
+    ui.tuneWhyList.appendChild(item);
+  }
+};
+
+const renderReviewRoute = () => {
+  ui.reviewRoute.innerHTML = "";
+  if (!routePlan.path) {
+    const chip = document.createElement("span");
+    chip.className = "path-chip";
+    chip.textContent = "Route preview unavailable";
+    ui.reviewRoute.appendChild(chip);
+    return;
+  }
+
+  for (const node of routePlan.path) {
+    const chip = document.createElement("span");
+    chip.className = "path-chip";
+    chip.textContent = node.format.format.toUpperCase();
+    ui.reviewRoute.appendChild(chip);
+  }
 };
 
 const renderSummary = () => {
@@ -298,24 +810,37 @@ const renderSummary = () => {
 
   ui.summaryFiles.textContent = selectedFiles.length === 0
     ? "No files selected"
-    : `${selectedFiles.length} file${selectedFiles.length === 1 ? "" : "s"} (${formatBytes(totalSelectedBytes())})`;
+    : `${selectedFiles.length} file${selectedFiles.length === 1 ? "" : "s"} | ${formatBytes(totalSelectedBytes())}`;
   ui.summaryFrom.textContent = inputOption
-    ? `${inputOption.format.format.toUpperCase()} / ${inputOption.format.mime}`
+    ? `${inputOption.format.format.toUpperCase()} | ${inputOption.format.mime}`
     : "Pick an input format";
   ui.summaryTo.textContent = outputOption
-    ? `${outputOption.format.format.toUpperCase()} / ${outputOption.format.mime}`
+    ? `${outputOption.format.format.toUpperCase()} | ${outputOption.format.mime}`
     : "Pick an output format";
-  ui.summaryMode.textContent = simpleMode ? "Simple mode" : "Advanced mode";
+  ui.summaryMode.textContent = simpleMode ? "Simple routing" : "Advanced routing";
+  ui.summaryPolicy.textContent =
+    `${performancePreset[0].toUpperCase()}${performancePreset.slice(1)} preset | ${executionPolicy.maxParallelJobs} job${executionPolicy.maxParallelJobs === 1 ? "" : "s"} max`;
 
   if (selectedFiles.length === 0) {
-    ui.reviewHint.textContent = "Select a file to begin.";
+    ui.reviewHint.textContent = "Select or load a file to begin.";
   } else if (!inputOption) {
-    ui.reviewHint.textContent = "Confirm the input format before moving on.";
+    ui.reviewHint.textContent = "Confirm the input format before exploring output targets.";
   } else if (!outputOption) {
-    ui.reviewHint.textContent = "Pick an output format to unlock conversion.";
+    ui.reviewHint.textContent = "Pick an output format to unlock Tune and route planning.";
+  } else if (routePlan.status === "loading") {
+    ui.reviewHint.textContent = "Analyzing the route, ETA and CPU budget...";
+  } else if (routePlan.status === "unavailable") {
+    ui.reviewHint.textContent = routePlan.error ?? "No viable route was found for the current format pair.";
+  } else if (routePlan.status === "ready" && routePlan.estimate) {
+    ui.reviewHint.textContent =
+      `${routePlan.estimate.routeSignatureLabel}. Estimated ${routePlan.estimate.etaLabel} with ${routePlan.estimate.cpuImpactLabel.toLowerCase()}.`;
   } else {
-    ui.reviewHint.textContent = `Ready to search for a route from ${inputOption.format.format.toUpperCase()} to ${outputOption.format.format.toUpperCase()}.`;
+    ui.reviewHint.textContent = "Tune the route to inspect performance, then review before converting.";
   }
+
+  ui.reviewPolicy.textContent =
+    `Preview and review use the ${performancePreset} preset, but live preview always runs in a single safe job.`;
+  renderReviewRoute();
 };
 
 const canEnterStep = (step: StepId) => {
@@ -326,6 +851,8 @@ const canEnterStep = (step: StepId) => {
       return selectedFiles.length > 0;
     case "to":
       return selectedInputRef !== null;
+    case "tune":
+      return selectedInputRef !== null && selectedOutputRef !== null;
     case "review":
       return selectedInputRef !== null && selectedOutputRef !== null;
   }
@@ -339,15 +866,11 @@ const isStepComplete = (step: StepId) => {
       return selectedInputRef !== null;
     case "to":
       return selectedOutputRef !== null;
+    case "tune":
+      return routePlan.status === "ready";
     case "review":
       return canConvert();
   }
-};
-
-const setCurrentStep = (step: StepId) => {
-  if (!canEnterStep(step) && step !== "upload") return;
-  currentStep = step;
-  syncStepUI();
 };
 
 const nextStepFrom = (step: StepId): StepId | null => {
@@ -361,8 +884,68 @@ const previousStepFrom = (step: StepId): StepId | null => {
 };
 
 function canConvert () {
-  return selectedFiles.length > 0 && selectedInputRef !== null && selectedOutputRef !== null && !isConverting;
+  return selectedFiles.length > 0
+    && selectedInputRef !== null
+    && selectedOutputRef !== null
+    && routePlan.status === "ready"
+    && !isConverting;
 }
+
+const syncStepUI = () => {
+  for (const stage of ui.stages) {
+    const step = stage.dataset.step as StepId;
+    stage.dataset.active = step === currentStep ? "true" : "false";
+  }
+
+  for (const button of ui.stepButtons) {
+    const step = button.dataset.stepTarget as StepId;
+    button.dataset.active = step === currentStep ? "true" : "false";
+    button.dataset.complete = isStepComplete(step) ? "true" : "false";
+    button.disabled = !canEnterStep(step);
+  }
+
+  const nextStep = nextStepFrom(currentStep);
+  const previousStep = previousStepFrom(currentStep);
+
+  ui.backButton.hidden = previousStep === null;
+  ui.backButton.disabled = previousStep === null || isConverting;
+
+  if (currentStep === "review") {
+    ui.nextButton.hidden = true;
+    ui.convertButton.hidden = false;
+  } else {
+    ui.nextButton.hidden = false;
+    ui.convertButton.hidden = true;
+    ui.nextButton.textContent =
+      currentStep === "upload" ? "Choose input format" :
+      currentStep === "from" ? "Choose output format" :
+      currentStep === "to" ? "Tune route" :
+      "Review conversion";
+    ui.nextButton.disabled =
+      nextStep === null
+      || !canEnterStep(nextStep)
+      || isConverting
+      || (currentStep === "tune" && routePlan.status === "loading");
+  }
+
+  ui.convertButton.disabled = !canConvert();
+};
+
+const setCurrentStep = (step: StepId) => {
+  if (!canEnterStep(step) && step !== "upload") return;
+  currentStep = step;
+  if (step !== "review") {
+    previewRequestId += 1;
+    if (previewState.status === "loading") {
+      resetPreviewState("Preview will resume when you return to Review.");
+    } else {
+      renderReviewPreview();
+    }
+  } else {
+    void maybeStartPreview();
+  }
+  syncStepUI();
+};
 
 const updateVisibleCount = (list: HTMLDivElement, counter: HTMLSpanElement, label: string) => {
   const visibleCount = Array.from(list.children).filter(child => {
@@ -408,30 +991,8 @@ const resetConversionFlow = () => {
   ui.outputSearch.value = "";
   filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
   filterButtonList(ui.outputList, ui.outputSearch.value, ui.toCount, "format");
-  renderSummary();
-  syncStepUI();
-};
-
-const applySelection = (side: ListSide, button: HTMLButtonElement, autoAdvance = true) => {
-  const option = optionFromButton(button);
-  if (!option) return;
-
-  const parent = side === "input" ? ui.inputList : ui.outputList;
-  for (const child of Array.from(parent.children)) {
-    if (child instanceof HTMLButtonElement) {
-      child.classList.remove("selected");
-    }
-  }
-  button.classList.add("selected");
-
-  if (side === "input") {
-    selectedInputRef = createOptionRef(option);
-    if (autoAdvance && !isDesktopLayout()) setCurrentStep("to");
-  } else {
-    selectedOutputRef = createOptionRef(option);
-    if (autoAdvance && !isDesktopLayout()) setCurrentStep("review");
-  }
-
+  clearRoutePlan();
+  renderOutputSuggestions();
   renderSummary();
   syncStepUI();
 };
@@ -465,14 +1026,28 @@ const restoreSelection = (side: ListSide) => {
   }
 };
 
+const renderListMeta = (option: { format: FileFormat; handler: FormatHandler }, side: ListSide) => {
+  const metaParts = [
+    option.format.mime,
+    `.${option.format.extension}`
+  ];
+  if (side === "output" && option.handler.performanceClass) {
+    metaParts.push(option.handler.performanceClass);
+  }
+  if (!simpleMode) metaParts.push(`via ${option.handler.name}`);
+  if (option.format.lossless) metaParts.push("lossless");
+  return metaParts.join(" | ");
+};
+
 const createFormatButton = (
   option: { format: FileFormat; handler: FormatHandler },
   side: ListSide
 ) => {
   const button = document.createElement("button");
   button.type = "button";
+  button.className = "format-option";
   button.setAttribute("format-index", String(allOptions.length - 1));
-  button.setAttribute("mime-type", option.format.mime);
+  button.setAttribute("mime-type", normalizeFormatMime(option.format.mime));
 
   const overline = document.createElement("span");
   overline.className = "format-overline";
@@ -484,13 +1059,7 @@ const createFormatButton = (
 
   const meta = document.createElement("span");
   meta.className = "format-meta";
-  const metaParts = [
-    option.format.mime,
-    `.${option.format.extension}`
-  ];
-  if (!simpleMode) metaParts.push(`via ${option.handler.name}`);
-  if (option.format.lossless) metaParts.push("lossless");
-  meta.textContent = metaParts.join(" | ");
+  meta.textContent = renderListMeta(option, side);
 
   button.append(overline, title, meta);
   button.addEventListener("click", () => applySelection(side, button));
@@ -530,7 +1099,7 @@ async function buildOptionList () {
 
       allOptions.push({ format, handler });
 
-      const dedupeKey = `${format.mime}::${format.format}`;
+      const dedupeKey = `${normalizeFormatMime(format.mime)}::${format.format}`;
       if (format.from && (!simpleMode || !seenInputs.has(dedupeKey))) {
         const button = createFormatButton({ format, handler }, "input");
         ui.inputList.appendChild(button);
@@ -553,78 +1122,16 @@ async function buildOptionList () {
 
   filterButtonList(ui.inputList, inputSearchValue, ui.fromCount, "format");
   filterButtonList(ui.outputList, outputSearchValue, ui.toCount, "format");
+  renderOutputSuggestions();
   renderSummary();
+  renderTunePanel();
   syncStepUI();
   window.hidePopup();
+
+  if (selectedInputRef && selectedOutputRef) {
+    void refreshRoutePlan();
+  }
 }
-
-const setRoutingMode = async (nextSimple: boolean) => {
-  if (simpleMode === nextSimple) {
-    updateModeUI();
-    return;
-  }
-
-  simpleMode = nextSimple;
-  updateModeUI();
-  showToast(simpleMode ? "Simple routing enabled." : "Advanced routing enabled.", "success");
-  window.showPopup(`<h2>Refreshing routes...</h2><p>Rebuilding the format list for ${simpleMode ? "simple" : "advanced"} mode.</p>`);
-  await buildOptionList();
-};
-
-const updateModeUI = () => {
-  document.documentElement.dataset.routingMode = simpleMode ? "simple" : "advanced";
-  ui.modeButton.textContent = `Routing: ${simpleMode ? "Simple" : "Advanced"}`;
-  ui.summaryMode.textContent = simpleMode ? "Simple mode" : "Advanced mode";
-  for (const button of ui.modeOptionButtons) {
-    const isSelected = (button.dataset.routingMode === "simple") === simpleMode;
-    button.dataset.selected = isSelected ? "true" : "false";
-  }
-};
-
-const openModeSheet = () => {
-  ui.modeSheet.hidden = false;
-  ui.modeSheetBackdrop.hidden = false;
-};
-
-const closeModeSheet = () => {
-  ui.modeSheet.hidden = true;
-  ui.modeSheetBackdrop.hidden = true;
-};
-
-const syncStepUI = () => {
-  for (const stage of ui.stages) {
-    const step = stage.dataset.step as StepId;
-    stage.dataset.active = step === currentStep ? "true" : "false";
-  }
-
-  for (const button of ui.stepButtons) {
-    const step = button.dataset.stepTarget as StepId;
-    button.dataset.active = step === currentStep ? "true" : "false";
-    button.dataset.complete = isStepComplete(step) ? "true" : "false";
-    button.disabled = !canEnterStep(step);
-  }
-
-  const nextStep = nextStepFrom(currentStep);
-  const previousStep = previousStepFrom(currentStep);
-
-  ui.backButton.hidden = previousStep === null;
-  ui.backButton.disabled = previousStep === null || isConverting;
-
-  if (currentStep === "review") {
-    ui.nextButton.hidden = true;
-    ui.convertButton.hidden = false;
-  } else {
-    ui.nextButton.hidden = false;
-    ui.convertButton.hidden = true;
-    ui.nextButton.textContent =
-      currentStep === "upload" ? "Choose input format" :
-      currentStep === "from" ? "Choose output format" :
-      "Review conversion";
-    ui.nextButton.disabled = nextStep === null || !canEnterStep(nextStep) || isConverting;
-  }
-
-  ui.convertButton.disabled = !canConvert();
-};
 
 const searchHandler = (event: Event) => {
   const target = event.target;
@@ -638,8 +1145,8 @@ const searchHandler = (event: Event) => {
 };
 
 const findMatchingInputButton = (file: File) => {
-  const mimeType = normalizeMimeType(file.type);
-  const fileExtension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const mimeType = normalizeFormatMime(file.type);
+  const fileExtension = getFileExtension(file.name);
   const buttons = Array.from(ui.inputList.children).filter(
     child => child instanceof HTMLButtonElement
   ) as HTMLButtonElement[];
@@ -673,6 +1180,17 @@ const findMatchingInputButton = (file: File) => {
   return null;
 };
 
+const collectTransferFiles = (transfer: DataTransfer | null | undefined): File[] => {
+  const directFiles = Array.from(transfer?.files ?? []);
+  if (directFiles.length > 0) {
+    return directFiles;
+  }
+
+  return Array.from(transfer?.items ?? [])
+    .map(item => (item.kind === "file" ? item.getAsFile() : null))
+    .filter((file): file is File => file instanceof File);
+};
+
 const autoSelectInputFormat = (file: File) => {
   const match = findMatchingInputButton(file);
   if (match) {
@@ -682,7 +1200,7 @@ const autoSelectInputFormat = (file: File) => {
     return;
   }
 
-  const fallbackSearchValue = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const fallbackSearchValue = getFileExtension(file.name);
   ui.inputSearch.value = fallbackSearchValue;
   const visibleCount = filterButtonList(ui.inputList, ui.inputSearch.value, ui.fromCount, "format");
   if (visibleCount === 0) {
@@ -692,30 +1210,63 @@ const autoSelectInputFormat = (file: File) => {
   showToast("Input format was not confidently detected. Please pick it manually.", "warning");
 };
 
+const applySelection = (side: ListSide, button: HTMLButtonElement, autoAdvance = true) => {
+  const option = optionFromButton(button);
+  if (!option) return;
+
+  const parent = side === "input" ? ui.inputList : ui.outputList;
+  for (const child of Array.from(parent.children)) {
+    if (child instanceof HTMLButtonElement) {
+      child.classList.remove("selected");
+    }
+  }
+  button.classList.add("selected");
+
+  if (side === "input") {
+    const changed = !optionMatchesSelection(selectedInputRef, option, true);
+    selectedInputRef = createOptionRef(option);
+    if (changed && selectedOutputRef) {
+      clearSelection("output");
+      clearRoutePlan();
+    }
+    renderOutputSuggestions();
+    if (autoAdvance) setCurrentStep("to");
+  } else {
+    selectedOutputRef = createOptionRef(option);
+    if (autoAdvance) setCurrentStep("tune");
+    void refreshRoutePlan();
+  }
+
+  renderSummary();
+  syncStepUI();
+};
+
+const setDragState = (active: boolean) => {
+  ui.body.dataset.dragging = active ? "true" : "false";
+};
+
 const fileSelectHandler = (event: Event) => {
-  let inputFiles: FileList | null | undefined;
+  let files: File[] = [];
   let sourceInput: HTMLInputElement | null = null;
 
   if (event instanceof DragEvent) {
     event.preventDefault();
-    inputFiles = event.dataTransfer?.files;
+    files = collectTransferFiles(event.dataTransfer);
     ui.body.dataset.dragging = "false";
   } else if (event instanceof ClipboardEvent) {
-    inputFiles = event.clipboardData?.files;
+    files = collectTransferFiles(event.clipboardData);
   } else {
     const target = event.target;
     if (!(target instanceof HTMLInputElement)) return;
     sourceInput = target;
-    inputFiles = target.files;
+    files = Array.from(target.files ?? []);
   }
 
-  if (!inputFiles) return;
-  const files = Array.from(inputFiles);
   if (sourceInput) sourceInput.value = "";
   if (files.length === 0) return;
 
-  if (files.some(file => file.type !== files[0].type)) {
-    showToast("All selected files must share the same MIME type.", "danger");
+  if (!filesShareCompatibleInputSignature(files)) {
+    showToast("All selected files must share the same MIME type or file extension.", "danger");
     return;
   }
 
@@ -729,13 +1280,7 @@ const fileSelectHandler = (event: Event) => {
   autoSelectInputFormat(files[0]);
 };
 
-const setDragState = (active: boolean) => {
-  ui.body.dataset.dragging = active ? "true" : "false";
-};
-
-async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
-  const pathString = path.map(node => node.format.format).join(" -> ");
-
+const pathMatchesDeadEnd = (path: ConvertPathNode[]) => {
   for (const deadEnd of deadEndAttempts) {
     let matchesDeadEnd = true;
     for (let index = 0; index < deadEnd.length; index += 1) {
@@ -744,12 +1289,59 @@ async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
         break;
       }
     }
-    if (matchesDeadEnd) {
-      return null;
-    }
+    if (matchesDeadEnd) return true;
+  }
+  return false;
+};
+
+const executeHandlerWithPolicy = async (
+  handler: FormatHandler,
+  files: FileData[],
+  inputFormat: FileFormat,
+  outputFormat: FileFormat,
+  args: string[] | undefined,
+  policy: ExecutionPolicy
+) => {
+  if ((handler.batchStrategy ?? "whole-batch") !== "per-file" || files.length <= 1 || policy.maxParallelJobs <= 1) {
+    return handler.doConvert(files, inputFormat, outputFormat, args);
   }
 
-  window.showPopup(`<h2>Finding conversion route...</h2><p>Trying <b>${escapeHtml(pathString)}</b>.</p>`);
+  const results: FileData[][] = new Array(files.length);
+  const workerCount = Math.min(policy.maxParallelJobs, files.length);
+  let nextIndex = 0;
+
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (true) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+      if (currentIndex >= files.length) return;
+      results[currentIndex] = await handler.doConvert([files[currentIndex]], inputFormat, outputFormat, args);
+      await waitForPaint();
+    }
+  }));
+
+  return results.flat();
+};
+
+async function attemptConvertPath (
+  files: FileData[],
+  path: ConvertPathNode[],
+  policy: ExecutionPolicy,
+  options: {
+    preview?: boolean;
+    showProgress?: boolean;
+    trackDeadEnds?: boolean;
+  } = {}
+) {
+  const pathString = path.map(node => node.format.format).join(" -> ");
+
+  if (options.trackDeadEnds && pathMatchesDeadEnd(path)) {
+    return null;
+  }
+
+  if (options.showProgress) {
+    window.showPopup(`<h2>Finding conversion route...</h2><p>Trying <b>${escapeHtml(pathString)}</b>.</p>`);
+  }
 
   for (let index = 0; index < path.length - 1; index += 1) {
     const handler = path[index + 1].handler;
@@ -775,20 +1367,25 @@ async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
         throw new Error(`Handler "${handler.name}" doesn't support the "${path[index].format.format}" format.`);
       }
 
-      files = (await Promise.all([
-        handler.doConvert(files, inputFormat, path[index + 1].format),
-        new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-      ]))[0];
+      files = await executeHandlerWithPolicy(
+        handler,
+        files,
+        inputFormat,
+        path[index + 1].format,
+        undefined,
+        policy
+      );
 
       if (files.some(file => !file.bytes.length)) throw new Error("Output is empty.");
+      if (!options.preview) {
+        await waitForPaint();
+      }
     } catch (error) {
-      const deadEndPath = path.slice(0, index + 2);
-      deadEndAttempts.push(deadEndPath);
-      window.traversionGraph.addDeadEndPath(deadEndPath);
-
-      window.showPopup("<h2>Finding conversion route...</h2><p>Looking for a valid path...</p>");
-      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
+      if (options.trackDeadEnds) {
+        const deadEndPath = path.slice(0, index + 2);
+        deadEndAttempts.push(deadEndPath);
+        window.traversionGraph.addDeadEndPath(deadEndPath);
+      }
       console.error(handler.name, `${path[index].format.format} -> ${path[index + 1].format.format}`, error);
       return null;
     }
@@ -797,21 +1394,313 @@ async function attemptConvertPath (files: FileData[], path: ConvertPathNode[]) {
   return { files, path };
 }
 
+async function findPlannedPath (from: ConvertPathNode, to: ConvertPathNode) {
+  for await (const path of window.traversionGraph.searchPath(from, to, simpleMode)) {
+    const finalPath = [...path];
+    if (finalPath.at(-1)?.handler === to.handler) {
+      finalPath[finalPath.length - 1] = to;
+    }
+    return finalPath;
+  }
+  return null;
+}
+
+async function tryConvertByTraversingInternal (
+  files: FileData[],
+  from: ConvertPathNode,
+  to: ConvertPathNode,
+  policy: ExecutionPolicy,
+  preferredPath: ConvertPathNode[] | null = null,
+  showProgress = false
+) {
+  deadEndAttempts = [];
+  window.traversionGraph.clearDeadEndPaths();
+
+  if (preferredPath) {
+    const preferredAttempt = await attemptConvertPath(files, preferredPath, policy, {
+      preview: false,
+      showProgress,
+      trackDeadEnds: true
+    });
+    if (preferredAttempt) return preferredAttempt;
+  }
+
+  for await (const path of window.traversionGraph.searchPath(from, to, simpleMode)) {
+    const candidatePath = [...path];
+    if (candidatePath.at(-1)?.handler === to.handler) {
+      candidatePath[candidatePath.length - 1] = to;
+    }
+    const attempt = await attemptConvertPath(files, candidatePath, policy, {
+      preview: false,
+      showProgress,
+      trackDeadEnds: true
+    });
+    if (attempt) return attempt;
+    if (showProgress) {
+      window.showPopup("<h2>Finding conversion route...</h2><p>Looking for a valid path...</p>");
+      await waitForPaint();
+    }
+  }
+  return null;
+}
+
 window.tryConvertByTraversing = async (
   files: FileData[],
   from: ConvertPathNode,
   to: ConvertPathNode
-) => {
-  deadEndAttempts = [];
-  window.traversionGraph.clearDeadEndPaths();
-  for await (const path of window.traversionGraph.searchPath(from, to, simpleMode)) {
-    if (path.at(-1)?.handler === to.handler) {
-      path[path.length - 1] = to;
-    }
-    const attempt = await attemptConvertPath(files, path);
-    if (attempt) return attempt;
+) => tryConvertByTraversingInternal(files, from, to, executionPolicy, null, false);
+
+const getPreviewEligibility = () => {
+  if (selectedFiles.length !== 1) {
+    return { canPreview: false, message: "Live preview is available for a single source file at a time." };
   }
-  return null;
+
+  if (selectedFiles[0].size > 10_000_000) {
+    return { canPreview: false, message: "Preview is paused for files larger than 10 MB to keep the app responsive." };
+  }
+
+  const outputOption = getSelectedOption("output");
+  if (!outputOption) {
+    return { canPreview: false, message: "Pick an output format to unlock preview." };
+  }
+
+  const mime = outputOption.format.mime;
+  const previewable = mime.startsWith("image/")
+    || mime.startsWith("audio/")
+    || mime.startsWith("video/")
+    || mime.startsWith("text/")
+    || mime.includes("json")
+    || mime.includes("xml")
+    || mime === "application/pdf";
+
+  if (!previewable) {
+    return { canPreview: false, message: "This output type does not have an inline preview yet, but the route can still run normally." };
+  }
+
+  return { canPreview: true, message: "" };
+};
+
+async function maybeStartPreview () {
+  if (currentStep !== "review") return;
+  if (routePlan.status !== "ready" || !routePlan.path) {
+    resetPreviewState("Route planning has to finish before preview can start.");
+    return;
+  }
+
+  const previewEligibility = getPreviewEligibility();
+  if (!previewEligibility.canPreview) {
+    resetPreviewState(previewEligibility.message);
+    return;
+  }
+
+  const requestId = ++previewRequestId;
+  previewState = {
+    status: "loading",
+    message: "Generating live preview on a single safe job...",
+    files: null
+  };
+  renderReviewPreview();
+
+  const inputOption = getSelectedOption("input");
+  const outputOption = getSelectedOption("output");
+  if (!inputOption || !outputOption) return;
+
+  const previewPolicy: ExecutionPolicy = {
+    ...executionPolicy,
+    targetThreads: 1,
+    maxParallelJobs: 1
+  };
+
+  const previewFiles = [await toFileData(selectedFiles[0])];
+  const startedAt = performance.now();
+
+  let output = await attemptConvertPath(previewFiles, routePlan.path, previewPolicy, {
+    preview: true,
+    showProgress: false,
+    trackDeadEnds: false
+  });
+
+  if (!output) {
+    output = await tryConvertByTraversingInternal(
+      previewFiles,
+      new ConvertPathNode(inputOption.handler, inputOption.format),
+      new ConvertPathNode(outputOption.handler, outputOption.format),
+      previewPolicy,
+      null,
+      false
+    );
+  }
+
+  if (requestId !== previewRequestId || currentStep !== "review") {
+    return;
+  }
+
+  if (!output) {
+    previewState = {
+      status: "error",
+      message: "Preview could not be generated for this route, but you can still run the full conversion.",
+      files: null
+    };
+    renderReviewPreview();
+    return;
+  }
+
+  previewState = {
+    status: "ready",
+    message: `Preview ready via ${output.path.map(node => node.format.format.toUpperCase()).join(" -> ")}.`,
+    files: output.files
+  };
+  renderReviewPreview();
+  recordRouteObservation(
+    getRouteKey(output.path),
+    previewFiles[0].bytes.length,
+    performance.now() - startedAt,
+    true,
+    deviceProfile.signature
+  );
+}
+
+async function refreshRoutePlan () {
+  const inputOption = getSelectedOption("input");
+  const outputOption = getSelectedOption("output");
+  const requestId = ++routePlanRequestId;
+  previewRequestId += 1;
+
+  if (!inputOption || !outputOption) {
+    clearRoutePlan();
+    return;
+  }
+
+  routePlan = {
+    status: "loading",
+    path: null,
+    estimate: null,
+    error: null
+  };
+  renderTunePanel();
+  renderSummary();
+  syncStepUI();
+
+  const from = new ConvertPathNode(inputOption.handler, inputOption.format);
+  const to = new ConvertPathNode(outputOption.handler, outputOption.format);
+
+  try {
+    const path = await findPlannedPath(from, to);
+    if (requestId !== routePlanRequestId) return;
+
+    if (!path) {
+      routePlan = {
+        status: "unavailable",
+        path: null,
+        estimate: null,
+        error: "The planner could not find a route for the selected source and target."
+      };
+      renderTunePanel();
+      renderSummary();
+      syncStepUI();
+      return;
+    }
+
+    const estimate = estimateRoute({
+      path,
+      totalBytes: totalSelectedBytes(),
+      fileCount: selectedFiles.length,
+      policy: executionPolicy,
+      profile: deviceProfile
+    });
+
+    routePlan = {
+      status: "ready",
+      path,
+      estimate,
+      error: null
+    };
+    renderTunePanel();
+    renderSummary();
+    syncStepUI();
+
+    if (currentStep === "review") {
+      void maybeStartPreview();
+    }
+  } catch (error) {
+    if (requestId !== routePlanRequestId) return;
+    routePlan = {
+      status: "unavailable",
+      path: null,
+      estimate: null,
+      error: normalizeMessage(error)
+    };
+    renderTunePanel();
+    renderSummary();
+    syncStepUI();
+  }
+}
+
+async function loadExamplePreset (preset: ExamplePreset) {
+  try {
+    const response = await fetch(preset.sourceUrl);
+    if (!response.ok) throw new Error(`Could not load ${preset.title}.`);
+    const blob = await response.blob();
+    const file = new File([blob], preset.fileName, {
+      type: blob.type || "application/octet-stream"
+    });
+    selectedFiles = [file];
+    resetConversionFlow();
+    renderSelectionCard();
+    renderSummary();
+    setCurrentStep("from");
+    autoSelectInputFormat(file);
+    await waitForPaint();
+
+    const outputButton = Array.from(ui.outputList.children)
+      .filter((child): child is HTMLButtonElement => child instanceof HTMLButtonElement)
+      .find(button => {
+        const option = optionFromButton(button);
+        return option?.format.format === preset.output.format && option.format.mime === preset.output.mime;
+      });
+    if (outputButton) {
+      outputButton.click();
+    }
+
+    showToast(`${preset.title} example loaded.`, "success");
+  } catch (error) {
+    showToast(normalizeMessage(error), "danger");
+  }
+}
+
+const setRoutingMode = async (nextSimple: boolean) => {
+  if (simpleMode === nextSimple) {
+    renderRoutingUI();
+    return;
+  }
+
+  simpleMode = nextSimple;
+  renderRoutingUI();
+  clearRoutePlan();
+  showToast(simpleMode ? "Simple routing enabled." : "Advanced routing enabled.", "success");
+  window.showPopup(`<h2>Refreshing routes...</h2><p>Rebuilding the format list for ${simpleMode ? "simple" : "advanced"} mode.</p>`);
+  await buildOptionList();
+};
+
+const setThemePreference = (nextPreference: ThemePreference) => {
+  if (themePreference === nextPreference) return;
+  themePreference = nextPreference;
+  localStorage.setItem(THEME_STORAGE_KEY, themePreference);
+  renderThemeUI();
+};
+
+const setPerformancePreset = (nextPreset: PerformancePreset) => {
+  if (performancePreset === nextPreset) return;
+  performancePreset = nextPreset;
+  localStorage.setItem(PRESET_STORAGE_KEY, performancePreset);
+  executionPolicy = buildExecutionPolicy(deviceProfile, performancePreset);
+  renderPerformanceUI();
+  renderSummary();
+  renderTunePanel();
+  syncStepUI();
+  if (selectedInputRef && selectedOutputRef) {
+    void refreshRoutePlan();
+  }
 };
 
 const downloadFile = (bytes: Uint8Array, name: string) => {
@@ -889,7 +1778,7 @@ const finishConversionState = () => {
 
 const convert = async () => {
   if (!canConvert()) {
-    showToast("Select files and both formats before converting.", "warning");
+    showToast("Select files, tune the route and wait for planning before converting.", "warning");
     return;
   }
 
@@ -935,9 +1824,17 @@ const convert = async () => {
     }
 
     window.showPopup("<h2>Finding conversion route...</h2><p>Preparing the first route candidate.</p>");
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await waitForPaint();
 
-    const output = await window.tryConvertByTraversing(inputFileData, inputOption, outputOption);
+    const startedAt = performance.now();
+    const output = await tryConvertByTraversingInternal(
+      inputFileData,
+      new ConvertPathNode(inputOption.handler, inputOption.format),
+      new ConvertPathNode(outputOption.handler, outputOption.format),
+      executionPolicy,
+      routePlan.path,
+      true
+    );
     if (!output) {
       finishConversionState();
       window.hidePopup();
@@ -949,6 +1846,13 @@ const convert = async () => {
     await deliverOutputFiles(finalFiles);
 
     finishConversionState();
+    recordRouteObservation(
+      getRouteKey(output.path),
+      totalSelectedBytes(),
+      performance.now() - startedAt,
+      false,
+      deviceProfile.signature
+    );
     showToast(finalFiles.length === 1 ? "Conversion complete." : `${finalFiles.length} files are ready.`, "success");
 
     const pathUsed = escapeHtml(output.path.map(node => node.format.format).join(" -> "));
@@ -960,11 +1864,12 @@ const convert = async () => {
         : ""}` +
       `<button type="button" onclick="window.hidePopup()">Done</button>`
     );
+    void refreshRoutePlan();
   } catch (error) {
     console.error(error);
     finishConversionState();
     window.hidePopup();
-    showToast(`Unexpected error during conversion: ${error}`, "danger");
+    showToast(`Unexpected error during conversion: ${normalizeMessage(error)}`, "danger");
   }
 };
 
@@ -976,6 +1881,25 @@ const syncNativeShell = async () => {
     await StatusBar.setOverlaysWebView({ overlay: true });
   } catch (error) {
     console.warn("Failed to initialize native shell chrome.", error);
+  }
+};
+
+const warmDeviceProfile = async () => {
+  if (profileWarmupStarted) return;
+  profileWarmupStarted = true;
+  try {
+    const profile = await loadDeviceProfile();
+    deviceProfile = profile;
+    executionPolicy = buildExecutionPolicy(deviceProfile, performancePreset);
+    renderPerformanceUI();
+    renderSummary();
+    renderTunePanel();
+    syncStepUI();
+    if (selectedInputRef && selectedOutputRef) {
+      void refreshRoutePlan();
+    }
+  } catch (error) {
+    console.warn("Device profile warmup failed.", error);
   }
 };
 
@@ -1015,12 +1939,23 @@ ui.popupBg.addEventListener("click", () => {
   if (!isConverting) window.hidePopup();
 });
 
-ui.modeButton.addEventListener("click", openModeSheet);
-ui.modeSheetBackdrop.addEventListener("click", closeModeSheet);
-for (const button of ui.modeOptionButtons) {
-  button.addEventListener("click", async () => {
-    closeModeSheet();
-    await setRoutingMode(button.dataset.routingMode === "simple");
+for (const button of ui.routingButtons) {
+  button.addEventListener("click", () => {
+    void setRoutingMode(button.dataset.routingMode === "simple");
+  });
+}
+
+for (const button of ui.themeButtons) {
+  button.addEventListener("click", () => {
+    const nextPreference = button.dataset.themePreference as ThemePreference;
+    setThemePreference(nextPreference);
+  });
+}
+
+for (const button of ui.performanceButtons) {
+  button.addEventListener("click", () => {
+    const nextPreset = button.dataset.performancePreset as PerformancePreset;
+    setPerformancePreset(nextPreset);
   });
 }
 
@@ -1048,20 +1983,16 @@ ui.convertButton.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", event => {
-  if (event.key !== "Escape") return;
-  closeModeSheet();
-  if (!isConverting) window.hidePopup();
+  if (event.key === "Escape" && !isConverting) {
+    window.hidePopup();
+  }
 });
 
-const handleDesktopMediaChange = () => {
-  syncStepUI();
-};
-
-if (typeof desktopMediaQuery.addEventListener === "function") {
-  desktopMediaQuery.addEventListener("change", handleDesktopMediaChange);
-} else {
-  desktopMediaQuery.addListener(handleDesktopMediaChange);
-}
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+  if (themePreference === "auto") {
+    renderThemeUI();
+  }
+});
 
 {
   const commitSha = import.meta.env.VITE_COMMIT_SHA;
@@ -1070,10 +2001,30 @@ if (typeof desktopMediaQuery.addEventListener === "function") {
   }
 }
 
+renderExamples();
 renderSelectionCard();
+renderThemeUI();
+renderRoutingUI();
+renderPerformanceUI();
+renderOutputSuggestions();
+renderTunePanel();
 renderSummary();
-updateModeUI();
+renderReviewPreview();
 syncStepUI();
+
+requestAnimationFrame(() => {
+  if ("requestIdleCallback" in window) {
+    (window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+    }).requestIdleCallback?.(() => {
+      void warmDeviceProfile();
+    }, { timeout: 1200 });
+  } else {
+    globalThis.setTimeout(() => {
+      void warmDeviceProfile();
+    }, 250);
+  }
+});
 
 (async () => {
   try {

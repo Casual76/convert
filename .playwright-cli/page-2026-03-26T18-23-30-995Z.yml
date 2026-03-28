@@ -1,0 +1,85 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
+      - generic [ref=e9]:
+        - region "Routing mode" [ref=e10]:
+          - generic [ref=e11]: Routing
+          - generic [ref=e12]:
+            - button "Simple" [ref=e13] [cursor=pointer]
+            - button "Advanced" [ref=e14] [cursor=pointer]
+        - region "Theme preference" [ref=e15]:
+          - generic [ref=e16]: Theme
+          - generic [ref=e17]:
+            - button "Auto" [ref=e18] [cursor=pointer]
+            - button "Light" [ref=e19] [cursor=pointer]
+            - button "Dark" [ref=e20] [cursor=pointer]
+        - link "Source" [ref=e21] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e22]:
+      - button "01 Upload Drop files or try a demo" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: "01"
+        - generic [ref=e25]: Upload
+        - generic [ref=e26]: Drop files or try a demo
+      - button "02 From Confirm the source format" [disabled]:
+        - generic: "02"
+        - generic: From
+        - generic: Confirm the source format
+      - button "03 To Pick a target route" [disabled]:
+        - generic: "03"
+        - generic: To
+        - generic: Pick a target route
+      - button "04 Tune Budget CPU and inspect ETA" [disabled]:
+        - generic: "04"
+        - generic: Tune
+        - generic: Budget CPU and inspect ETA
+      - button "05 Review Preview and convert" [disabled]:
+        - generic: "05"
+        - generic: Review
+        - generic: Preview and convert
+    - main [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - paragraph [ref=e51]: Step 1
+          - heading "Load a file, sample a route and see what the app can do." [level=2] [ref=e52]
+          - paragraph [ref=e53]: Use your own files or launch a prebuilt example to explore the full flow without hunting for assets first.
+        - generic [ref=e54]:
+          - article [ref=e55]:
+            - generic [ref=e56]:
+              - paragraph [ref=e57]: Drop zone
+              - heading "Start with the file. We will handle the route." [level=3] [ref=e58]
+              - paragraph [ref=e59]: Drag, drop, paste or browse. The app keeps conversion on-device, auto-detects the input when it can, then explains route cost, preview support and CPU budget before conversion.
+            - button "Add files Drag, drop or paste here. Multiple files are allowed when they share the same MIME type." [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: Add files
+              - generic [ref=e62]: Drag, drop or paste here. Multiple files are allowed when they share the same MIME type.
+          - complementary [ref=e63]:
+            - paragraph [ref=e64]: Ready when you are
+            - heading "No file selected yet" [level=3] [ref=e65]
+            - paragraph [ref=e66]: Load a file to unlock route planning, performance tuning and live preview.
+            - generic [ref=e68]: No files
+            - paragraph [ref=e69]: Try one of the examples or drop your own file to unlock route planning, preview and performance tuning.
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - paragraph [ref=e73]: Examples
+              - heading "Quick demo routes" [level=3] [ref=e74]
+            - paragraph [ref=e75]: Useful, light and playful presets that jump you straight into the new flow.
+          - generic [ref=e76]:
+            - button "Example Vector to PNG Use a tiny SVG sample and land on a crisp PNG output." [ref=e77] [cursor=pointer]:
+              - generic [ref=e78]: Example
+              - strong [ref=e79]: Vector to PNG
+              - generic [ref=e80]: Use a tiny SVG sample and land on a crisp PNG output.
+            - button "Example Text to WAV Feed a short note and preview a speech-friendly route." [ref=e81] [cursor=pointer]:
+              - generic [ref=e82]: Example
+              - strong [ref=e83]: Text to WAV
+              - generic [ref=e84]: Feed a short note and preview a speech-friendly route.
+            - button "Example Markdown to DOCX Try a document flow with a simple markdown note." [ref=e85] [cursor=pointer]:
+              - generic [ref=e86]: Example
+              - strong [ref=e87]: Markdown to DOCX
+              - generic [ref=e88]: Try a document flow with a simple markdown note.
+    - generic [ref=e43]:
+      - button "Choose input format" [disabled]

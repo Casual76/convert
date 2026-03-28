@@ -5,7 +5,7 @@ declare global {
   interface Window {
     supportedFormatCache: Map<string, FileFormat[]>;
     traversionGraph: TraversionGraph;
-    printSupportedFormatCache: () => string;
+    printSupportedFormatCache: () => string | Promise<string>;
     showPopup: (html: string) => void;
     hidePopup: () => void;
     tryConvertByTraversing: (files: FileData[], from: ConvertPathNode, to: ConvertPathNode) => Promise<{

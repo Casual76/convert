@@ -1,0 +1,9 @@
+Total messages: 20 (Errors: 0, Warnings: 1)
+Returning 6 messages for level "info"
+
+[WARNING] using deprecated parameters for the initialization function; pass a single object instead @ http://127.0.0.1:4173/convert/node_modules/.vite/deps/@flo-audio_reflo.js?v=3b7ead05:1313
+[LOG] floHandler: reflo worker ready @ http://127.0.0.1:4173/convert/src/handlers/flo.ts:151
+[LOG] VexFlow fonts loaded successfully @ http://127.0.0.1:4173/convert/src/handlers/vexflow.ts:20
+[LOG] Initializing traversion graph... @ http://127.0.0.1:4173/convert/src/TraversionGraph.ts:119
+[LOG] Traversion graph initialized in 123.40 ms with 717 nodes and 64005 edges. @ http://127.0.0.1:4173/convert/src/TraversionGraph.ts:195
+[LOG] Built initial format list. @ http://127.0.0.1:4173/convert/src/main.ts:876

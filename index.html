@@ -14,109 +14,253 @@
   <meta name="og:site_name" content="Convert to it!">
   <meta name="og:description" content="Truly universal online file converter. Private, on-device conversion across mediums.">
   <meta name="og:image" content="https://p2r3.github.io/convert/assets/favicon-Bfod-rsk.ico">
-  <meta name="theme-color" content="#08101F">
+  <meta name="theme-color" content="#f4efe6">
   <meta name="og:type" content="website">
 </head>
 <body>
+  <input id="file-input" type="file" multiple>
 
-  <input id="file-input" type="file">
-
-  <div class="app-shell">
-    <header class="hero glass-panel">
-      <div class="hero-copy">
+  <div id="app-shell" class="app-shell">
+    <header class="top-bar surface-panel">
+      <div class="brand-block">
         <p class="eyebrow">Universal converter</p>
         <h1>Convert to it!</h1>
         <p class="hero-text">
-          Private, on-device conversion with a phone-first flow that stays fast even when the formats get weird.
+          Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
         </p>
       </div>
 
-      <div class="hero-actions">
-        <button id="mode-button" class="ghost-button" type="button">Routing: Simple</button>
+      <div class="top-actions">
+        <section class="control-cluster" aria-label="Routing mode">
+          <span class="control-label">Routing</span>
+          <div class="segmented-control">
+            <button type="button" class="segment-button" data-routing-mode="simple">Simple</button>
+            <button type="button" class="segment-button" data-routing-mode="advanced">Advanced</button>
+          </div>
+        </section>
+
+        <section class="control-cluster" aria-label="Theme preference">
+          <span class="control-label">Theme</span>
+          <div class="segmented-control">
+            <button type="button" class="segment-button" data-theme-preference="auto">Auto</button>
+            <button type="button" class="segment-button" data-theme-preference="light">Light</button>
+            <button type="button" class="segment-button" data-theme-preference="dark">Dark</button>
+          </div>
+        </section>
+
         <a id="commit-id" href="https://github.com/p2r3/convert">Source</a>
       </div>
     </header>
 
-    <nav id="stepper" class="stepper" aria-label="Conversion steps">
+    <nav class="stepper surface-panel" aria-label="Conversion steps">
       <button class="step-chip" type="button" data-step-target="upload">
         <span class="step-index">01</span>
         <span class="step-label">Upload</span>
+        <span class="step-copy">Drop files or try a demo</span>
       </button>
       <button class="step-chip" type="button" data-step-target="from">
         <span class="step-index">02</span>
         <span class="step-label">From</span>
+        <span class="step-copy">Confirm the source format</span>
       </button>
       <button class="step-chip" type="button" data-step-target="to">
         <span class="step-index">03</span>
         <span class="step-label">To</span>
+        <span class="step-copy">Pick a target route</span>
+      </button>
+      <button class="step-chip" type="button" data-step-target="tune">
+        <span class="step-index">04</span>
+        <span class="step-label">Tune</span>
+        <span class="step-copy">Budget CPU and inspect ETA</span>
       </button>
       <button class="step-chip" type="button" data-step-target="review">
-        <span class="step-index">04</span>
-        <span class="step-label">Convert</span>
+        <span class="step-index">05</span>
+        <span class="step-label">Review</span>
+        <span class="step-copy">Preview and convert</span>
       </button>
     </nav>
 
-    <main id="wizard-grid" class="wizard-grid">
-      <section id="upload-stage" class="wizard-stage glass-panel" data-step="upload">
-        <div class="stage-heading">
+    <main class="wizard-flow">
+      <section class="wizard-stage stage-upload surface-panel" data-step="upload">
+        <div class="stage-header">
           <p class="stage-kicker">Step 1</p>
-          <h2>Drop your file and let the app guess the route.</h2>
+          <h2>Load a file, sample a route and see what the app can do.</h2>
+          <p class="stage-copy">Use your own files or launch a prebuilt example to explore the full flow without hunting for assets first.</p>
         </div>
 
-        <button id="file-area" class="drop-zone" type="button">
-          <span class="drop-title">Tap to add a file</span>
-          <span class="drop-subtitle" id="drop-hint-text">or drag, drop, or paste it here</span>
-        </button>
+        <div class="upload-grid">
+          <article class="upload-hero emphasis-panel">
+            <div class="upload-copy">
+              <p class="eyebrow">Drop zone</p>
+              <h3>Start with the file. We will handle the route.</h3>
+              <p>
+                Drag, drop, paste or browse. The app keeps conversion on-device, auto-detects the input when it can, then explains route cost, preview support and CPU budget before conversion.
+              </p>
+            </div>
 
-        <div id="selection-card" class="info-card">
-          <p id="selection-kicker" class="selection-kicker">Ready when you are</p>
-          <h3 id="selection-title">No file selected yet</h3>
-          <p id="selection-meta">Choose a file to unlock the format steps and build a conversion route.</p>
-          <div id="selection-list" class="chip-row"></div>
+            <button id="file-area" class="drop-zone" type="button">
+              <span class="drop-title">Add files</span>
+              <span class="drop-subtitle">Drag, drop or paste here. Multiple files are allowed when they share the same MIME type.</span>
+            </button>
+          </article>
+
+          <aside class="selection-card tone-card">
+            <p id="selection-kicker" class="selection-kicker">Ready when you are</p>
+            <h3 id="selection-title">No file selected yet</h3>
+            <p id="selection-meta">Load a file to unlock route planning, performance tuning and live preview.</p>
+            <div id="selection-list" class="chip-row"></div>
+            <p id="source-insight" class="source-insight">
+              Try one of the examples or drop your own file to unlock route planning, preview and performance tuning.
+            </p>
+          </aside>
         </div>
+
+        <section class="section-block">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Examples</p>
+              <h3>Quick demo routes</h3>
+            </div>
+            <p class="section-copy">Useful, light and playful presets that jump you straight into the new flow.</p>
+          </div>
+          <div id="example-list" class="example-grid"></div>
+        </section>
       </section>
 
-      <section id="from-container" class="wizard-stage glass-panel" data-step="from">
-        <div class="stage-heading">
+      <section class="wizard-stage surface-panel" data-step="from">
+        <div class="stage-header">
           <p class="stage-kicker">Step 2</p>
           <h2>Confirm the input format.</h2>
-          <p class="stage-copy">We auto-detect when possible, but you can search and override it.</p>
+          <p class="stage-copy">Detection gets you close. Search or override when you want tighter control over the route.</p>
         </div>
 
-        <label class="search-shell" for="search-from">
-          <span>Search input formats</span>
-          <input type="text" id="search-from" class="search" placeholder="PNG, PDF, audio/wav...">
-        </label>
-
-        <div class="list-meta">
-          <span id="from-count">0 formats</span>
+        <div class="stage-toolbar">
+          <label class="search-shell" for="search-from">
+            <span>Search input formats</span>
+            <input type="text" id="search-from" class="search" placeholder="PNG, PDF, audio/wav...">
+          </label>
+          <div class="count-pill">
+            <span id="from-count">0 formats</span>
+          </div>
         </div>
+
         <div id="from-list" class="format-list"></div>
       </section>
 
-      <section id="to-container" class="wizard-stage glass-panel" data-step="to">
-        <div class="stage-heading">
+      <section class="wizard-stage surface-panel" data-step="to">
+        <div class="stage-header">
           <p class="stage-kicker">Step 3</p>
-          <h2>Pick the output format.</h2>
-          <p class="stage-copy">Search broadly or browse until the route looks right.</p>
+          <h2>Pick the target format.</h2>
+          <p class="stage-copy">Recommended outputs stay up top, while the full catalog remains searchable below.</p>
         </div>
 
-        <label class="search-shell" for="search-to">
-          <span>Search output formats</span>
-          <input type="text" id="search-to" class="search" placeholder="PDF, MP3, ZIP, JSON...">
-        </label>
+        <section class="section-block section-tight">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Recommended</p>
+              <h3>Suggested for this source</h3>
+            </div>
+            <p class="section-copy">Curated targets that fit the selected medium and stay pleasant to use.</p>
+          </div>
+          <div id="to-suggestions" class="suggestion-grid"></div>
+        </section>
 
-        <div class="list-meta">
-          <span id="to-count">0 formats</span>
+        <div class="stage-toolbar">
+          <label class="search-shell" for="search-to">
+            <span>Search output formats</span>
+            <input type="text" id="search-to" class="search" placeholder="PDF, MP3, ZIP, JSON...">
+          </label>
+          <div class="count-pill">
+            <span id="to-count">0 formats</span>
+          </div>
         </div>
+
         <div id="to-list" class="format-list"></div>
       </section>
 
-      <section id="review-stage" class="wizard-stage glass-panel" data-step="review">
-        <div class="stage-heading">
+      <section class="wizard-stage surface-panel" data-step="tune">
+        <div class="stage-header">
           <p class="stage-kicker">Step 4</p>
-          <h2>Review the conversion before you run it.</h2>
-          <p class="stage-copy">Everything stays on-device. You can still jump back and tweak any step.</p>
+          <h2>Tune the route around your machine.</h2>
+          <p class="stage-copy">Choose how aggressively the app should use CPU, then inspect ETA, route weight and why that path was chosen.</p>
+        </div>
+
+        <section class="section-block section-tight">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Performance preset</p>
+              <h3>CPU budget</h3>
+            </div>
+            <p class="section-copy">Never fully saturates the system, but each preset shifts the balance between responsiveness and throughput.</p>
+          </div>
+          <div class="segmented-control performance-control">
+            <button type="button" class="segment-button" data-performance-preset="responsive">Responsive</button>
+            <button type="button" class="segment-button" data-performance-preset="balanced">Balanced</button>
+            <button type="button" class="segment-button" data-performance-preset="max">Max</button>
+          </div>
+        </section>
+
+        <div class="tune-grid">
+          <article class="metric-card tone-card">
+            <span class="metric-label">Profile</span>
+            <strong id="tune-profile-status">Hardware fallback profile</strong>
+            <p id="tune-profile-summary">Waiting for local profiling data.</p>
+            <p id="tune-profile-detail" class="muted-copy">The profiler runs after first render and caches the result for future launches.</p>
+          </article>
+
+          <article class="metric-card">
+            <span class="metric-label">ETA</span>
+            <strong id="tune-eta">--</strong>
+            <p class="metric-footnote">Estimated duration band for the selected route.</p>
+          </article>
+
+          <article class="metric-card">
+            <span class="metric-label">Intensity</span>
+            <strong id="tune-intensity">--</strong>
+            <p class="metric-footnote">Relative weight of the route across handlers and medium jumps.</p>
+          </article>
+
+          <article class="metric-card">
+            <span class="metric-label">CPU Impact</span>
+            <strong id="tune-cpu">--</strong>
+            <p class="metric-footnote">Estimated reactivity impact after reserving headroom for the rest of the system.</p>
+          </article>
+
+          <article class="metric-card">
+            <span class="metric-label">Parallel Jobs</span>
+            <strong id="tune-jobs">--</strong>
+            <p class="metric-footnote">Maximum safe fan-out the planner will try for compatible steps.</p>
+          </article>
+
+          <article class="metric-card">
+            <span class="metric-label">Confidence</span>
+            <strong id="tune-confidence">--</strong>
+            <p class="metric-footnote">Raised by a local benchmark and by timings captured on this device.</p>
+          </article>
+        </div>
+
+        <section class="section-block">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Route preview</p>
+              <h3>Planned conversion steps</h3>
+            </div>
+            <p class="section-copy">Every step shows the handler, expected weight and how much it can fan out safely.</p>
+          </div>
+          <div id="tune-route-list" class="route-list"></div>
+        </section>
+
+        <details class="why-route">
+          <summary>Why this route</summary>
+          <ul id="tune-why-list" class="why-list"></ul>
+        </details>
+      </section>
+
+      <section class="wizard-stage surface-panel" data-step="review">
+        <div class="stage-header">
+          <p class="stage-kicker">Step 5</p>
+          <h2>Review, preview and convert.</h2>
+          <p class="stage-copy">You now have the chosen formats, tuned CPU policy, route estimate and a safe single-job preview when the target supports it.</p>
         </div>
 
         <div class="summary-grid">
@@ -134,46 +278,57 @@
           </article>
           <article class="summary-card">
             <span class="summary-label">Routing</span>
-            <strong id="summary-mode">Simple mode</strong>
+            <strong id="summary-mode">Simple routing</strong>
+          </article>
+          <article class="summary-card">
+            <span class="summary-label">Policy</span>
+            <strong id="summary-policy">Balanced preset</strong>
           </article>
         </div>
 
-        <div id="review-hint" class="review-hint">
-          Select a file and both formats to enable conversion.
-        </div>
+        <div id="review-hint" class="review-hint">Select or load a file to begin.</div>
+
+        <section class="section-block section-tight">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">Route</p>
+              <h3>Output path at a glance</h3>
+            </div>
+            <p id="review-policy" class="section-copy">Preview and review use the balanced preset, but live preview always runs in a single safe job.</p>
+          </div>
+          <div id="review-route" class="path-row"></div>
+        </section>
+
+        <section class="preview-panel">
+          <div class="preview-header">
+            <div>
+              <p class="section-kicker">Live preview</p>
+              <h3>First-file result</h3>
+            </div>
+            <div class="preview-copy">
+              <p id="review-preview-status">Pick a source file and target format to unlock preview.</p>
+              <p id="review-preview-meta" class="muted-copy"></p>
+            </div>
+          </div>
+          <div id="review-preview-frame" class="preview-frame-shell"></div>
+        </section>
       </section>
     </main>
-  </div>
 
-  <div id="action-bar" class="action-bar glass-panel">
-    <button id="back-button" class="ghost-button" type="button">Back</button>
-    <button id="next-button" class="primary-button" type="button">Continue</button>
-    <button id="convert-button" class="primary-button accent-button" type="button">Convert</button>
+    <div class="action-bar surface-panel">
+      <button id="back-button" class="button button-tonal" type="button">Back</button>
+      <button id="next-button" class="button button-primary" type="button">Continue</button>
+      <button id="convert-button" class="button button-primary button-strong" type="button">Convert</button>
+    </div>
   </div>
 
   <div id="popup-bg" class="overlay" hidden></div>
-  <div id="popup" class="dialog glass-panel" hidden>
+  <div id="popup" class="dialog surface-panel" hidden>
     <div id="popup-content">
       <h2>Loading tools...</h2>
       <p>Preparing the conversion graph.</p>
     </div>
   </div>
-
-  <div id="mode-sheet-backdrop" class="overlay" hidden></div>
-  <section id="mode-sheet" class="sheet glass-panel" hidden aria-labelledby="mode-sheet-title">
-    <div class="sheet-header">
-      <p class="stage-kicker">Routing mode</p>
-      <h2 id="mode-sheet-title">Choose how formats are exposed.</h2>
-    </div>
-    <button class="mode-option" type="button" data-routing-mode="simple">
-      <strong>Simple mode</strong>
-      <span>Group by user-facing format and keep the route picker clean.</span>
-    </button>
-    <button class="mode-option" type="button" data-routing-mode="advanced">
-      <strong>Advanced mode</strong>
-      <span>Expose handler-specific formats so you can steer the conversion tool manually.</span>
-    </button>
-  </section>
 
   <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
   <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
@@ -191,14 +346,14 @@
       overlay.style.display = "none";
       overlay.style.placeItems = "center";
       overlay.style.padding = "24px";
-      overlay.style.background = "radial-gradient(circle at top, rgba(55, 102, 255, 0.16), rgba(8, 16, 31, 0.98) 58%)";
+      overlay.style.background = "radial-gradient(circle at top, rgba(255, 137, 99, 0.18), rgba(25, 19, 13, 0.96) 56%)";
       overlay.style.backdropFilter = "blur(18px)";
       overlay.style.pointerEvents = "none";
       overlay.innerHTML =
-        '<div style="max-width: 420px; border-radius: 28px; padding: 24px; color: #F7FAFF; background: rgba(8, 16, 31, 0.84); border: 1px solid rgba(181, 206, 255, 0.22); box-shadow: 0 22px 64px rgba(0, 0, 0, 0.45);">' +
-        '<p style="margin: 0 0 8px; font: 600 0.85rem/1.4 Manrope, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(189, 211, 255, 0.78);">Startup error</p>' +
+        '<div style="max-width: 420px; border-radius: 28px; padding: 24px; color: #201a18; background: #fff8f6; border: 1px solid rgba(118, 86, 76, 0.2); box-shadow: 0 24px 64px rgba(40, 22, 15, 0.2);">' +
+        '<p style="margin: 0 0 8px; font: 600 0.85rem/1.4 Manrope, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: #7f675f;">Startup error</p>' +
         '<h2 style="margin: 0 0 12px; font: 700 1.4rem/1.2 Space Grotesk, system-ui, sans-serif;">The app could not finish loading.</h2>' +
-        '<p id="startup-fatal-message" style="margin: 0; font: 500 0.98rem/1.6 Manrope, system-ui, sans-serif; color: rgba(240, 245, 255, 0.92);">Unknown error.</p>' +
+        '<p id="startup-fatal-message" style="margin: 0; font: 500 0.98rem/1.6 Manrope, system-ui, sans-serif; color: #52443e;">Unknown error.</p>' +
         '</div>';
       document.body.appendChild(overlay);
 
@@ -232,6 +387,5 @@
       console.error("Failed to load main entry.", error);
     });
   </script>
-
 </body>
 </html>

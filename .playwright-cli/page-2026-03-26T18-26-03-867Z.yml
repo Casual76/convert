@@ -1,0 +1,88 @@
+- generic [active] [ref=e1]:
+  - button "Choose File" [ref=e2]
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Universal converter
+        - heading "Convert to it!" [level=1] [ref=e7]
+        - paragraph [ref=e8]: Private, on-device conversion with expressive Material 3 styling, route insight, safe live preview and a tune step that explains CPU cost before you commit.
+      - generic [ref=e9]:
+        - region "Routing mode" [ref=e10]:
+          - generic [ref=e11]: Routing
+          - generic [ref=e12]:
+            - button "Simple" [ref=e13] [cursor=pointer]
+            - button "Advanced" [ref=e14] [cursor=pointer]
+        - region "Theme preference" [ref=e15]:
+          - generic [ref=e16]: Theme
+          - generic [ref=e17]:
+            - button "Auto" [ref=e18] [cursor=pointer]
+            - button "Light" [ref=e19] [cursor=pointer]
+            - button "Dark" [ref=e20] [cursor=pointer]
+        - link "Source" [ref=e21] [cursor=pointer]:
+          - /url: https://github.com/p2r3/convert
+    - navigation "Conversion steps" [ref=e22]:
+      - button "01 Upload Drop files or try a demo" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: "01"
+        - generic [ref=e25]: Upload
+        - generic [ref=e26]: Drop files or try a demo
+      - button "02 From Confirm the source format" [ref=e27] [cursor=pointer]:
+        - generic [ref=e28]: "02"
+        - generic [ref=e29]: From
+        - generic [ref=e30]: Confirm the source format
+      - button "03 To Pick a target route" [ref=e31] [cursor=pointer]:
+        - generic [ref=e32]: "03"
+        - generic [ref=e33]: To
+        - generic [ref=e34]: Pick a target route
+      - button "04 Tune Budget CPU and inspect ETA" [ref=e35] [cursor=pointer]:
+        - generic [ref=e36]: "04"
+        - generic [ref=e37]: Tune
+        - generic [ref=e38]: Budget CPU and inspect ETA
+      - button "05 Review Preview and convert" [ref=e39] [cursor=pointer]:
+        - generic [ref=e40]: "05"
+        - generic [ref=e41]: Review
+        - generic [ref=e42]: Preview and convert
+    - main [ref=e48]:
+      - generic [ref=e155]:
+        - generic [ref=e156]:
+          - paragraph [ref=e157]: Step 5
+          - heading "Review, preview and convert." [level=2] [ref=e158]
+          - paragraph [ref=e159]: You now have the chosen formats, tuned CPU policy, route estimate and a safe single-job preview when the target supports it.
+        - generic [ref=e160]:
+          - article [ref=e161]:
+            - generic [ref=e162]: Files
+            - strong [ref=e163]: 1 file | 818 B
+          - article [ref=e164]:
+            - generic [ref=e165]: From
+            - strong [ref=e166]: SVG | image/svg+xml
+          - article [ref=e167]:
+            - generic [ref=e168]: To
+            - strong [ref=e169]: PNG | image/png
+          - article [ref=e170]:
+            - generic [ref=e171]: Routing
+            - strong [ref=e172]: Simple routing
+          - article [ref=e173]:
+            - generic [ref=e174]: Policy
+            - strong [ref=e175]: Balanced preset | 6 jobs max
+        - generic [ref=e176]: Single-tool route via canvasToBlob. Estimated <5s with high impact.
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e179]:
+              - paragraph [ref=e180]: Route
+              - heading "Output path at a glance" [level=3] [ref=e181]
+            - paragraph [ref=e182]: Preview and review use the balanced preset, but live preview always runs in a single safe job.
+          - generic [ref=e183]:
+            - generic [ref=e184]: SVG
+            - generic [ref=e185]: PNG
+        - generic [ref=e186]:
+          - generic [ref=e187]:
+            - generic [ref=e188]:
+              - paragraph [ref=e189]: Live preview
+              - heading "First-file result" [level=3] [ref=e190]
+            - generic [ref=e191]:
+              - paragraph [ref=e192]: Preview ready via SVG -> PNG.
+              - paragraph [ref=e193]: 1 preview file rendered using a single safe job.
+          - img "vector-card.png" [ref=e195]
+    - generic [ref=e43]:
+      - button "Back" [ref=e44] [cursor=pointer]
+      - button "Convert" [ref=e46] [cursor=pointer]
+  - generic [ref=e47]: Vector to PNG example loaded.

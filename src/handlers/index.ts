@@ -143,4 +143,45 @@ try { handlers.push(new fenToJsonHandler()) } catch (_) { };
 try { handlers.push(new piskelHandler()) } catch (_) { };
 try { handlers.push(new xcursorHandler()) } catch (_) { };
 
+const handlerInsights: Record<string, Pick<FormatHandler, "batchStrategy" | "performanceClass">> = {
+  renameZip: { batchStrategy: "per-file", performanceClass: "light" },
+  renameTxt: { batchStrategy: "per-file", performanceClass: "light" },
+  renameJson: { batchStrategy: "per-file", performanceClass: "light" },
+  TextEncoding: { batchStrategy: "per-file", performanceClass: "light" },
+  json5: { batchStrategy: "per-file", performanceClass: "light" },
+  fromjson: { batchStrategy: "per-file", performanceClass: "light" },
+  tojson: { batchStrategy: "per-file", performanceClass: "light" },
+  jsonToC: { batchStrategy: "per-file", performanceClass: "light" },
+  fenToJson: { batchStrategy: "per-file", performanceClass: "light" },
+  textToSource: { batchStrategy: "per-file", performanceClass: "light" },
+  chessjs: { batchStrategy: "per-file", performanceClass: "light" },
+  toon: { batchStrategy: "per-file", performanceClass: "light" },
+  bson: { batchStrategy: "per-file", performanceClass: "light" },
+  batToExe: { batchStrategy: "per-file", performanceClass: "medium" },
+  exe2bat: { batchStrategy: "per-file", performanceClass: "light" },
+  FFmpeg: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  ImageMagick: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  pandoc: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  sevenZip: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  threejs: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  sqlite3: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  pdfparse: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  pdftoimg: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  mcMap: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  VexFlow: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  floHandler: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  libopenmpt: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  miditextcodec: { batchStrategy: "whole-batch", performanceClass: "medium" },
+  midiSynth: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  midi: { batchStrategy: "whole-batch", performanceClass: "heavy" },
+  xcf: { batchStrategy: "whole-batch", performanceClass: "heavy" }
+};
+
+for (const handler of handlers) {
+  const insight = handlerInsights[handler.name];
+  if (!insight) continue;
+  handler.batchStrategy = insight.batchStrategy;
+  handler.performanceClass = insight.performanceClass;
+}
+
 export default handlers;

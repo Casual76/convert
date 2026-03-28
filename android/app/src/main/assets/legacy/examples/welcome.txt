@@ -1,0 +1,5 @@
+Welcome to Convert to it!
+
+This tiny sample is here so you can try a text to speech style route,
+peek at the tune step, and see how the app estimates CPU impact before
+it runs the full conversion.

@@ -4,17 +4,22 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -25,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.p2r3.convert.model.ConversionHistoryEntry
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HistoryScreen(
     entries: List<ConversionHistoryEntry>,
@@ -32,37 +38,65 @@ fun HistoryScreen(
     onRerun: (ConversionHistoryEntry) -> Unit
 ) {
     val context = LocalContext.current
-    ScreenContainer(
-        title = "Cronologia",
-        subtitle = "Job recenti, stato, output generati e scorciatoie per aprire o condividere.",
-        reduceMotion = reduceMotion
-    ) {
+
+    ScreenContainer {
         if (entries.isEmpty()) {
             item {
-                AnimatedScreenBlock(index = 1, reduceMotion = reduceMotion) {
+                AnimatedScreenBlock(index = 0, reduceMotion = reduceMotion) {
                     EmptyStateCard(
                         title = "Cronologia vuota",
-                        body = "Appena lanci un job, qui compariranno risultato, file creati e azioni utili."
+                        body = "Quando completi o fallisci un job, qui vedrai stato, output e diagnostica."
                     )
                 }
             }
         } else {
-            itemsIndexed(entries) { index, entry ->
-                AnimatedScreenBlock(index = 1 + index, reduceMotion = reduceMotion) {
-                    Card {
+            itemsIndexed(entries, key = { _, entry -> entry.id }) { index, entry ->
+                AnimatedScreenBlock(index = index, reduceMotion = reduceMotion) {
+                    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                         Column(
-                            modifier = Modifier.padding(18.dp),
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Text(entry.title, style = MaterialTheme.typography.titleMedium)
-                            Text(entry.subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            val runtimeLabel = entry.runtimeKind?.name ?: "N/D"
-                            Text(
-                                "${entry.status.name.lowercase().replaceFirstChar(Char::titlecase)} - ${entry.outputCount} output - $runtimeLabel${if (entry.usedFallback) " fallback" else ""}",
-                                style = MaterialTheme.typography.labelLarge
+                            ListItem(
+                                headlineContent = { Text(entry.title) },
+                                overlineContent = { Text(historySummary(entry)) },
+                                supportingContent = {
+                                    Text(
+                                        buildString {
+                                            append(entry.subtitle)
+                                            append("\n")
+                                            append(entry.message)
+                                            entry.diagnosticsMessage?.takeIf { it.isNotBlank() }?.let {
+                                                append("\n")
+                                                append(it)
+                                            }
+                                        },
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             )
-                            Text(entry.message, style = MaterialTheme.typography.bodyMedium)
-                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                SummaryChip(
+                                    label = "${entry.outputCount} output",
+                                    icon = Icons.Outlined.TaskAlt,
+                                    highlighted = entry.outputCount > 0
+                                )
+                                if (!entry.diagnosticsMessage.isNullOrBlank()) {
+                                    SummaryChip(
+                                        label = "Diagnostica disponibile",
+                                        icon = Icons.Outlined.BugReport
+                                    )
+                                }
+                            }
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
                                 if (!entry.requestSnapshot.isNullOrBlank()) {
                                     Button(onClick = { onRerun(entry) }) {
                                         Text("Riesegui")
@@ -86,6 +120,15 @@ fun HistoryScreen(
                 }
             }
         }
+    }
+}
+
+private fun historySummary(entry: ConversionHistoryEntry): String = buildString {
+    append(entry.status.name)
+    append(" - ")
+    append(entry.runtimeKind?.name ?: "N/D")
+    if (entry.usedFallback) {
+        append(" - fallback")
     }
 }
 

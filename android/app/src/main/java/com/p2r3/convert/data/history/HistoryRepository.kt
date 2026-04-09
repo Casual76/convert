@@ -26,9 +26,10 @@ interface HistoryRepository {
         outputUris: List<String>,
         runtimeKind: EngineRuntimeKind,
         usedFallback: Boolean,
+        diagnosticsMessage: String? = null,
         routeToken: String? = null
     )
-    suspend fun markFailed(id: Long, message: String)
+    suspend fun markFailed(id: Long, message: String, diagnosticsMessage: String? = null)
     suspend fun clearAll()
     suspend fun getById(id: Long): ConversionHistoryEntry?
 }

@@ -19,5 +19,6 @@ data class HistoryEntryEntity(
     val routeToken: String?,
     val runtimeKind: String?,
     val usedFallback: Boolean,
+    val diagnosticsMessage: String?,
     val keepEntry: Boolean
 )

@@ -19,6 +19,7 @@ import com.p2r3.convert.model.ConversionPreview
 import com.p2r3.convert.model.ConversionRequest
 import com.p2r3.convert.model.ConversionResult
 import com.p2r3.convert.model.ConversionStatus
+import com.p2r3.convert.model.BridgeValidationState
 import com.p2r3.convert.model.EngineDiagnostics
 import com.p2r3.convert.model.EngineRuntimeKind
 import com.p2r3.convert.model.FormatDescriptor
@@ -304,7 +305,8 @@ class NativeCommonConversionEngine @Inject constructor(
         catalogFormatCount = catalog.size,
         inputFormatCount = catalog.count { it.supportsInput },
         outputFormatCount = catalog.count { it.supportsOutput },
-        handlerCount = 3
+        handlerCount = 3,
+        bridgeValidationState = BridgeValidationState.VALIDATED
     )
 
     private fun convertSingle(inputUri: Uri, sourceId: String, targetId: String): ByteArray? {

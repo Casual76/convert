@@ -38,6 +38,18 @@ enum class EngineRuntimeKind {
     BRIDGE
 }
 
+enum class BridgeValidationState {
+    WARMING_UP,
+    VALIDATED,
+    UNAVAILABLE
+}
+
+enum class RuntimeAvailability {
+    NATIVE,
+    VALIDATED_BRIDGE,
+    UNAVAILABLE
+}
+
 enum class PreviewKind {
     NONE,
     IMAGE_PROXY,
@@ -57,7 +69,8 @@ data class FormatDescriptor(
     val handlerName: String,
     val lossless: Boolean = false,
     val availableRuntimeKinds: List<EngineRuntimeKind> = listOf(EngineRuntimeKind.NATIVE),
-    val nativePreferred: Boolean = true
+    val nativePreferred: Boolean = true,
+    val runtimeAvailability: RuntimeAvailability = RuntimeAvailability.NATIVE
 )
 
 data class CommonConversionPreset(
@@ -89,7 +102,8 @@ data class RoutePreview(
     val confidenceLabel: String,
     val reasons: List<String>,
     val previewSupported: Boolean,
-    val runtimeKind: EngineRuntimeKind = EngineRuntimeKind.NATIVE
+    val runtimeKind: EngineRuntimeKind = EngineRuntimeKind.NATIVE,
+    val runtimeAvailability: RuntimeAvailability = RuntimeAvailability.NATIVE
 )
 
 data class ConversionPreview(
@@ -144,6 +158,7 @@ data class ConversionHistoryEntry(
     val routeToken: String? = null,
     val runtimeKind: EngineRuntimeKind? = null,
     val usedFallback: Boolean = false,
+    val diagnosticsMessage: String? = null,
     val keepEntry: Boolean = true
 )
 
@@ -172,8 +187,12 @@ data class EngineDiagnostics(
     val inputFormatCount: Int,
     val outputFormatCount: Int,
     val handlerCount: Int,
+    val bridgeValidationState: BridgeValidationState = BridgeValidationState.WARMING_UP,
+    val validatedBridgeFormatCount: Int = 0,
+    val validatedBridgeHandlerCount: Int = 0,
     val disabledHandlers: List<String> = emptyList(),
-    val cacheSource: String? = null
+    val cacheSource: String? = null,
+    val diagnosticsMessage: String? = null
 )
 
 fun legacyFormatId(format: String, mimeType: String): String =

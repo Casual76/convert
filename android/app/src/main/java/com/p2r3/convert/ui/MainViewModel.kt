@@ -17,6 +17,7 @@ import com.p2r3.convert.data.jobs.deserializeConversionRequest
 import com.p2r3.convert.data.preset.PresetRepository
 import com.p2r3.convert.data.settings.SettingsRepository
 import com.p2r3.convert.model.AppSettings
+import com.p2r3.convert.model.BridgeValidationState
 import com.p2r3.convert.model.CommonConversionPreset
 import com.p2r3.convert.model.ConversionHistoryEntry
 import com.p2r3.convert.model.ConversionPreview
@@ -74,23 +75,32 @@ data class MainUiState(
     val incomingImportPrompt: IncomingImportPrompt? = null
 ) {
     val engineHeadline: String
-        get() = if (engineDiagnostics == null) {
-            "Motore universale in inizializzazione"
-        } else {
-            "Motore universale pronto"
+        get() {
+            val diagnostics = engineDiagnostics ?: return "Motore universale in inizializzazione"
+            return when (diagnostics.bridgeValidationState) {
+                BridgeValidationState.WARMING_UP -> "Motore in warm-up"
+                BridgeValidationState.VALIDATED -> "Motore universale pronto"
+                BridgeValidationState.UNAVAILABLE -> "Motore pronto con bridge limitato"
+            }
         }
 
     val engineBody: String
         get() {
             val diagnostics = engineDiagnostics
-                ?: return "Sto caricando il catalogo effettivo e il bridge legacy headless."
-            val cacheLabel = diagnostics.cacheSource?.let { "Cache $it" } ?: "Cache non ancora disponibile"
+                ?: return "Sto validando il catalogo effettivo sul device e preparo il bridge solo per le route davvero affidabili."
+            val bridgeStatus = when (diagnostics.bridgeValidationState) {
+                BridgeValidationState.WARMING_UP -> "Bridge in warm-up"
+                BridgeValidationState.VALIDATED -> "Bridge validato"
+                BridgeValidationState.UNAVAILABLE -> "Bridge non disponibile"
+            }
+            val cacheLabel = diagnostics.cacheSource?.let { "Fonte cache: $it" } ?: "Cache non ancora disponibile"
             val disabledLabel = if (diagnostics.disabledHandlers.isEmpty()) {
                 "nessun handler disabilitato"
             } else {
                 "${diagnostics.disabledHandlers.size} handler disabilitati"
             }
-            return "${diagnostics.catalogFormatCount} formati disponibili sul device, ${diagnostics.handlerCount} handler attivi e fallback bridge invisibile quando serve. $cacheLabel, $disabledLabel."
+            val diagnosticsLabel = diagnostics.diagnosticsMessage?.let { " $it" }.orEmpty()
+            return "${diagnostics.catalogFormatCount} formati disponibili sul device, ${diagnostics.validatedBridgeHandlerCount} handler bridge realmente validati e stato corrente: $bridgeStatus. $cacheLabel, $disabledLabel.$diagnosticsLabel"
         }
 }
 

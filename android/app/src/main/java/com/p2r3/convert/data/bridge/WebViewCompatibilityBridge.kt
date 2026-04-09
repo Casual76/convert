@@ -16,11 +16,13 @@ import com.p2r3.convert.BuildConfig
 import com.p2r3.convert.data.engine.NativeCommonConversionEngine
 import com.p2r3.convert.model.ConversionPreview
 import com.p2r3.convert.model.ConversionRequest
+import com.p2r3.convert.model.BridgeValidationState
 import com.p2r3.convert.model.EngineDiagnostics
 import com.p2r3.convert.model.EngineRuntimeKind
 import com.p2r3.convert.model.FormatDescriptor
 import com.p2r3.convert.model.PerformancePreset
 import com.p2r3.convert.model.PreviewKind
+import com.p2r3.convert.model.RuntimeAvailability
 import com.p2r3.convert.model.RoutePreview
 import com.p2r3.convert.model.RouteStep
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -280,7 +282,9 @@ class WebViewCompatibilityBridge @Inject constructor(
                         addJavascriptInterface(RuntimeHost(), "AndroidBridgeHost")
                     }
                 }
-                webView?.loadUrl("https://appassets.androidplatform.net/assets/legacy/android-bridge.html")
+                webView?.loadUrl(
+                    "https://appassets.androidplatform.net/assets/legacy/android-bridge.html?appVersion=${Uri.encode(BuildConfig.VERSION_NAME)}"
+                )
             }
         }
 
@@ -430,7 +434,10 @@ class WebViewCompatibilityBridge @Inject constructor(
                 add(EngineRuntimeKind.BRIDGE)
             }
         },
-        nativePreferred = json.optBoolean("nativePreferred", false)
+        nativePreferred = json.optBoolean("nativePreferred", false),
+        runtimeAvailability = enumValueOf(
+            json.optString("runtimeAvailability", RuntimeAvailability.VALIDATED_BRIDGE.name)
+        )
     )
 
     private fun parseRoutePreview(json: JSONObject): RoutePreview = RoutePreview(
@@ -468,7 +475,10 @@ class WebViewCompatibilityBridge @Inject constructor(
             }
         },
         previewSupported = json.optBoolean("previewSupported"),
-        runtimeKind = enumValueOf(json.optString("runtimeKind", EngineRuntimeKind.BRIDGE.name))
+        runtimeKind = enumValueOf(json.optString("runtimeKind", EngineRuntimeKind.BRIDGE.name)),
+        runtimeAvailability = enumValueOf(
+            json.optString("runtimeAvailability", RuntimeAvailability.VALIDATED_BRIDGE.name)
+        )
     )
 
     private fun parsePreview(json: JSONObject?): ConversionPreview {
@@ -497,6 +507,12 @@ class WebViewCompatibilityBridge @Inject constructor(
             inputFormatCount = json?.optInt("inputFormatCount") ?: 0,
             outputFormatCount = json?.optInt("outputFormatCount") ?: 0,
             handlerCount = json?.optInt("handlerCount") ?: 0,
+            bridgeValidationState = json?.optString("bridgeValidationState")
+                ?.takeIf(String::isNotBlank)
+                ?.let { enumValueOf<BridgeValidationState>(it) }
+                ?: BridgeValidationState.UNAVAILABLE,
+            validatedBridgeFormatCount = json?.optInt("validatedBridgeFormatCount") ?: 0,
+            validatedBridgeHandlerCount = json?.optInt("validatedBridgeHandlerCount") ?: 0,
             disabledHandlers = buildList {
                 val array = json?.optJSONArray("disabledHandlers")
                 if (array != null) {
@@ -505,7 +521,8 @@ class WebViewCompatibilityBridge @Inject constructor(
                     }
                 }
             },
-            cacheSource = json?.optString("cacheSource")
+            cacheSource = json?.optString("cacheSource"),
+            diagnosticsMessage = json?.optString("diagnosticsMessage")?.takeIf(String::isNotBlank)
         )
     }
 

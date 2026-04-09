@@ -41,6 +41,7 @@ class RoomHistoryRepository @Inject constructor(
             routeToken = routeToken,
             runtimeKind = runtimeKind?.name,
             usedFallback = false,
+            diagnosticsMessage = null,
             keepEntry = keepEntry
         )
     )
@@ -57,6 +58,7 @@ class RoomHistoryRepository @Inject constructor(
         outputUris: List<String>,
         runtimeKind: EngineRuntimeKind,
         usedFallback: Boolean,
+        diagnosticsMessage: String?,
         routeToken: String?
     ) {
         update(id) { current ->
@@ -67,14 +69,19 @@ class RoomHistoryRepository @Inject constructor(
                 message = message,
                 runtimeKind = runtimeKind.name,
                 usedFallback = usedFallback,
+                diagnosticsMessage = diagnosticsMessage,
                 routeToken = routeToken ?: current.routeToken
             )
         }
     }
 
-    override suspend fun markFailed(id: Long, message: String) {
+    override suspend fun markFailed(id: Long, message: String, diagnosticsMessage: String?) {
         update(id) { current ->
-            current.copy(status = ConversionStatus.FAILED.name, message = message)
+            current.copy(
+                status = ConversionStatus.FAILED.name,
+                message = message,
+                diagnosticsMessage = diagnosticsMessage
+            )
         }
     }
 
@@ -109,6 +116,7 @@ class RoomHistoryRepository @Inject constructor(
         routeToken = entity.routeToken,
         runtimeKind = entity.runtimeKind?.let { enumValueOf<EngineRuntimeKind>(it) },
         usedFallback = entity.usedFallback,
+        diagnosticsMessage = entity.diagnosticsMessage,
         keepEntry = entity.keepEntry
     )
 }

@@ -6,9 +6,11 @@ import com.p2r3.convert.model.ConversionPreview
 import com.p2r3.convert.model.ConversionRequest
 import com.p2r3.convert.model.ConversionResult
 import com.p2r3.convert.model.ConversionStatus
+import com.p2r3.convert.model.BridgeValidationState
 import com.p2r3.convert.model.EngineDiagnostics
 import com.p2r3.convert.model.EngineRuntimeKind
 import com.p2r3.convert.model.FormatDescriptor
+import com.p2r3.convert.model.RuntimeAvailability
 import com.p2r3.convert.model.RoutePreview
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -158,7 +160,8 @@ class CompositeConversionEngine @Inject constructor(
                 catalogFormatCount = 0,
                 inputFormatCount = 0,
                 outputFormatCount = 0,
-                handlerCount = 0
+                handlerCount = 0,
+                bridgeValidationState = BridgeValidationState.UNAVAILABLE
             )
         )
         val mergedCatalog = loadCatalog()
@@ -167,9 +170,13 @@ class CompositeConversionEngine @Inject constructor(
             catalogFormatCount = mergedCatalog.size,
             inputFormatCount = mergedCatalog.count { it.supportsInput },
             outputFormatCount = mergedCatalog.count { it.supportsOutput },
-            handlerCount = native.handlerCount + bridge.handlerCount,
+            handlerCount = native.handlerCount + bridge.validatedBridgeHandlerCount,
+            bridgeValidationState = bridge.bridgeValidationState,
+            validatedBridgeFormatCount = bridge.validatedBridgeFormatCount,
+            validatedBridgeHandlerCount = bridge.validatedBridgeHandlerCount,
             disabledHandlers = bridge.disabledHandlers,
-            cacheSource = bridge.cacheSource
+            cacheSource = bridge.cacheSource,
+            diagnosticsMessage = bridge.diagnosticsMessage
         )
     }
 
@@ -202,7 +209,15 @@ class CompositeConversionEngine @Inject constructor(
                     lossless = current.lossless || descriptor.lossless,
                     availableRuntimeKinds = (current.availableRuntimeKinds + descriptor.availableRuntimeKinds).distinct(),
                     nativePreferred = current.nativePreferred || descriptor.nativePreferred,
-                    handlerName = if (current.nativePreferred) current.handlerName else descriptor.handlerName
+                    handlerName = if (current.nativePreferred) current.handlerName else descriptor.handlerName,
+                    runtimeAvailability = if (
+                        current.runtimeAvailability == RuntimeAvailability.NATIVE
+                        || descriptor.runtimeAvailability == RuntimeAvailability.NATIVE
+                    ) {
+                        RuntimeAvailability.NATIVE
+                    } else {
+                        RuntimeAvailability.VALIDATED_BRIDGE
+                    }
                 )
             }
         }

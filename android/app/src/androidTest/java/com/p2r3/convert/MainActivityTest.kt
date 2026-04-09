@@ -17,7 +17,7 @@ class MainActivityTest {
 
     @Test
     fun launchesNativeShellAndShowsPrimaryNavigation() {
-        composeRule.onNodeWithText("Convert to it!").assertIsDisplayed()
+        composeRule.onAllNodesWithText("Home")[0].assertIsDisplayed()
         composeRule.onNodeWithText("Converti").assertIsDisplayed()
         composeRule.onNodeWithText("Impostazioni").assertIsDisplayed()
     }
@@ -36,7 +36,7 @@ class MainActivityTest {
             composeRule.onAllNodesWithText("shared-note.md").fetchSemanticsNodes().isNotEmpty()
         }
 
-        composeRule.onNodeWithText("File di input").assertIsDisplayed()
+        composeRule.onNodeWithText("1. Scegli i file").assertIsDisplayed()
         composeRule.onNodeWithText("shared-note.md").assertIsDisplayed()
     }
 

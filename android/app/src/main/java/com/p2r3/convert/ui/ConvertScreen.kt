@@ -8,36 +8,36 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.FolderOpen
-import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material.icons.outlined.Route
+import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -55,6 +55,7 @@ import com.p2r3.convert.model.ConversionPreview
 import com.p2r3.convert.model.FormatDescriptor
 import com.p2r3.convert.model.PreviewKind
 import com.p2r3.convert.model.RoutePreview
+import com.p2r3.convert.model.RuntimeAvailability
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -77,7 +78,7 @@ fun ConvertScreen(
 
     if (showSourceSheet) {
         FormatSheet(
-            title = "Scegli il formato sorgente",
+            title = "Conferma il formato sorgente",
             options = uiState.session.catalog.filter { it.supportsInput },
             reduceMotion = reduceMotion,
             onDismiss = { showSourceSheet = false },
@@ -105,24 +106,30 @@ fun ConvertScreen(
     val detectedLabels = selectedInputs.mapNotNull { it.detectedFormatLabel }.distinct().sorted()
     val detectedCount = selectedInputs.count { it.detectedFormatId != null }
     val totalBytes = selectedInputs.sumOf { it.sizeBytes }
+
     val sourceSubtitle = when {
-        selectedInputs.isEmpty() -> "Seleziona uno o piu file: il catalogo prova a riconoscere il formato in automatico."
-        detectedLabels.size > 1 -> "Nel batch sono presenti piu formati. Conferma manualmente il sorgente."
-        uiState.session.selectedSource != null -> "${uiState.session.selectedSource.mimeType} - puoi correggerlo in qualsiasi momento."
-        else -> "Se il provider Android non fornisce abbastanza dati, puoi correggere il rilevamento a mano."
-    }
-    val targetSubtitle = when {
-        uiState.session.selectedSource == null -> "Prima conferma il sorgente, poi il pannello mostera solo i target davvero raggiungibili."
-        uiState.session.availableTargets.isEmpty() -> "Sto verificando le route disponibili sul device."
-        uiState.session.selectedTarget != null -> "${uiState.session.availableTargets.size} output compatibili disponibili per questo sorgente."
-        else -> "Seleziona uno dei ${uiState.session.availableTargets.size} target supportati per questo sorgente."
+        selectedInputs.isEmpty() -> "Prima scegli uno o piu file."
+        detectedLabels.size > 1 -> "Sono stati rilevati piu formati. Conviene confermare il sorgente a mano."
+        uiState.session.selectedSource != null -> "Controlla il formato suggerito e continua."
+        else -> "Se il rilevamento non e corretto puoi cambiarlo manualmente."
     }
 
-    ScreenContainer(
-        title = "Converti",
-        subtitle = "Picker Android nativo, auto-detect sul catalogo completo, route preview e scheduler on-device.",
-        reduceMotion = reduceMotion
-    ) {
+    val targetSubtitle = when {
+        uiState.session.selectedSource == null -> "Il target si sblocca dopo la conferma del sorgente."
+        uiState.session.availableTargets.isEmpty() -> "Sto caricando solo gli output davvero disponibili sul device."
+        uiState.session.selectedTarget != null -> "${uiState.session.availableTargets.size} output compatibili disponibili."
+        else -> "Seleziona uno dei ${uiState.session.availableTargets.size} output compatibili."
+    }
+
+    ScreenContainer {
+        item {
+            AnimatedScreenBlock(index = 0, reduceMotion = reduceMotion) {
+                SectionTitle(
+                    title = "Flusso guidato",
+                    body = "Segui i passaggi in ordine: file, sorgente, output e avvio del job."
+                )
+            }
+        }
         item {
             AnimatedScreenBlock(index = 1, reduceMotion = reduceMotion) {
                 InputWorkspaceCard(
@@ -137,20 +144,23 @@ fun ConvertScreen(
         }
         item {
             AnimatedScreenBlock(index = 2, reduceMotion = reduceMotion) {
-                PairingCard(
-                    label = "Formato sorgente",
-                    title = uiState.session.selectedSource?.displayName ?: "Da rilevare o scegliere",
+                SelectorCard(
+                    stepLabel = "2. Formato sorgente",
+                    title = uiState.session.selectedSource?.displayName ?: "Formato sorgente",
                     subtitle = sourceSubtitle,
-                    onClick = { showSourceSheet = true }
+                    runtimeLabel = uiState.session.selectedSource?.runtimeAvailability?.toReadableLabel(),
+                    onClick = { showSourceSheet = true },
+                    enabled = selectedInputs.isNotEmpty()
                 )
             }
         }
         item {
             AnimatedScreenBlock(index = 3, reduceMotion = reduceMotion) {
-                PairingCard(
-                    label = "Formato di output",
-                    title = uiState.session.selectedTarget?.displayName ?: "Scegli il target",
+                SelectorCard(
+                    stepLabel = "3. Formato di output",
+                    title = uiState.session.selectedTarget?.displayName ?: "Formato di output",
                     subtitle = targetSubtitle,
+                    runtimeLabel = uiState.session.selectedTarget?.runtimeAvailability?.toReadableLabel(),
                     onClick = { showTargetSheet = true },
                     enabled = uiState.session.selectedSource != null
                 )
@@ -161,17 +171,17 @@ fun ConvertScreen(
                 AnimatedContent(
                     targetState = uiState.session.routePreview,
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(if (reduceMotion) 80 else 120)) togetherWith
-                            fadeOut(animationSpec = tween(if (reduceMotion) 60 else 90))
+                        fadeIn(animationSpec = tween(if (reduceMotion) 90 else 140)) togetherWith
+                            fadeOut(animationSpec = tween(if (reduceMotion) 70 else 100))
                     },
                     label = "route-preview"
                 ) { route ->
                     if (route != null) {
                         RouteCard(route)
                     } else {
-                        EmptyStateCard(
-                            title = "Anteprima route",
-                            body = "Dopo aver confermato sorgente e target, qui vedrai runtime, tempi attesi, impatto CPU e passaggi previsti."
+                        StatusCard(
+                            title = "4. Route",
+                            body = "Quando sorgente e target sono pronti, qui vedrai runtime, passaggi e livello di affidabilita."
                         )
                     }
                 }
@@ -182,8 +192,8 @@ fun ConvertScreen(
                 AnimatedContent(
                     targetState = uiState.session.preview,
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(if (reduceMotion) 80 else 120)) togetherWith
-                            fadeOut(animationSpec = tween(if (reduceMotion) 60 else 90))
+                        fadeIn(animationSpec = tween(if (reduceMotion) 90 else 140)) togetherWith
+                            fadeOut(animationSpec = tween(if (reduceMotion) 70 else 100))
                     },
                     label = "preview-panel"
                 ) { preview ->
@@ -217,103 +227,128 @@ private fun InputWorkspaceCard(
     onPickFiles: () -> Unit,
     onClearSelection: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        PremiumHeroSurface(reduceMotion = false) {
-            Column(
-                modifier = Modifier.padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("File di input", style = MaterialTheme.typography.titleLarge)
-                        Text(
-                            if (inputs.isEmpty()) {
-                                "Scegli file dal picker Android per iniziare."
-                            } else {
-                                "Controlla il rilevamento automatico prima di pianificare la route."
-                            },
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null)
-                }
-
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    MetricPill(label = "File", value = inputs.size.toString(), emphasized = true)
-                    MetricPill(label = "Rilevati", value = if (inputs.isEmpty()) "0/0" else "$detectedCount/${inputs.size}")
-                    MetricPill(label = "Peso", value = humanFileSize(totalBytes))
-                    detectedLabels.take(3).forEach { label ->
-                        MetricPill(label = "Auto", value = label)
-                    }
-                }
-
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Button(onClick = onPickFiles) {
-                        Icon(Icons.Outlined.FolderOpen, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Scegli file")
-                    }
-                    if (inputs.isNotEmpty()) {
-                        OutlinedButton(onClick = onClearSelection) {
-                            Icon(Icons.Outlined.Tune, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text("Pulisci")
-                        }
-                    }
-                }
-
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text("1. Scegli i file", style = MaterialTheme.typography.titleLarge)
+            Text(
                 if (inputs.isEmpty()) {
-                    Text(
-                        "Il rilevamento usa nome file, MIME Android, alias comuni e catalogo unificato del motore.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    "Apri il picker Android nativo e seleziona quello che vuoi convertire."
                 } else {
-                    inputs.take(5).forEachIndexed { index, input ->
-                        if (index > 0) {
-                            HorizontalDivider(color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f))
+                    "Controlla i file selezionati prima di confermare il formato sorgente."
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SummaryChip(label = "${inputs.size} file", highlighted = inputs.isNotEmpty())
+                SummaryChip(label = humanFileSize(totalBytes))
+                if (inputs.isNotEmpty()) {
+                    SummaryChip(label = "Rilevati $detectedCount/${inputs.size}")
+                }
+                detectedLabels.take(2).forEach { label ->
+                    SummaryChip(label = label)
+                }
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Button(onClick = onPickFiles) {
+                    Icon(Icons.Outlined.FolderOpen, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Scegli file")
+                }
+                if (inputs.isNotEmpty()) {
+                    OutlinedButton(onClick = onClearSelection) {
+                        Icon(Icons.Outlined.SwapHoriz, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Pulisci")
+                    }
+                }
+            }
+
+            if (inputs.isEmpty()) {
+                Text(
+                    "Il rilevamento usa nome file e MIME Android, ma puoi sempre correggere il formato manualmente.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                inputs.take(4).forEachIndexed { index, input ->
+                    if (index > 0) {
+                        HorizontalDivider()
+                    }
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                input.displayName,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                "${input.detectedFormatLabel ?: "Da confermare"} - ${input.mimeType ?: "MIME sconosciuto"} - ${humanFileSize(input.sizeBytes)}",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                        SelectedInputRow(input = input)
-                    }
-                    if (inputs.size > 5) {
-                        Text(
-                            "Altri ${inputs.size - 5} file selezionati.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
+                    )
+                }
+                if (inputs.size > 4) {
+                    Text(
+                        "Altri ${inputs.size - 4} file selezionati.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SelectedInputRow(input: PickedInput) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            input.displayName,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+private fun SelectorCard(
+    stepLabel: String,
+    title: String,
+    subtitle: String,
+    runtimeLabel: String?,
+    onClick: () -> Unit,
+    enabled: Boolean = true
+) {
+    ElevatedCard(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            MetricPill(label = "Formato", value = input.detectedFormatLabel ?: "Da confermare")
-            MetricPill(label = "MIME", value = input.mimeType ?: "Sconosciuto")
-            MetricPill(label = "Peso", value = humanFileSize(input.sizeBytes))
+            Text(
+                text = stepLabel,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.secondary
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            runtimeLabel?.let {
+                SummaryChip(label = it, icon = Icons.Outlined.AutoAwesome, highlighted = enabled)
+            }
         }
     }
 }
@@ -321,50 +356,51 @@ private fun SelectedInputRow(input: PickedInput) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RouteCard(route: RoutePreview) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {
-        Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Anteprima route", style = MaterialTheme.typography.titleLarge)
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("4. Route", style = MaterialTheme.typography.titleLarge)
+            Text(
+                route.runtimeAvailability.toReadableLabel(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                MetricPill(label = "Motore", value = route.runtimeKind.name, emphasized = true)
-                MetricPill(label = "Tempo", value = route.etaLabel)
-                MetricPill(label = "CPU", value = route.cpuImpactLabel)
-                MetricPill(label = "Affidabilita", value = route.confidenceLabel)
+                SummaryChip(label = route.runtimeKind.name, icon = Icons.Outlined.Route, highlighted = true)
+                SummaryChip(label = route.etaLabel)
+                SummaryChip(label = route.confidenceLabel)
             }
-            route.steps.forEach { step ->
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
-                ) {
-                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
+            route.steps.forEachIndexed { index, step ->
+                if (index > 0) {
+                    HorizontalDivider()
+                }
+                ListItem(
+                    headlineContent = {
+                        Text("${formatIdLabel(step.fromFormatId)} -> ${formatIdLabel(step.toFormatId)}")
+                    },
+                    overlineContent = { Text(step.runtimeKind.name) },
+                    supportingContent = {
                         Text(
-                            "${formatIdLabel(step.fromFormatId)} -> ${formatIdLabel(step.toFormatId)}",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            MetricPill(label = "Handler", value = step.handlerName)
-                            MetricPill(label = "Classe", value = step.performanceClass)
-                            MetricPill(label = "Batch", value = step.batchStrategy)
-                            MetricPill(label = "Runtime", value = step.runtimeKind.name)
-                        }
-                        Text(
-                            step.note,
-                            style = MaterialTheme.typography.bodyMedium,
+                            "${step.handlerName} - ${step.performanceClass} - ${step.batchStrategy}\n${step.note}",
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                }
+                )
             }
+
             route.reasons.forEach { reason ->
-                Text("- $reason", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    reason,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -372,23 +408,22 @@ private fun RouteCard(route: RoutePreview) {
 
 @Composable
 private fun PreviewCard(preview: ConversionPreview?) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {
-        Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Anteprima", style = MaterialTheme.typography.titleLarge)
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("5. Anteprima", style = MaterialTheme.typography.titleLarge)
             if (preview == null) {
                 Text(
-                    "Qui comparira l'anteprima non appena la route sara valida e abbastanza leggera da essere mostrata.",
+                    "Se la route lo consente, qui vedrai un'anteprima leggera prima del job.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                MetricPill(
-                    label = "Modalita",
-                    value = preview.kind.name.replace('_', ' ').lowercase(Locale.ROOT).replaceFirstChar(Char::titlecase),
-                    emphasized = preview.supported
+                SummaryChip(
+                    label = preview.kind.name.replace('_', ' ').lowercase(Locale.ROOT).replaceFirstChar(Char::titlecase),
+                    highlighted = preview.supported
                 )
                 Text(preview.headline, style = MaterialTheme.typography.titleMedium)
                 Text(
@@ -398,8 +433,7 @@ private fun PreviewCard(preview: ConversionPreview?) {
                 )
                 when (preview.kind) {
                     PreviewKind.IMAGE_PROXY -> {
-                        val imageUri = preview.proxyUri
-                        if (imageUri != null) {
+                        preview.proxyUri?.let { imageUri ->
                             AsyncImage(
                                 model = imageUri,
                                 contentDescription = null,
@@ -415,14 +449,14 @@ private fun PreviewCard(preview: ConversionPreview?) {
                     PreviewKind.TEXT -> {
                         StatusCard(
                             title = "Anteprima testuale",
-                            body = preview.textPreview ?: "Questa route resta leggera, quindi il contenuto finale puo essere mostrato inline."
+                            body = preview.textPreview ?: "Il contenuto finale puo essere mostrato direttamente qui."
                         )
                     }
 
                     PreviewKind.DOCUMENT -> {
                         StatusCard(
                             title = "Anteprima documento",
-                            body = "Il PDF viene assemblato localmente quando parte il job."
+                            body = "Il documento finale viene generato on-device quando parte il job."
                         )
                     }
 
@@ -466,20 +500,28 @@ private fun FormatSheet(
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         LazyColumn(
-            contentPadding = PaddingValues(20.dp),
+            contentPadding = PaddingValues(start = 20.dp, top = 12.dp, end = 20.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
                 AnimatedScreenBlock(index = 0, reduceMotion = reduceMotion) {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text(title, style = MaterialTheme.typography.headlineMedium)
-                        OutlinedTextField(
-                            value = query,
-                            onValueChange = { query = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Cerca formato") },
-                            singleLine = true
-                        )
+                        Text(title, style = MaterialTheme.typography.headlineSmall)
+                        SearchBar(
+                            inputField = {
+                                SearchBarDefaults.InputField(
+                                    query = query,
+                                    onQueryChange = { query = it },
+                                    onSearch = {},
+                                    expanded = false,
+                                    onExpandedChange = {},
+                                    placeholder = { Text("Cerca formato") }
+                                )
+                            },
+                            expanded = false,
+                            onExpandedChange = {},
+                            modifier = Modifier.fillMaxWidth()
+                        ) { }
                         FlowRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -492,7 +534,9 @@ private fun FormatSheet(
                             categories.forEach { category ->
                                 FilterChip(
                                     selected = selectedCategory == category,
-                                    onClick = { selectedCategory = if (selectedCategory == category) null else category },
+                                    onClick = {
+                                        selectedCategory = if (selectedCategory == category) null else category
+                                    },
                                     label = { Text(category) }
                                 )
                             }
@@ -506,19 +550,21 @@ private fun FormatSheet(
                     AnimatedScreenBlock(index = 1, reduceMotion = reduceMotion) {
                         EmptyStateCard(
                             title = "Nessun formato trovato",
-                            body = "Prova un altro termine di ricerca o rimuovi il filtro categoria."
+                            body = "Prova un altro termine oppure rimuovi il filtro attivo."
                         )
                     }
                 }
             } else {
-                items(filteredOptions) { format ->
-                    AnimatedScreenBlock(index = filteredOptions.indexOf(format) + 1, reduceMotion = reduceMotion) {
-                        Card(
+                itemsIndexed(filteredOptions, key = { _, format -> format.id }) { index, format ->
+                    AnimatedScreenBlock(index = index + 1, reduceMotion = reduceMotion) {
+                        ElevatedCard(
                             onClick = { onSelect(format) },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
                                 Text(format.displayName, style = MaterialTheme.typography.titleMedium)
                                 Text(
                                     format.mimeType,
@@ -529,23 +575,15 @@ private fun FormatSheet(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    MetricPill(label = "Sigla", value = format.shortLabel, emphasized = true)
-                                    MetricPill(label = "Est.", value = format.extension.ifBlank { "-" })
-                                    MetricPill(
-                                        label = "Runtime",
-                                        value = format.availableRuntimeKinds.joinToString { it.name }
-                                    )
-                                    format.categories.ifEmpty { listOf("Altro") }.forEach { category ->
-                                        MetricPill(label = "Categoria", value = category)
-                                    }
+                                    SummaryChip(label = format.shortLabel, highlighted = true)
+                                    SummaryChip(label = format.extension.ifBlank { "-" })
+                                    SummaryChip(label = format.runtimeAvailability.toReadableLabel())
                                 }
                             }
                         }
                     }
                 }
             }
-
-            item { Spacer(Modifier.height(20.dp)) }
         }
     }
 }
@@ -554,6 +592,12 @@ private fun formatIdLabel(formatId: String): String {
     val explicit = formatId.substringAfterLast('(', "").substringBefore(')').trim()
     if (explicit.isNotBlank()) return explicit.uppercase()
     return formatId.substringBefore('(').substringAfterLast('/').ifBlank { formatId }.uppercase()
+}
+
+private fun RuntimeAvailability.toReadableLabel(): String = when (this) {
+    RuntimeAvailability.NATIVE -> "Runtime nativo"
+    RuntimeAvailability.VALIDATED_BRIDGE -> "Bridge validato"
+    RuntimeAvailability.UNAVAILABLE -> "Non disponibile"
 }
 
 private fun humanFileSize(bytes: Long): String {

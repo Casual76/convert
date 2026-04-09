@@ -15,6 +15,8 @@ import { estimateRoute, getRouteKey } from "./routeEstimator.js";
 
 type AndroidPerformancePreset = "BATTERY" | "BALANCED" | "PERFORMANCE";
 type RuntimeKind = "BRIDGE";
+type BridgeCacheSource = "bootstrap-cache" | "validated-storage" | "validated-device" | "unavailable";
+type BridgeValidationState = "WARMING_UP" | "VALIDATED" | "UNAVAILABLE";
 
 interface BridgeFormatDescriptor {
   id: string;
@@ -29,6 +31,7 @@ interface BridgeFormatDescriptor {
   lossless: boolean;
   availableRuntimeKinds: RuntimeKind[];
   nativePreferred: boolean;
+  runtimeAvailability: "VALIDATED_BRIDGE";
 }
 
 interface BridgeRouteStep {
@@ -51,6 +54,7 @@ interface BridgeRoutePreview {
   reasons: string[];
   previewSupported: boolean;
   runtimeKind: RuntimeKind;
+  runtimeAvailability: "VALIDATED_BRIDGE";
 }
 
 interface BridgeConversionPreview {
@@ -96,8 +100,22 @@ interface BridgeDiagnostics {
   inputFormatCount: number;
   outputFormatCount: number;
   handlerCount: number;
+  bridgeValidationState: BridgeValidationState;
+  validatedBridgeFormatCount: number;
+  validatedBridgeHandlerCount: number;
   disabledHandlers: string[];
-  cacheSource: "cache" | "live";
+  cacheSource: BridgeCacheSource;
+  diagnosticsMessage?: string | null;
+}
+
+interface BridgeValidationSnapshot {
+  cacheEntries: Array<[string, FileFormat[]]>;
+  disabledHandlers: string[];
+  cacheSource: BridgeCacheSource;
+  bridgeValidationState: BridgeValidationState;
+  validatedBridgeFormatCount: number;
+  validatedBridgeHandlerCount: number;
+  diagnosticsMessage?: string | null;
 }
 
 interface BridgeOption {
@@ -148,8 +166,15 @@ const toOptionsById = new Map<string, BridgeOption>();
 const routeCache = new Map<string, RouteTokenPayload | null>();
 const disabledHandlers = new Set<string>();
 let initialized = false;
-let cacheSource: "cache" | "live" = "cache";
+let cacheSource: BridgeCacheSource = "bootstrap-cache";
+let bridgeValidationState: BridgeValidationState = "WARMING_UP";
+let diagnosticsMessage: string | null = null;
 let runtimeProfile: DevicePerformanceProfile = createHeuristicProfile();
+const runtimeUrl = new URL(window.location.href);
+const appVersion = runtimeUrl.searchParams.get("appVersion")?.trim() || "dev";
+const validatedCacheStorageKey = "convert-to-it.bridge.validated-cache.v2";
+const validatedDisabledHandlersStorageKey = "convert-to-it.bridge.disabled-handlers.v2";
+const validatedVersionStorageKey = "convert-to-it.bridge.validated-version.v2";
 
 const formatId = (format: Pick<FileFormat, "mime" | "format">) =>
   `${normalizeMimeType(format.mime)}(${format.format.toLowerCase()})`;
@@ -269,7 +294,8 @@ const toDescriptor = (format: FileFormat, handlerName: string): BridgeFormatDesc
   handlerName,
   lossless: Boolean(format.lossless),
   availableRuntimeKinds: ["BRIDGE"],
-  nativePreferred: false
+  nativePreferred: false,
+  runtimeAvailability: "VALIDATED_BRIDGE"
 });
 
 const dedupeCatalog = () => {
@@ -321,12 +347,10 @@ const readCacheFromDisk = async () => {
   for (const [handlerName, formats] of raw) {
     supportedFormatCache.set(handlerName, formats);
   }
-  cacheSource = "cache";
 };
 
 const buildSupportedFormatCacheLive = async () => {
   supportedFormatCache.clear();
-  cacheSource = "live";
 
   for (const handler of handlers) {
     try {
@@ -347,15 +371,135 @@ const buildSupportedFormatCacheLive = async () => {
   }
 };
 
+const persistValidatedState = () => {
+  try {
+    localStorage.setItem(validatedVersionStorageKey, appVersion);
+    localStorage.setItem(
+      validatedCacheStorageKey,
+      JSON.stringify(Array.from(supportedFormatCache.entries()))
+    );
+    localStorage.setItem(
+      validatedDisabledHandlersStorageKey,
+      JSON.stringify(Array.from(disabledHandlers))
+    );
+  } catch (error) {
+    console.warn("Could not persist validated bridge state.", error);
+  }
+};
+
+const loadValidatedState = () => {
+  try {
+    if (localStorage.getItem(validatedVersionStorageKey) !== appVersion) {
+      return false;
+    }
+    const rawEntries = localStorage.getItem(validatedCacheStorageKey);
+    if (!rawEntries) return false;
+
+    const entries = JSON.parse(rawEntries) as Array<[string, FileFormat[]]>;
+    supportedFormatCache.clear();
+    entries.forEach(([handlerName, formats]) => {
+      supportedFormatCache.set(handlerName, formats);
+    });
+
+    disabledHandlers.clear();
+    const rawDisabledHandlers = localStorage.getItem(validatedDisabledHandlersStorageKey);
+    if (rawDisabledHandlers) {
+      for (const handlerName of JSON.parse(rawDisabledHandlers) as string[]) {
+        disabledHandlers.add(handlerName);
+      }
+    }
+
+    dedupeCatalog();
+    cacheSource = "validated-storage";
+    bridgeValidationState = supportedFormatCache.size > 0 ? "VALIDATED" : "UNAVAILABLE";
+    diagnosticsMessage = supportedFormatCache.size > 0
+      ? null
+      : "No validated compatibility handlers are available for this app version.";
+    return supportedFormatCache.size > 0;
+  } catch (error) {
+    console.warn("Could not restore validated bridge state.", error);
+    return false;
+  }
+};
+
+const clearValidatedState = () => {
+  try {
+    localStorage.removeItem(validatedVersionStorageKey);
+    localStorage.removeItem(validatedCacheStorageKey);
+    localStorage.removeItem(validatedDisabledHandlersStorageKey);
+  } catch (error) {
+    console.warn("Could not clear validated bridge state.", error);
+  }
+};
+
+const buildValidationSnapshot = (): BridgeValidationSnapshot => ({
+  cacheEntries: Array.from(supportedFormatCache.entries()),
+  disabledHandlers: Array.from(disabledHandlers).sort(),
+  cacheSource,
+  bridgeValidationState,
+  validatedBridgeFormatCount: catalogById.size,
+  validatedBridgeHandlerCount: supportedFormatCache.size,
+  diagnosticsMessage
+});
+
+const disableHandler = (handlerName: string, reason: string) => {
+  diagnosticsMessage = reason;
+  disabledHandlers.add(handlerName);
+  supportedFormatCache.delete(handlerName);
+  dedupeCatalog();
+  cacheSource = supportedFormatCache.size > 0 ? "validated-device" : "unavailable";
+  bridgeValidationState = supportedFormatCache.size > 0 ? "VALIDATED" : "UNAVAILABLE";
+  if (supportedFormatCache.size > 0) {
+    persistValidatedState();
+  } else {
+    clearValidatedState();
+  }
+};
+
+const validateOnDevice = async () => {
+  supportedFormatCache.clear();
+  disabledHandlers.clear();
+  diagnosticsMessage = null;
+  bridgeValidationState = "WARMING_UP";
+  await buildSupportedFormatCacheLive();
+  dedupeCatalog();
+  if (supportedFormatCache.size === 0) {
+    cacheSource = "unavailable";
+    bridgeValidationState = "UNAVAILABLE";
+    diagnosticsMessage = "No compatibility handlers validated successfully on this device.";
+    clearValidatedState();
+    return;
+  }
+  cacheSource = "validated-device";
+  bridgeValidationState = "VALIDATED";
+  persistValidatedState();
+};
+
 const ensureInitialized = async () => {
   if (initialized) return;
+
   try {
     await readCacheFromDisk();
+    cacheSource = "bootstrap-cache";
   } catch (error) {
-    console.warn("Falling back to live supported-format discovery.", error);
-    await buildSupportedFormatCacheLive();
+    console.warn("Bootstrap cache unavailable for Android bridge.", error);
   }
-  dedupeCatalog();
+
+  if (!loadValidatedState()) {
+    try {
+      await validateOnDevice();
+    } catch (error) {
+      supportedFormatCache.clear();
+      dedupeCatalog();
+      cacheSource = "unavailable";
+      bridgeValidationState = "UNAVAILABLE";
+      diagnosticsMessage = error instanceof Error
+        ? error.message
+        : String(error);
+      clearValidatedState();
+    }
+  }
+
   runtimeProfile = createHeuristicProfile();
   initialized = true;
   window.__bridgeRuntimeReady = true;
@@ -541,9 +685,15 @@ const attemptConvertPath = async (
         throw new Error(`Handler "${handler.name}" produced empty output.`);
       }
     } catch (error) {
-      disabledHandlers.add(handler.name);
+      const detail = error instanceof Error ? error.message : String(error);
+      disableHandler(
+        handler.name,
+        `The compatibility handler "${handler.name}" was invalidated after failing ${path[index].format.format} -> ${path[index + 1].format.format}. ${detail}`
+      );
       console.error(handler.name, `${path[index].format.format} -> ${path[index + 1].format.format}`, error);
-      return null;
+      throw new Error(
+        `Handler "${handler.name}" failed for ${path[index].format.format} -> ${path[index + 1].format.format}: ${detail}`
+      );
     }
   }
   return { files, path };
@@ -597,7 +747,8 @@ const buildRoutePreview = (
   confidenceLabel: estimateConfidenceLabel(estimate.confidence),
   reasons: estimate.reasons,
   previewSupported: true,
-  runtimeKind: "BRIDGE"
+  runtimeKind: "BRIDGE",
+  runtimeAvailability: "VALIDATED_BRIDGE"
 });
 
 const inferPreview = async (payload: BridgePreviewPayload): Promise<BridgeConversionPreview> => {
@@ -720,9 +871,6 @@ const runConversion = async (payload: BridgeRunPayload) => {
 
   const inputFiles = await Promise.all(payload.inputs.map(fetchInputFile));
   const output = await attemptConvertPath(inputFiles, path, policy);
-  if (!output) {
-    throw new Error("The compatibility runtime failed while executing the planned route.");
-  }
 
   emitOutputsToAndroid(payload.callId, output.files.map(file => ({
     ...file,
@@ -754,9 +902,13 @@ const diagnostics = async (): Promise<BridgeDiagnostics> => {
     catalogFormatCount: catalogById.size,
     inputFormatCount: Array.from(catalogById.values()).filter(descriptor => descriptor.supportsInput).length,
     outputFormatCount: Array.from(catalogById.values()).filter(descriptor => descriptor.supportsOutput).length,
-    handlerCount: handlers.length,
+    handlerCount: supportedFormatCache.size,
+    bridgeValidationState,
+    validatedBridgeFormatCount: catalogById.size,
+    validatedBridgeHandlerCount: supportedFormatCache.size,
     disabledHandlers: Array.from(disabledHandlers).sort(),
-    cacheSource
+    cacheSource,
+    diagnosticsMessage
   };
 };
 
@@ -815,6 +967,10 @@ const api = {
   },
   async diagnostics() {
     return diagnostics();
+  },
+  async validationSnapshot() {
+    await ensureInitialized();
+    return buildValidationSnapshot();
   }
 };
 

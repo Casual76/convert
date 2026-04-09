@@ -3,27 +3,23 @@ package com.p2r3.convert.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import android.net.Uri
 import android.view.WindowManager
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +28,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -42,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.p2r3.convert.model.ConversionStatus
 import com.p2r3.convert.ui.theme.ConvertTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConvertRoot(
     viewModel: MainViewModel = hiltViewModel()
@@ -78,6 +74,16 @@ fun ConvertRoot(
             val navController = rememberNavController()
             val startDestination = AppDestination.fromSettings(uiState.settings.startDestination)
             val reduceMotion = uiState.settings.reduceMotion
+            val destinations = listOf(
+                AppDestination.Home,
+                AppDestination.Convert,
+                AppDestination.Common,
+                AppDestination.History,
+                AppDestination.Settings
+            )
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route ?: startDestination.route
+            val currentDestination = destinations.firstOrNull { it.route == currentRoute } ?: startDestination
 
             LaunchedEffect(uiState.pendingNavigationTarget) {
                 val target = uiState.pendingNavigationTarget ?: return@LaunchedEffect
@@ -90,147 +96,125 @@ fun ConvertRoot(
                 viewModel.consumeNavigationRequest()
             }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(androidx.compose.material3.MaterialTheme.colorScheme.background)
-            ) {
-                val useRail = maxWidth >= 920.dp
-                val destinations = listOf(
-                    AppDestination.Home,
-                    AppDestination.Convert,
-                    AppDestination.Common,
-                    AppDestination.History,
-                    AppDestination.Settings
-                )
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
-                val openDestination: (AppDestination) -> Unit = { destination ->
-                    navController.navigate(destination.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+            NavigationSuiteScaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = MaterialTheme.colorScheme.surface,
+                navigationSuiteItems = {
+                    destinations.forEach { destination ->
+                        item(
+                            selected = currentRoute == destination.route,
+                            onClick = {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = destination.icon,
+                                    contentDescription = destination.label
+                                )
+                            },
+                            label = { Text(destination.label) }
+                        )
                     }
                 }
-
+            ) {
                 Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = MaterialTheme.colorScheme.surface,
                     snackbarHost = { SnackbarHost(snackbarHostState) },
-                    bottomBar = {
-                        if (!useRail) {
-                            NavigationBar {
-                                destinations.forEach { destination ->
-                                    NavigationBarItem(
-                                        selected = currentRoute == destination.route,
-                                        onClick = { openDestination(destination) },
-                                        icon = { Icon(destination.icon, contentDescription = destination.label) },
-                                        label = { Text(destination.label) }
-                                    )
-                                }
-                            }
-                        }
+                    topBar = {
+                        TopAppBar(title = { Text(currentDestination.title) })
                     }
                 ) { innerPadding ->
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        if (useRail) {
-                            NavigationRail {
-                                destinations.forEach { destination ->
-                                    NavigationRailItem(
-                                        selected = currentRoute == destination.route,
-                                        onClick = { openDestination(destination) },
-                                        icon = { Icon(destination.icon, contentDescription = destination.label) },
-                                        label = { Text(destination.label) }
-                                    )
-                                }
-                            }
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination.route,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        enterTransition = {
+                            fadeIn(animationSpec = tween(if (reduceMotion) 90 else 160))
+                        },
+                        exitTransition = {
+                            fadeOut(animationSpec = tween(if (reduceMotion) 70 else 120))
+                        },
+                        popEnterTransition = {
+                            fadeIn(animationSpec = tween(if (reduceMotion) 90 else 160))
+                        },
+                        popExitTransition = {
+                            fadeOut(animationSpec = tween(if (reduceMotion) 70 else 120))
                         }
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = startDestination.route,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding),
-                            enterTransition = {
-                                fadeIn(animationSpec = tween(if (reduceMotion) 80 else 140))
-                            },
-                            exitTransition = {
-                                fadeOut(animationSpec = tween(if (reduceMotion) 60 else 100))
-                            },
-                            popEnterTransition = {
-                                fadeIn(animationSpec = tween(if (reduceMotion) 80 else 140))
-                            },
-                            popExitTransition = {
-                                fadeOut(animationSpec = tween(if (reduceMotion) 60 else 100))
-                            }
-                        ) {
-                            composable(AppDestination.Home.route) {
-                                HomeScreen(
-                                    uiState = uiState,
-                                    reduceMotion = reduceMotion,
-                                    onOpenConvert = { navController.navigate(AppDestination.Convert.route) },
-                                    onPresetClick = {
-                                        viewModel.applyPreset(it)
-                                        navController.navigate(AppDestination.Convert.route)
-                                    }
-                                )
-                            }
-                            composable(AppDestination.Convert.route) {
-                                ConvertScreen(
-                                    uiState = uiState,
-                                    reduceMotion = reduceMotion,
-                                    onPickFiles = viewModel::onFilesPicked,
-                                    onSelectSource = viewModel::selectSource,
-                                    onSelectTarget = viewModel::selectTarget,
-                                    onStartConversion = viewModel::startConversion,
-                                    onClearSelection = viewModel::clearSelection
-                                )
-                            }
-                            composable(AppDestination.Common.route) {
-                                CommonScreen(
-                                    presets = uiState.presets,
-                                    reduceMotion = reduceMotion,
-                                    onPresetClick = {
-                                        viewModel.applyPreset(it)
-                                        navController.navigate(AppDestination.Convert.route)
-                                    }
-                                )
-                            }
-                            composable(AppDestination.History.route) {
-                                HistoryScreen(
-                                    entries = uiState.history,
-                                    reduceMotion = reduceMotion,
-                                    onRerun = viewModel::rerunHistoryEntry
-                                )
-                            }
-                            composable(AppDestination.Settings.route) {
-                                SettingsScreen(
-                                    settings = uiState.settings,
-                                    engineBody = uiState.engineBody,
-                                    engineDiagnostics = uiState.engineDiagnostics,
-                                    onThemeMode = viewModel::setThemeMode,
-                                    onDynamicColor = viewModel::setDynamicColorEnabled,
-                                    onStartDestination = viewModel::setStartDestination,
-                                    onAutoPreview = viewModel::setAutoPreview,
-                                    onPreviewLimit = viewModel::setPreviewLimit,
-                                    onOutputNamingPolicy = viewModel::setOutputNamingPolicy,
-                                    onAutoOpenResult = viewModel::setAutoOpenResult,
-                                    onKeepHistory = viewModel::setKeepHistory,
-                                    onKeepScreenOn = viewModel::setKeepScreenOn,
-                                    onPerformancePreset = viewModel::setPerformancePreset,
-                                    onMaxParallelJobs = viewModel::setMaxParallelJobs,
-                                    onBatteryFriendlyMode = viewModel::setBatteryFriendlyMode,
-                                    onConfirmBeforeBatch = viewModel::setConfirmBeforeBatch,
-                                    onReduceMotion = viewModel::setReduceMotion,
-                                    onHaptics = viewModel::setHapticsEnabled,
-                                    onClearHistory = viewModel::clearHistory,
-                                    onSetOutputDirectory = viewModel::setOutputDirectory,
-                                    onExportSettings = viewModel::exportSettingsToUri,
-                                    onImportSettings = viewModel::importSettingsFromUri,
-                                    onClearTemporaryFiles = viewModel::clearTemporaryFiles
-                                )
-                            }
+                    ) {
+                        composable(AppDestination.Home.route) {
+                            HomeScreen(
+                                uiState = uiState,
+                                reduceMotion = reduceMotion,
+                                onOpenConvert = { navController.navigate(AppDestination.Convert.route) },
+                                onPresetClick = {
+                                    viewModel.applyPreset(it)
+                                    navController.navigate(AppDestination.Convert.route)
+                                }
+                            )
+                        }
+                        composable(AppDestination.Convert.route) {
+                            ConvertScreen(
+                                uiState = uiState,
+                                reduceMotion = reduceMotion,
+                                onPickFiles = viewModel::onFilesPicked,
+                                onSelectSource = viewModel::selectSource,
+                                onSelectTarget = viewModel::selectTarget,
+                                onStartConversion = viewModel::startConversion,
+                                onClearSelection = viewModel::clearSelection
+                            )
+                        }
+                        composable(AppDestination.Common.route) {
+                            CommonScreen(
+                                presets = uiState.presets,
+                                reduceMotion = reduceMotion,
+                                onPresetClick = {
+                                    viewModel.applyPreset(it)
+                                    navController.navigate(AppDestination.Convert.route)
+                                }
+                            )
+                        }
+                        composable(AppDestination.History.route) {
+                            HistoryScreen(
+                                entries = uiState.history,
+                                reduceMotion = reduceMotion,
+                                onRerun = viewModel::rerunHistoryEntry
+                            )
+                        }
+                        composable(AppDestination.Settings.route) {
+                            SettingsScreen(
+                                settings = uiState.settings,
+                                engineBody = uiState.engineBody,
+                                engineDiagnostics = uiState.engineDiagnostics,
+                                onThemeMode = viewModel::setThemeMode,
+                                onDynamicColor = viewModel::setDynamicColorEnabled,
+                                onStartDestination = viewModel::setStartDestination,
+                                onAutoPreview = viewModel::setAutoPreview,
+                                onPreviewLimit = viewModel::setPreviewLimit,
+                                onOutputNamingPolicy = viewModel::setOutputNamingPolicy,
+                                onAutoOpenResult = viewModel::setAutoOpenResult,
+                                onKeepHistory = viewModel::setKeepHistory,
+                                onKeepScreenOn = viewModel::setKeepScreenOn,
+                                onPerformancePreset = viewModel::setPerformancePreset,
+                                onMaxParallelJobs = viewModel::setMaxParallelJobs,
+                                onBatteryFriendlyMode = viewModel::setBatteryFriendlyMode,
+                                onConfirmBeforeBatch = viewModel::setConfirmBeforeBatch,
+                                onReduceMotion = viewModel::setReduceMotion,
+                                onHaptics = viewModel::setHapticsEnabled,
+                                onClearHistory = viewModel::clearHistory,
+                                onSetOutputDirectory = viewModel::setOutputDirectory,
+                                onExportSettings = viewModel::exportSettingsToUri,
+                                onImportSettings = viewModel::importSettingsFromUri,
+                                onClearTemporaryFiles = viewModel::clearTemporaryFiles
+                            )
                         }
                     }
                 }
@@ -256,6 +240,15 @@ fun ConvertRoot(
         }
     }
 }
+
+private val AppDestination.title: String
+    get() = when (this) {
+        AppDestination.Home -> "Home"
+        AppDestination.Convert -> "Converti"
+        AppDestination.Common -> "Comuni"
+        AppDestination.History -> "Cronologia"
+        AppDestination.Settings -> "Impostazioni"
+    }
 
 private fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this

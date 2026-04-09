@@ -4,7 +4,7 @@
   "author": "PortalRunner",
   "description": "Truly universal browser-based file converter",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "src/electron.cjs",
   "scripts": {
